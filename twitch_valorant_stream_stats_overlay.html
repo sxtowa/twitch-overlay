@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twitch Valorant Stream Stats Overlay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --accent: #f9a8d4;
+      --accent-glow: rgba(249, 168, 212, 0.35);
+      --accent-soft: rgba(249, 168, 212, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Strictly transparent background by default for 1920x1080 OBS Browser Source */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      user-select: none;
+    }
+
+    /* Optional preview backdrops inside customizer (OBS stays transparent) */
+    body.preview-dark {
+      background-color: #07090f;
+      background-image:
+        radial-gradient(circle at 20% 85%, var(--accent-soft), transparent 48%),
+        radial-gradient(circle at 82% 18%, rgba(145, 70, 255, 0.08), transparent 45%);
+    }
+
+    body.preview-light {
+      background-color: #e2e8f0;
+      background-image:
+        linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* Dark cyber-minimalist glassmorphism card */
+    .val-glass {
+      position: relative;
+      background: linear-gradient(145deg, rgba(12, 14, 22, 0.88), rgba(16, 20, 32, 0.8));
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.11);
+      box-shadow:
+        0 20px 48px -12px rgba(0, 0, 0, 0.72),
+        0 0 30px -10px var(--accent-glow),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
+      transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.25s ease;
+    }
+
+    .val-pulse {
+      transform: translateY(-2px) scale(1.01);
+      border-color: var(--accent);
+      box-shadow:
+        0 22px 52px -12px rgba(0, 0, 0, 0.78),
+        0 0 34px -6px var(--accent-glow),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
+    }
+
+    /* Corner positioning presets */
+    .pos-bottom-left {
+      bottom: 24px;
+      left: 24px;
+      top: auto;
+      right: auto;
+    }
+
+    .pos-top-left {
+      top: 24px;
+      left: 24px;
+      bottom: auto;
+      right: auto;
+    }
+
+    .pos-top-right {
+      top: 24px;
+      right: 24px;
+      bottom: auto;
+      left: auto;
+    }
+
+    .pos-bottom-right {
+      bottom: 24px;
+      right: 24px;
+      top: auto;
+      left: auto;
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.45);
+      border-radius: 999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===================================================================== -->
+  <!-- MAIN VALORANT STREAM STATS OVERLAY CARD                               -->
+  <!-- ===================================================================== -->
+  <aside
+    id="valorant-widget"
+    class="val-glass pos-bottom-left fixed z-10 w-[430px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
+    aria-label="Valorant Stream Stats Overlay"
+  >
+    <!-- Top Accent Strip -->
+    <div
+      class="h-[2.5px] w-full"
+      style="background: linear-gradient(90deg, var(--accent), var(--accent-soft) 75%, transparent);"
+    ></div>
+
+    <div class="p-4">
+      <!-- Header: Valorant Emblem + Riot ID & Tag + Hoy RR Delta -->
+      <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
+        <div class="flex min-w-0 items-center gap-2">
+          <span
+            class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5"
+            style="color: var(--accent);"
+            aria-hidden="true"
+          >
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2.5 4.5 11 19.5h4.2L6.7 4.5H2.5zm19 0-6.2 10.8 2.1 4.2 8.1-15h-4z" />
+            </svg>
+          </span>
+          <div class="min-w-0">
+            <div class="flex items-baseline gap-1.5">
+              <span id="display-riot-name" class="truncate text-sm font-extrabold tracking-tight text-white">
+                episodicx
+              </span>
+              <span id="display-riot-tag" class="shrink-0 font-mono text-xs font-semibold text-slate-400">
+                #012
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Net RR Delta Pill -->
+        <div class="flex shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-slate-950/70 px-2.5 py-1">
+          <span class="font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            HOY
+          </span>
+          <span
+            id="display-rr-delta"
+            class="font-mono text-xs font-extrabold text-emerald-300"
+          >
+            +42 RR
+          </span>
+        </div>
+      </div>
+
+      <!-- Rank Tier + Current RR + 0-100 Progress Bar -->
+      <div class="mt-3 rounded-xl border border-white/10 bg-slate-950/60 p-3">
+        <div class="flex items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span
+              class="h-2.5 w-2.5 shrink-0 rounded-full"
+              style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
+            ></span>
+            <span id="display-rank-tier" class="text-sm font-extrabold tracking-tight text-white">
+              Diamond II
+            </span>
+          </div>
+          <div class="font-mono text-xs font-bold" style="color: var(--accent);">
+            <span id="display-rr">64</span>
+            <span class="text-slate-400">RR</span>
+          </div>
+        </div>
+
+        <!-- 0-100 RR Progress Bar -->
+        <div class="mt-2.5">
+          <div class="mb-1 flex items-center justify-between font-mono text-[10px] text-slate-400">
+            <span>PROGRESO DE RANGO</span>
+            <span id="display-rr-progress-label">64 / 100 RR</span>
+          </div>
+          <div class="h-2 w-full overflow-hidden rounded-full bg-white/10">
+            <div
+              id="display-rr-bar"
+              class="h-full rounded-full transition-all duration-300 ease-out"
+              style="
+                width: 64%;
+                background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white));
+                box-shadow: 0 0 12px var(--accent-glow);
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Record W-L & Winrate % Row -->
+      <div class="mt-2.5 grid grid-cols-2 gap-2">
+        <div class="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2">
+          <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            RECORD
+          </span>
+          <div class="mt-0.5 flex items-baseline gap-1.5 font-mono text-xs font-bold">
+            <span id="display-wins" class="text-emerald-300">7W</span>
+            <span class="text-slate-500">-</span>
+            <span id="display-losses" class="text-rose-300">3L</span>
+          </div>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2">
+          <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            WINRATE DEL DÍA
+          </span>
+          <div
+            id="display-winrate"
+            class="mt-0.5 font-mono text-xs font-extrabold text-white"
+          >
+            70.0%
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional Combat Stats Row: K/D, ACS, HS% -->
+      <div
+        id="combat-stats-row"
+        class="mt-2 grid grid-cols-3 gap-2"
+      >
+        <div class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+          <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            K/D
+          </span>
+          <span id="display-kd" class="mt-0.5 block font-mono text-xs font-bold text-slate-100">
+            1.28
+          </span>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+          <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            ACS
+          </span>
+          <span id="display-acs" class="mt-0.5 block font-mono text-xs font-bold text-slate-100">
+            234
+          </span>
+        </div>
+
+        <div class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+          <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+            HS%
+          </span>
+          <span id="display-hs" class="mt-0.5 block font-mono text-xs font-bold text-slate-100">
+            26.4%
+          </span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===================================================================== -->
+  <!-- COLLAPSIBLE CUSTOMIZER DRAWER (Bottom-Right)                          -->
+  <!-- ===================================================================== -->
+  <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <section
+      id="customizer-drawer"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[410px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+    >
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-white">
+            Valorant Setup
+          </h2>
+          <p class="font-mono text-[10px] text-slate-400">
+            Atajos: [C] Panel • [H] Ocultar UI • ?clean=1
+          </p>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button
+            id="reset-session-btn"
+            type="button"
+            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
+            title="Resetear estadísticas de hoy"
+          >
+            Reset Hoy
+          </button>
+          <button
+            id="hide-ui-btn"
+            type="button"
+            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
+            title="Ocultar interfaz (Atajo: H)"
+          >
+            Ocultar UI
+          </button>
+          <button
+            id="close-drawer-btn"
+            type="button"
+            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-slate-300 hover:bg-white/10 hover:text-white"
+            title="Cerrar panel"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. MANUAL STATS & MATCH CONTROLS -->
+      <div class="mt-3.5 space-y-2.5">
+        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+          1. Estadísticas Manuales y Partidas
+        </div>
+
+        <!-- Riot ID & Tag -->
+        <div class="grid grid-cols-3 gap-1.5">
+          <div class="col-span-2">
+            <label for="input-riot-name" class="block font-mono text-[9px] text-slate-400">
+              Riot ID
+            </label>
+            <input
+              id="input-riot-name"
+              type="text"
+              maxlength="24"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+          <div>
+            <label for="input-riot-tag" class="block font-mono text-[9px] text-slate-400">
+              Tag
+            </label>
+            <input
+              id="input-riot-tag"
+              type="text"
+              maxlength="10"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+        </div>
+
+        <!-- Rank Tier & Current RR -->
+        <div class="grid grid-cols-2 gap-1.5">
+          <div>
+            <label for="input-rank-tier" class="block font-mono text-[9px] text-slate-400">
+              Rango actual
+            </label>
+            <select
+              id="input-rank-tier"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            ></select>
+          </div>
+          <div>
+            <label for="input-rr" class="block font-mono text-[9px] text-slate-400">
+              RR actual (0 - 100)
+            </label>
+            <input
+              id="input-rr"
+              type="number"
+              min="0"
+              max="999"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+        </div>
+
+        <!-- Quick Win / Loss Buttons -->
+        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
+          <button
+            id="quick-win-btn"
+            type="button"
+            class="rounded-xl border border-emerald-400/35 bg-emerald-500/15 px-3 py-2 font-mono text-xs font-extrabold text-emerald-300 transition hover:bg-emerald-500/25 active:scale-95"
+          >
+            + Victoria (+18 RR)
+          </button>
+          <button
+            id="quick-loss-btn"
+            type="button"
+            class="rounded-xl border border-rose-400/35 bg-rose-500/15 px-3 py-2 font-mono text-xs font-extrabold text-rose-300 transition hover:bg-rose-500/25 active:scale-95"
+          >
+            + Derrota (-16 RR)
+          </button>
+        </div>
+
+        <!-- Configurable RR for Manual Wins and Losses + Direct +/- Add/Subtract -->
+        <div class="grid grid-cols-2 gap-2 rounded-xl border border-white/10 bg-slate-900/80 p-2">
+          <div>
+            <label for="input-win-rr" class="block font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-300">
+              RR Victoria Manual
+            </label>
+            <div class="mt-1 flex items-center gap-1">
+              <button
+                type="button"
+                data-win-rr-delta="-1"
+                title="Quitar 1 RR a la victoria manual"
+                class="win-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-emerald-400/40"
+              >
+                -
+              </button>
+              <input
+                id="input-win-rr"
+                type="number"
+                min="-200"
+                max="200"
+                class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 text-center font-mono text-xs font-bold text-emerald-300 outline-none focus:border-emerald-400"
+              />
+              <button
+                type="button"
+                data-win-rr-delta="1"
+                title="Añadir 1 RR a la victoria manual"
+                class="win-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-emerald-400/40"
+              >
+                +
+              </button>
+            </div>
+            <div class="mt-1.5 grid grid-cols-2 gap-1">
+              <button
+                type="button"
+                data-apply-win-rr="-5"
+                title="Restar 5 RR directamente (Victoria)"
+                class="apply-win-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
+              >
+                -5 RR
+              </button>
+              <button
+                type="button"
+                data-apply-win-rr="5"
+                title="Sumar 5 RR directamente (Victoria)"
+                class="apply-win-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-emerald-400/40 hover:text-emerald-200"
+              >
+                +5 RR
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label for="input-loss-rr" class="block font-mono text-[9px] font-bold uppercase tracking-wider text-rose-300">
+              RR Derrota Manual
+            </label>
+            <div class="mt-1 flex items-center gap-1">
+              <button
+                type="button"
+                data-loss-rr-delta="-1"
+                title="Restar 1 RR a la derrota manual"
+                class="loss-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-rose-400/40"
+              >
+                -
+              </button>
+              <input
+                id="input-loss-rr"
+                type="number"
+                min="-200"
+                max="200"
+                class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 text-center font-mono text-xs font-bold text-rose-300 outline-none focus:border-rose-400"
+              />
+              <button
+                type="button"
+                data-loss-rr-delta="1"
+                title="Añadir 1 RR a la derrota manual"
+                class="loss-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-rose-400/40"
+              >
+                +
+              </button>
+            </div>
+            <div class="mt-1.5 grid grid-cols-2 gap-1">
+              <button
+                type="button"
+                data-apply-loss-rr="-5"
+                title="Restar 5 RR directamente (Derrota)"
+                class="apply-loss-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
+              >
+                -5 RR
+              </button>
+              <button
+                type="button"
+                data-apply-loss-rr="5"
+                title="Sumar 5 RR directamente (Derrota)"
+                class="apply-loss-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-emerald-400/40 hover:text-emerald-200"
+              >
+                +5 RR
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Direct RR & Today RR Delta Step Controls -->
+        <div class="grid grid-cols-4 gap-1.5">
+          <button
+            type="button"
+            data-rr-step="-10"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
+          >
+            -10 RR
+          </button>
+          <button
+            type="button"
+            data-rr-step="-1"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
+          >
+            -1 RR
+          </button>
+          <button
+            type="button"
+            data-rr-step="1"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
+          >
+            +1 RR
+          </button>
+          <button
+            type="button"
+            data-rr-step="10"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
+          >
+            +10 RR
+          </button>
+        </div>
+
+        <!-- Wins, Losses, Today Delta -->
+        <div class="grid grid-cols-3 gap-1.5">
+          <div>
+            <label for="input-wins" class="block font-mono text-[9px] text-slate-400">
+              Victorias (W)
+            </label>
+            <input
+              id="input-wins"
+              type="number"
+              min="0"
+              max="999"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+          <div>
+            <label for="input-losses" class="block font-mono text-[9px] text-slate-400">
+              Derrotas (L)
+            </label>
+            <input
+              id="input-losses"
+              type="number"
+              min="0"
+              max="999"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+          <div>
+            <label for="input-rr-delta" class="block font-mono text-[9px] text-slate-400">
+              RR de hoy (+/-)
+            </label>
+            <input
+              id="input-rr-delta"
+              type="number"
+              min="-999"
+              max="999"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+        </div>
+
+        <!-- Optional Combat Stats Toggle & Inputs -->
+        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
+          <label class="flex cursor-pointer items-center justify-between">
+            <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
+              Mostrar K/D, ACS y HS%
+            </span>
+            <input
+              id="toggle-combat-stats"
+              type="checkbox"
+              class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+            />
+          </label>
+
+          <div id="combat-inputs-grid" class="mt-2 grid grid-cols-3 gap-1.5">
+            <div>
+              <label for="input-kd" class="block font-mono text-[9px] text-slate-400">K/D</label>
+              <input
+                id="input-kd"
+                type="number"
+                step="0.01"
+                min="0"
+                max="20"
+                class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
+              />
+            </div>
+            <div>
+              <label for="input-acs" class="block font-mono text-[9px] text-slate-400">ACS</label>
+              <input
+                id="input-acs"
+                type="number"
+                min="0"
+                max="999"
+                class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
+              />
+            </div>
+            <div>
+              <label for="input-hs" class="block font-mono text-[9px] text-slate-400">HS %</label>
+              <input
+                id="input-hs"
+                type="number"
+                step="0.1"
+                min="0"
+                max="100"
+                class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. OPTIONAL API / ENDPOINT POLLING -->
+      <div class="mt-3.5 space-y-2 border-t border-white/10 pt-3.5">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+            2. Conectar API / Endpoint
+          </span>
+          <span
+            id="endpoint-status-badge"
+            class="rounded-full border border-white/15 bg-slate-900 px-2 py-0.5 font-mono text-[9px] font-bold text-slate-400"
+          >
+            MANUAL
+          </span>
+        </div>
+
+        <p class="text-[10px] leading-relaxed text-slate-400">
+          URL directa (sin <code class="text-slate-200">$(customapi...)</code>) en texto plano o JSON. Si el servidor bloquea CORS desde el navegador/OBS, el modo manual sigue activo sin interrupciones.
+        </p>
+
+        <input
+          id="input-endpoint-url"
+          type="url"
+          placeholder="https://tu-api-o-endpoint.com/stats"
+          class="w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] text-cyan-200 placeholder-slate-600 outline-none focus:border-pink-300"
+        />
+
+        <div class="grid grid-cols-2 gap-1.5">
+          <div>
+            <label for="input-poll-seconds" class="block font-mono text-[9px] text-slate-400">
+              Intervalo (segundos)
+            </label>
+            <input
+              id="input-poll-seconds"
+              type="number"
+              min="5"
+              max="3600"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
+          </div>
+          <div class="flex flex-col justify-end">
+            <label class="flex h-[30px] cursor-pointer items-center justify-between rounded-lg border border-white/15 bg-slate-900 px-2.5">
+              <span class="font-mono text-[10px] font-semibold text-slate-200">Auto-sync</span>
+              <input
+                id="toggle-endpoint-enabled"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button
+            id="sync-endpoint-btn"
+            type="button"
+            class="flex-1 rounded-xl border border-pink-300/40 bg-pink-300/15 px-3 py-1.5 font-mono text-[11px] font-bold text-pink-100 transition hover:bg-pink-300/25 active:scale-95"
+          >
+            Sincronizar ahora
+          </button>
+          <button
+            id="clear-endpoint-btn"
+            type="button"
+            class="rounded-xl border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
+          >
+            Limpiar
+          </button>
+        </div>
+
+        <p id="endpoint-feedback" class="hidden rounded-lg border border-white/10 bg-slate-900/90 p-2 font-mono text-[10px] leading-relaxed text-slate-300"></p>
+      </div>
+
+      <!-- 3. POSITION, ACCENT & PREVIEW BACKDROP -->
+      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
+        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+          3. Posición, Color y Vista Previa
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Esquina en pantalla</span>
+          <div class="mt-1.5 grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              data-pos="pos-bottom-left"
+              class="pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white"
+            >
+              ↙ Abajo Izquierda
+            </button>
+            <button
+              type="button"
+              data-pos="pos-top-left"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↖ Arriba Izquierda
+            </button>
+            <button
+              type="button"
+              data-pos="pos-top-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↗ Arriba Derecha
+            </button>
+            <button
+              type="button"
+              data-pos="pos-bottom-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↘ Abajo Derecha
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Paleta de acento (11 colores)</span>
+          <div id="accent-presets-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">
+            Fondo de vista previa (OBS siempre transparente)
+          </span>
+          <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+            <button
+              type="button"
+              data-backdrop="transparent"
+              class="backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200"
+            >
+              Transparente
+            </button>
+            <button
+              type="button"
+              data-backdrop="dark"
+              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Oscuro
+            </button>
+            <button
+              type="button"
+              data-backdrop="light"
+              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Claro
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom-Right Toggle Pill -->
+    <button
+      id="toggle-drawer-btn"
+      type="button"
+      title="Configurar Valorant Overlay (Atajo: C)"
+      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-65 shadow-lg backdrop-blur-md transition hover:border-pink-300/50 hover:text-pink-200 hover:opacity-100 focus:opacity-100"
+      aria-expanded="false"
+      aria-controls="customizer-drawer"
+    >
+      <span
+        class="h-2 w-2 rounded-full"
+        style="background-color: var(--accent);"
+      ></span>
+      <span>Valorant Setup</span>
+    </button>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      const STORAGE_KEY = 'twitch_valorant_overlay_v4';
+      const DEFAULT_ENDPOINT_URL = '';
+
+      const RANK_TIERS = [
+        'Iron I', 'Iron II', 'Iron III',
+        'Bronze I', 'Bronze II', 'Bronze III',
+        'Silver I', 'Silver II', 'Silver III',
+        'Gold I', 'Gold II', 'Gold III',
+        'Platinum I', 'Platinum II', 'Platinum III',
+        'Diamond I', 'Diamond II', 'Diamond III',
+        'Ascendant I', 'Ascendant II', 'Ascendant III',
+        'Immortal I', 'Immortal II', 'Immortal III',
+        'Radiant',
+      ];
+
+      // 11 Accent Presets (Rosa Pastel #f9a8d4 default first)
+      const ACCENT_PRESETS = [
+        {
+          id: 'rosa-pastel',
+          name: 'Rosa Pastel',
+          color: '#f9a8d4',
+          glow: 'rgba(249, 168, 212, 0.35)',
+          soft: 'rgba(249, 168, 212, 0.14)',
+        },
+        {
+          id: 'spotify-verde',
+          name: 'Spotify Verde',
+          color: '#1db954',
+          glow: 'rgba(29, 185, 84, 0.34)',
+          soft: 'rgba(29, 185, 84, 0.14)',
+        },
+        {
+          id: 'twitch-violeta',
+          name: 'Twitch Violeta',
+          color: '#9146ff',
+          glow: 'rgba(145, 70, 255, 0.36)',
+          soft: 'rgba(145, 70, 255, 0.15)',
+        },
+        {
+          id: 'cian-neon',
+          name: 'Cian Neón',
+          color: '#22d3ee',
+          glow: 'rgba(34, 211, 238, 0.34)',
+          soft: 'rgba(34, 211, 238, 0.14)',
+        },
+        {
+          id: 'lavanda',
+          name: 'Lavanda',
+          color: '#c4b5fd',
+          glow: 'rgba(196, 181, 253, 0.34)',
+          soft: 'rgba(196, 181, 253, 0.14)',
+        },
+        {
+          id: 'menta-pastel',
+          name: 'Menta Pastel',
+          color: '#6ee7b7',
+          glow: 'rgba(110, 231, 183, 0.34)',
+          soft: 'rgba(110, 231, 183, 0.14)',
+        },
+        {
+          id: 'melocoton',
+          name: 'Melocotón',
+          color: '#fdba74',
+          glow: 'rgba(253, 186, 116, 0.34)',
+          soft: 'rgba(253, 186, 116, 0.14)',
+        },
+        {
+          id: 'lila',
+          name: 'Lila',
+          color: '#e879f9',
+          glow: 'rgba(232, 121, 249, 0.34)',
+          soft: 'rgba(232, 121, 249, 0.14)',
+        },
+        {
+          id: 'coral',
+          name: 'Coral',
+          color: '#fb7185',
+          glow: 'rgba(251, 113, 133, 0.34)',
+          soft: 'rgba(251, 113, 133, 0.14)',
+        },
+        {
+          id: 'azul-cielo',
+          name: 'Azul Cielo',
+          color: '#7dd3fc',
+          glow: 'rgba(125, 211, 252, 0.34)',
+          soft: 'rgba(125, 211, 252, 0.14)',
+        },
+        {
+          id: 'dorado',
+          name: 'Dorado',
+          color: '#fbbf24',
+          glow: 'rgba(251, 191, 36, 0.34)',
+          soft: 'rgba(251, 191, 36, 0.14)',
+        },
+      ];
+
+      function toSafeNumber(val, fallback, min, max) {
+        const n = Number(val);
+        if (!Number.isFinite(n)) return fallback;
+        if (typeof min === 'number' && n < min) return min;
+        if (typeof max === 'number' && n > max) return max;
+        return n;
+      }
+
+      function createDefaultState() {
+        return {
+          riotName: 'episodicx',
+          riotTag: '#012',
+          rankTier: 'Diamond II',
+          rr: 64,
+          rrDelta: 42,
+          winRrAmount: 18,
+          lossRrAmount: -16,
+          wins: 7,
+          losses: 3,
+          showCombatStats: true,
+          kd: 1.28,
+          acs: 234,
+          hs: 26.4,
+          position: 'pos-bottom-left',
+          backdrop: 'transparent',
+          accent: ACCENT_PRESETS[0].color,
+          accentGlow: ACCENT_PRESETS[0].glow,
+          accentSoft: ACCENT_PRESETS[0].soft,
+          endpointUrl: DEFAULT_ENDPOINT_URL,
+          endpointEnabled: false,
+          pollSeconds: 45,
+        };
+      }
+
+      function loadState() {
+        const defaults = createDefaultState();
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return defaults;
+          const p = JSON.parse(raw);
+          if (!p || typeof p !== 'object') return defaults;
+
+          const validPositions = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
+          const preset =
+            ACCENT_PRESETS.find((item) => item.color.toLowerCase() === String(p.accent || '').toLowerCase()) ||
+            ACCENT_PRESETS[0];
+
+          const rawRank = typeof p.rankTier === 'string' && p.rankTier.trim() ? p.rankTier.trim() : defaults.rankTier;
+          const rankExists = RANK_TIERS.some((r) => r.toLowerCase() === rawRank.toLowerCase());
+
+          return {
+            riotName: typeof p.riotName === 'string' && p.riotName.trim() ? p.riotName.trim() : defaults.riotName,
+            riotTag: typeof p.riotTag === 'string' && p.riotTag.trim() ? p.riotTag.trim() : defaults.riotTag,
+            rankTier: rankExists ? rawRank : defaults.rankTier,
+            rr: Math.round(toSafeNumber(p.rr, defaults.rr, 0, 999)),
+            rrDelta: Math.round(toSafeNumber(p.rrDelta, defaults.rrDelta, -999, 999)),
+            winRrAmount: Math.round(toSafeNumber(p.winRrAmount, defaults.winRrAmount, -200, 200)),
+            lossRrAmount: Math.round(toSafeNumber(p.lossRrAmount, defaults.lossRrAmount, -200, 200)),
+            wins: Math.round(toSafeNumber(p.wins, defaults.wins, 0, 999)),
+            losses: Math.round(toSafeNumber(p.losses, defaults.losses, 0, 999)),
+            showCombatStats: p.showCombatStats !== false,
+            kd: Number(toSafeNumber(p.kd, defaults.kd, 0, 20).toFixed(2)),
+            acs: Math.round(toSafeNumber(p.acs, defaults.acs, 0, 999)),
+            hs: Number(toSafeNumber(p.hs, defaults.hs, 0, 100).toFixed(1)),
+            position: validPositions.includes(p.position) ? p.position : defaults.position,
+            backdrop: ['transparent', 'dark', 'light'].includes(p.backdrop) ? p.backdrop : 'transparent',
+            accent: preset.color,
+            accentGlow: typeof p.accentGlow === 'string' && p.accentGlow ? p.accentGlow : preset.glow,
+            accentSoft: typeof p.accentSoft === 'string' && p.accentSoft ? p.accentSoft : preset.soft,
+            endpointUrl:
+              typeof p.endpointUrl === 'string'
+                ? p.endpointUrl.trim()
+                : defaults.endpointUrl,
+            endpointEnabled: Boolean(p.endpointEnabled),
+            pollSeconds: Math.round(toSafeNumber(p.pollSeconds, defaults.pollSeconds, 5, 3600)),
+          };
+        } catch (err) {
+          console.error('Error loading Valorant overlay state:', err);
+          return defaults;
+        }
+      }
+
+      let state = loadState();
+      let pollIntervalId = null;
+      let pulseTimeoutId = null;
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (err) {
+          console.error('Error saving Valorant overlay state:', err);
+        }
+      }
+
+      // =========================================================================
+      // DOM REFERENCES
+      // =========================================================================
+      const widgetEl = document.getElementById('valorant-widget');
+      const displayRiotNameEl = document.getElementById('display-riot-name');
+      const displayRiotTagEl = document.getElementById('display-riot-tag');
+      const displayRrDeltaEl = document.getElementById('display-rr-delta');
+      const displayRankTierEl = document.getElementById('display-rank-tier');
+      const displayRrEl = document.getElementById('display-rr');
+      const displayRrProgressLabelEl = document.getElementById('display-rr-progress-label');
+      const displayRrBarEl = document.getElementById('display-rr-bar');
+      const displayWinsEl = document.getElementById('display-wins');
+      const displayLossesEl = document.getElementById('display-losses');
+      const displayWinrateEl = document.getElementById('display-winrate');
+      const combatStatsRowEl = document.getElementById('combat-stats-row');
+      const displayKdEl = document.getElementById('display-kd');
+      const displayAcsEl = document.getElementById('display-acs');
+      const displayHsEl = document.getElementById('display-hs');
+
+      const inputRiotNameEl = document.getElementById('input-riot-name');
+      const inputRiotTagEl = document.getElementById('input-riot-tag');
+      const inputRankTierEl = document.getElementById('input-rank-tier');
+      const inputRrEl = document.getElementById('input-rr');
+      const inputWinRrEl = document.getElementById('input-win-rr');
+      const inputLossRrEl = document.getElementById('input-loss-rr');
+      const quickWinBtnEl = document.getElementById('quick-win-btn');
+      const quickLossBtnEl = document.getElementById('quick-loss-btn');
+      const inputWinsEl = document.getElementById('input-wins');
+      const inputLossesEl = document.getElementById('input-losses');
+      const inputRrDeltaEl = document.getElementById('input-rr-delta');
+      const toggleCombatStatsEl = document.getElementById('toggle-combat-stats');
+      const combatInputsGridEl = document.getElementById('combat-inputs-grid');
+      const inputKdEl = document.getElementById('input-kd');
+      const inputAcsEl = document.getElementById('input-acs');
+      const inputHsEl = document.getElementById('input-hs');
+
+      const endpointStatusBadgeEl = document.getElementById('endpoint-status-badge');
+      const inputEndpointUrlEl = document.getElementById('input-endpoint-url');
+      const inputPollSecondsEl = document.getElementById('input-poll-seconds');
+      const toggleEndpointEnabledEl = document.getElementById('toggle-endpoint-enabled');
+      const syncEndpointBtnEl = document.getElementById('sync-endpoint-btn');
+      const clearEndpointBtnEl = document.getElementById('clear-endpoint-btn');
+      const endpointFeedbackEl = document.getElementById('endpoint-feedback');
+
+      const accentPresetsGridEl = document.getElementById('accent-presets-grid');
+      const customizerRootEl = document.getElementById('customizer-root');
+      const drawerEl = document.getElementById('customizer-drawer');
+      const toggleDrawerBtnEl = document.getElementById('toggle-drawer-btn');
+      const closeDrawerBtnEl = document.getElementById('close-drawer-btn');
+      const hideUiBtnEl = document.getElementById('hide-ui-btn');
+      const resetSessionBtnEl = document.getElementById('reset-session-btn');
+
+      function escapeHtml(text) {
+        return String(text || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      // =========================================================================
+      // OVERLAY RENDERING & INPUT SYNC
+      // =========================================================================
+      function triggerCardPulse() {
+        widgetEl.classList.remove('val-pulse');
+        void widgetEl.offsetWidth;
+        widgetEl.classList.add('val-pulse');
+        clearTimeout(pulseTimeoutId);
+        pulseTimeoutId = setTimeout(() => {
+          widgetEl.classList.remove('val-pulse');
+        }, 550);
+      }
+
+      function renderOverlay(animate = false) {
+        const cleanName = (state.riotName || 'episodicx').trim() || 'episodicx';
+        const rawTag = (state.riotTag || '#012').trim();
+        const cleanTag = rawTag ? (rawTag.startsWith('#') ? rawTag : `#${rawTag}`) : '#012';
+
+        displayRiotNameEl.textContent = cleanName;
+        displayRiotTagEl.textContent = cleanTag;
+        displayRankTierEl.textContent = state.rankTier || 'Diamond II';
+        displayRrEl.textContent = String(state.rr);
+
+        const delta = Number(state.rrDelta || 0);
+        if (delta > 0) {
+          displayRrDeltaEl.textContent = `+${delta} RR`;
+          displayRrDeltaEl.className = 'font-mono text-xs font-extrabold text-emerald-300';
+        } else if (delta < 0) {
+          displayRrDeltaEl.textContent = `${delta} RR`;
+          displayRrDeltaEl.className = 'font-mono text-xs font-extrabold text-rose-300';
+        } else {
+          displayRrDeltaEl.textContent = '0 RR';
+          displayRrDeltaEl.className = 'font-mono text-xs font-extrabold text-slate-300';
+        }
+
+        const progressRr =
+          state.rr >= 100 && state.rr % 100 === 0
+            ? 100
+            : Math.max(0, Math.min(100, state.rr % 100));
+        displayRrProgressLabelEl.textContent = `${progressRr} / 100 RR`;
+        displayRrBarEl.style.width = `${progressRr}%`;
+
+        displayWinsEl.textContent = `${state.wins}W`;
+        displayLossesEl.textContent = `${state.losses}L`;
+
+        const totalGames = state.wins + state.losses;
+        const winrate = totalGames > 0 ? ((state.wins / totalGames) * 100).toFixed(1) : '0.0';
+        displayWinrateEl.textContent = `${winrate}%`;
+
+        combatStatsRowEl.classList.toggle('hidden', !state.showCombatStats);
+        combatInputsGridEl.classList.toggle('opacity-50', !state.showCombatStats);
+        displayKdEl.textContent = Number(state.kd).toFixed(2);
+        displayAcsEl.textContent = String(Math.round(state.acs));
+        displayHsEl.textContent = `${Number(state.hs).toFixed(1)}%`;
+
+        const winSigned = state.winRrAmount >= 0 ? `+${state.winRrAmount}` : `${state.winRrAmount}`;
+        const lossSigned = state.lossRrAmount >= 0 ? `+${state.lossRrAmount}` : `${state.lossRrAmount}`;
+        quickWinBtnEl.textContent = `+ Victoria (${winSigned} RR)`;
+        quickLossBtnEl.textContent = `+ Derrota (${lossSigned} RR)`;
+
+        if (state.endpointEnabled && state.endpointUrl) {
+          endpointStatusBadgeEl.textContent = `AUTO • ${state.pollSeconds}S`;
+          endpointStatusBadgeEl.className =
+            'rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 font-mono text-[9px] font-bold text-emerald-300';
+        } else if (state.endpointUrl) {
+          endpointStatusBadgeEl.textContent = 'LISTO';
+          endpointStatusBadgeEl.className =
+            'rounded-full border border-pink-300/35 bg-pink-300/15 px-2 py-0.5 font-mono text-[9px] font-bold text-pink-200';
+        } else {
+          endpointStatusBadgeEl.textContent = 'MANUAL';
+          endpointStatusBadgeEl.className =
+            'rounded-full border border-white/15 bg-slate-900 px-2 py-0.5 font-mono text-[9px] font-bold text-slate-400';
+        }
+
+        if (animate) {
+          triggerCardPulse();
+        }
+      }
+
+      function populateRankSelect() {
+        const options = RANK_TIERS.slice();
+        if (!options.includes(state.rankTier)) {
+          options.unshift(state.rankTier);
+        }
+        inputRankTierEl.innerHTML = options
+          .map((tier) => `<option value="${escapeHtml(tier)}">${escapeHtml(tier)}</option>`)
+          .join('');
+        inputRankTierEl.value = state.rankTier;
+      }
+
+      function syncInputsFromState() {
+        inputRiotNameEl.value = state.riotName;
+        inputRiotTagEl.value = state.riotTag;
+        populateRankSelect();
+        inputRrEl.value = String(state.rr);
+        inputWinRrEl.value = String(state.winRrAmount);
+        inputLossRrEl.value = String(state.lossRrAmount);
+        inputWinsEl.value = String(state.wins);
+        inputLossesEl.value = String(state.losses);
+        inputRrDeltaEl.value = String(state.rrDelta);
+        toggleCombatStatsEl.checked = Boolean(state.showCombatStats);
+        inputKdEl.value = String(state.kd);
+        inputAcsEl.value = String(state.acs);
+        inputHsEl.value = String(state.hs);
+
+        inputEndpointUrlEl.value = state.endpointUrl;
+        inputPollSecondsEl.value = String(state.pollSeconds);
+        toggleEndpointEnabledEl.checked = Boolean(state.endpointEnabled);
+      }
+
+      // =========================================================================
+      // MANUAL MATCH & RR CONTROLS
+      // =========================================================================
+      function applyQuickMatch(isWin) {
+        const rrChange = isWin ? Number(state.winRrAmount || 0) : Number(state.lossRrAmount || 0);
+        if (isWin) {
+          state.wins = Math.round(toSafeNumber(state.wins + 1, 0, 0, 999));
+        } else {
+          state.losses = Math.round(toSafeNumber(state.losses + 1, 0, 0, 999));
+        }
+        state.rrDelta = Math.round(toSafeNumber(state.rrDelta + rrChange, 0, -999, 999));
+        state.rr = Math.round(toSafeNumber(state.rr + rrChange, 0, 0, 999));
+        saveState();
+        syncInputsFromState();
+        renderOverlay(true);
+      }
+
+      function adjustManualMatchConfig(isWin, delta) {
+        if (isWin) {
+          state.winRrAmount = Math.round(toSafeNumber(state.winRrAmount + delta, 18, -200, 200));
+        } else {
+          state.lossRrAmount = Math.round(toSafeNumber(state.lossRrAmount + delta, -16, -200, 200));
+        }
+        saveState();
+        syncInputsFromState();
+        renderOverlay(false);
+      }
+
+      function applyDirectManualRr(isWin, rrAmount) {
+        const delta = Math.round(toSafeNumber(rrAmount, 0, -200, 200));
+        if (isWin) {
+          state.winRrAmount = Math.round(toSafeNumber(state.winRrAmount + delta, 18, -200, 200));
+        } else {
+          state.lossRrAmount = Math.round(toSafeNumber(state.lossRrAmount + delta, -16, -200, 200));
+        }
+        state.rr = Math.round(toSafeNumber(state.rr + delta, 0, 0, 999));
+        state.rrDelta = Math.round(toSafeNumber(state.rrDelta + delta, 0, -999, 999));
+        saveState();
+        syncInputsFromState();
+        renderOverlay(true);
+      }
+
+      function applyRrStep(delta) {
+        const step = Math.round(toSafeNumber(delta, 0, -200, 200));
+        state.rr = Math.round(toSafeNumber(state.rr + step, 0, 0, 999));
+        state.rrDelta = Math.round(toSafeNumber(state.rrDelta + step, 0, -999, 999));
+        saveState();
+        syncInputsFromState();
+        renderOverlay(true);
+      }
+
+      // =========================================================================
+      // ENDPOINT / API POLLING (JSON & PLAIN TEXT WITH RESILIENT PARSING)
+      // =========================================================================
+      function setEndpointFeedback(msg, isError) {
+        if (!msg) {
+          endpointFeedbackEl.classList.add('hidden');
+          endpointFeedbackEl.textContent = '';
+          return;
+        }
+        endpointFeedbackEl.textContent = msg;
+        endpointFeedbackEl.classList.remove('hidden');
+        endpointFeedbackEl.className = isError
+          ? 'rounded-lg border border-rose-400/35 bg-rose-950/50 p-2 font-mono text-[10px] leading-relaxed text-rose-200'
+          : 'rounded-lg border border-emerald-400/30 bg-emerald-950/40 p-2 font-mono text-[10px] leading-relaxed text-emerald-200';
+      }
+
+      function parsePlainTextResponse(text) {
+        const clean = String(text || '').replace(/\s+/g, ' ').trim();
+        if (!clean) return null;
+
+        const out = {};
+        const rankMatch = clean.match(
+          /\b(?:Iron|Bronze|Silver|Gold|Platinum|Diamond|Ascendant|Immortal)\s+(?:I{1,3}|1|2|3)|\bRadiant\b/i
+        );
+        if (rankMatch) {
+          out.rank = rankMatch[0].trim();
+        }
+
+        const rrMatch = clean.match(/([+-]?\d{1,3})\s*RR\b/i);
+        if (rrMatch) {
+          out.rr = Number(rrMatch[1]);
+        }
+
+        const deltaMatch =
+          clean.match(/\(([+-]\d{1,3})\s*RR\)/i) ||
+          clean.match(/([+-]\d{1,3})\s*(?:today|hoy|mmr)/i);
+        if (deltaMatch) {
+          out.rrDelta = Number(deltaMatch[1]);
+        }
+
+        const wlMatch = clean.match(/\b(\d{1,3})\s*[WVF]\s*[-/]\s*(\d{1,3})\s*[LD]\b/i);
+        if (wlMatch) {
+          out.wins = Number(wlMatch[1]);
+          out.losses = Number(wlMatch[2]);
+        }
+
+        return Object.keys(out).length ? out : null;
+      }
+
+      function sanitizeEndpointUrl(raw) {
+        let trimmed = String(raw || '').trim();
+        const macroMatch = trimmed.match(/^\$\(customapi\.(.+)\)$/i);
+        if (macroMatch && macroMatch[1]) {
+          trimmed = macroMatch[1].trim();
+        }
+        return trimmed;
+      }
+
+      async function syncFromEndpoint(manualTrigger) {
+        const cleanedUrl = sanitizeEndpointUrl(inputEndpointUrlEl.value || state.endpointUrl);
+        state.endpointUrl = cleanedUrl;
+        if (inputEndpointUrlEl.value !== cleanedUrl) {
+          inputEndpointUrlEl.value = cleanedUrl;
+        }
+        saveState();
+
+        if (!cleanedUrl) {
+          if (manualTrigger) {
+            setEndpointFeedback('Introduce una URL directa válida para sincronizar.', true);
+          }
+          renderOverlay(false);
+          return;
+        }
+
+        try {
+          const response = await fetch(cleanedUrl, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const rawBody = await response.text();
+          let parsedData = null;
+
+          try {
+            const jsonObj = JSON.parse(rawBody);
+            parsedData = jsonObj && typeof jsonObj.data === 'object' ? jsonObj.data : jsonObj;
+          } catch (_) {
+            parsedData = parsePlainTextResponse(rawBody);
+          }
+
+          if (!parsedData || typeof parsedData !== 'object') {
+            throw new Error('Formato no reconocido (se esperaba JSON o texto con rango/RR).');
+          }
+
+          const nextRank = parsedData.rankTier || parsedData.rank || parsedData.current_rank;
+          if (typeof nextRank === 'string' && nextRank.trim()) {
+            state.rankTier = nextRank.trim();
+          }
+
+          const nextRr = parsedData.rr ?? parsedData.elo ?? parsedData.ranking_in_tier;
+          if (Number.isFinite(Number(nextRr))) {
+            state.rr = Math.round(toSafeNumber(nextRr, state.rr, 0, 999));
+          }
+
+          const nextDelta = parsedData.rrDelta ?? parsedData.mmrChange ?? parsedData.delta ?? parsedData.todayRr;
+          if (Number.isFinite(Number(nextDelta))) {
+            state.rrDelta = Math.round(toSafeNumber(nextDelta, state.rrDelta, -999, 999));
+          }
+
+          if (Number.isFinite(Number(parsedData.wins))) {
+            state.wins = Math.round(toSafeNumber(parsedData.wins, state.wins, 0, 999));
+          }
+          if (Number.isFinite(Number(parsedData.losses))) {
+            state.losses = Math.round(toSafeNumber(parsedData.losses, state.losses, 0, 999));
+          }
+          if (Number.isFinite(Number(parsedData.kd))) {
+            state.kd = Number(toSafeNumber(parsedData.kd, state.kd, 0, 20).toFixed(2));
+          }
+          if (Number.isFinite(Number(parsedData.acs))) {
+            state.acs = Math.round(toSafeNumber(parsedData.acs, state.acs, 0, 999));
+          }
+          if (Number.isFinite(Number(parsedData.hs))) {
+            state.hs = Number(toSafeNumber(parsedData.hs, state.hs, 0, 100).toFixed(1));
+          }
+
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
+
+          const nowStr = new Date().toLocaleTimeString('es-ES', { hour12: false });
+          setEndpointFeedback(`Sincronizado a las ${nowStr}.`, false);
+        } catch (err) {
+          const isCorsOrNet = err instanceof TypeError || /failed to fetch/i.test(String(err && err.message));
+          const detail = isCorsOrNet
+            ? 'Bloqueado por CORS o sin acceso de red desde el navegador/OBS. Tus controles manuales siguen activos.'
+            : `No se pudo sincronizar (${err && err.message ? err.message : 'error'}). Tus controles manuales siguen activos.`;
+          setEndpointFeedback(detail, true);
+        }
+      }
+
+      function configurePollingTimer() {
+        clearInterval(pollIntervalId);
+        pollIntervalId = null;
+
+        if (state.endpointEnabled && state.endpointUrl) {
+          const intervalMs = Math.max(5, Number(state.pollSeconds || 45)) * 1000;
+          pollIntervalId = setInterval(() => {
+            syncFromEndpoint(false);
+          }, intervalMs);
+        }
+      }
+
+      // =========================================================================
+      // APPEARANCE, ACCENT PALETTE, SHORTCUTS & EVENT BINDINGS
+      // =========================================================================
+      function applyPosition(pos) {
+        const valid = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
+        const chosen = valid.includes(pos) ? pos : 'pos-bottom-left';
+        state.position = chosen;
+        widgetEl.classList.remove(...valid);
+        widgetEl.classList.add(chosen);
+        saveState();
+
+        document.querySelectorAll('.pos-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-pos') === chosen;
+          btn.className = active
+            ? 'pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white'
+            : 'pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25';
+        });
+      }
+
+      function applyBackdrop(backdrop) {
+        const chosen = ['transparent', 'dark', 'light'].includes(backdrop) ? backdrop : 'transparent';
+        state.backdrop = chosen;
+        document.body.classList.remove('preview-dark', 'preview-light');
+        if (chosen === 'dark') document.body.classList.add('preview-dark');
+        if (chosen === 'light') document.body.classList.add('preview-light');
+        saveState();
+
+        document.querySelectorAll('.backdrop-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-backdrop') === chosen;
+          btn.className = active
+            ? 'backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200'
+            : 'backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
+        });
+      }
+
+      function renderAccentGrid() {
+        if (!accentPresetsGridEl) return;
+        const current = String(state.accent || ACCENT_PRESETS[0].color).toLowerCase();
+
+        accentPresetsGridEl.innerHTML = ACCENT_PRESETS.map((preset) => {
+          const isActive = preset.color.toLowerCase() === current;
+          return `
+            <button
+              type="button"
+              data-accent-id="${preset.id}"
+              title="${escapeHtml(preset.name)} (${preset.color})"
+              class="accent-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
+                isActive
+                  ? 'border-white/60 bg-slate-800/95 font-bold text-white shadow-sm'
+                  : 'border-white/10 bg-slate-900 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
+              }"
+            >
+              <span
+                class="h-2.5 w-2.5 shrink-0 rounded-full"
+                style="background-color: ${preset.color}; box-shadow: 0 0 8px ${preset.glow};"
+              ></span>
+              <span class="truncate">${escapeHtml(preset.name)}</span>
+            </button>
+          `;
+        }).join('');
+
+        accentPresetsGridEl.querySelectorAll('.accent-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const preset = ACCENT_PRESETS.find((p) => p.id === btn.getAttribute('data-accent-id'));
+            if (preset) applyAccent(preset);
+          });
+        });
+      }
+
+      function applyAccent(preset) {
+        const chosen = preset || ACCENT_PRESETS[0];
+        state.accent = chosen.color;
+        state.accentGlow = chosen.glow;
+        state.accentSoft = chosen.soft;
+
+        document.documentElement.style.setProperty('--accent', state.accent);
+        document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
+        document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+
+        saveState();
+        renderAccentGrid();
+      }
+
+      function toggleDrawer(force) {
+        const shouldOpen = typeof force === 'boolean' ? force : drawerEl.classList.contains('hidden');
+        drawerEl.classList.toggle('hidden', !shouldOpen);
+        toggleDrawerBtnEl.setAttribute('aria-expanded', String(shouldOpen));
+        toggleDrawerBtnEl.classList.toggle('opacity-100', shouldOpen);
+      }
+
+      function bindEvents() {
+        inputRiotNameEl.addEventListener('input', (e) => {
+          state.riotName = e.target.value;
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputRiotTagEl.addEventListener('input', (e) => {
+          state.riotTag = e.target.value;
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputRankTierEl.addEventListener('change', (e) => {
+          state.rankTier = e.target.value;
+          saveState();
+          renderOverlay(true);
+        });
+
+        inputRrEl.addEventListener('input', (e) => {
+          state.rr = Math.round(toSafeNumber(e.target.value, 0, 0, 999));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputWinRrEl.addEventListener('input', (e) => {
+          state.winRrAmount = Math.round(toSafeNumber(e.target.value, 18, -200, 200));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputLossRrEl.addEventListener('input', (e) => {
+          state.lossRrAmount = Math.round(toSafeNumber(e.target.value, -16, -200, 200));
+          saveState();
+          renderOverlay(false);
+        });
+
+        document.querySelectorAll('.win-rr-step').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            adjustManualMatchConfig(true, Number(btn.getAttribute('data-win-rr-delta') || 0));
+          });
+        });
+
+        document.querySelectorAll('.loss-rr-step').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            adjustManualMatchConfig(false, Number(btn.getAttribute('data-loss-rr-delta') || 0));
+          });
+        });
+
+        document.querySelectorAll('.apply-win-rr').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            applyDirectManualRr(true, Number(btn.getAttribute('data-apply-win-rr') || 0));
+          });
+        });
+
+        document.querySelectorAll('.apply-loss-rr').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            applyDirectManualRr(false, Number(btn.getAttribute('data-apply-loss-rr') || 0));
+          });
+        });
+
+        quickWinBtnEl.addEventListener('click', () => applyQuickMatch(true));
+        quickLossBtnEl.addEventListener('click', () => applyQuickMatch(false));
+
+        document.querySelectorAll('.rr-step-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            applyRrStep(Number(btn.getAttribute('data-rr-step') || 0));
+          });
+        });
+
+        inputWinsEl.addEventListener('input', (e) => {
+          state.wins = Math.round(toSafeNumber(e.target.value, 0, 0, 999));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputLossesEl.addEventListener('input', (e) => {
+          state.losses = Math.round(toSafeNumber(e.target.value, 0, 0, 999));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputRrDeltaEl.addEventListener('input', (e) => {
+          state.rrDelta = Math.round(toSafeNumber(e.target.value, 0, -999, 999));
+          saveState();
+          renderOverlay(false);
+        });
+
+        toggleCombatStatsEl.addEventListener('change', (e) => {
+          state.showCombatStats = e.target.checked;
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputKdEl.addEventListener('input', (e) => {
+          state.kd = Number(toSafeNumber(e.target.value, 0, 0, 20).toFixed(2));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputAcsEl.addEventListener('input', (e) => {
+          state.acs = Math.round(toSafeNumber(e.target.value, 0, 0, 999));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputHsEl.addEventListener('input', (e) => {
+          state.hs = Number(toSafeNumber(e.target.value, 0, 0, 100).toFixed(1));
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputEndpointUrlEl.addEventListener('input', (e) => {
+          state.endpointUrl = e.target.value.trim();
+          saveState();
+          renderOverlay(false);
+        });
+
+        inputPollSecondsEl.addEventListener('input', (e) => {
+          state.pollSeconds = Math.round(toSafeNumber(e.target.value, 45, 5, 3600));
+          saveState();
+          configurePollingTimer();
+          renderOverlay(false);
+        });
+
+        toggleEndpointEnabledEl.addEventListener('change', (e) => {
+          state.endpointEnabled = e.target.checked;
+          saveState();
+          configurePollingTimer();
+          renderOverlay(false);
+          if (state.endpointEnabled) {
+            syncFromEndpoint(true);
+          }
+        });
+
+        syncEndpointBtnEl.addEventListener('click', () => {
+          syncFromEndpoint(true);
+        });
+
+        clearEndpointBtnEl.addEventListener('click', () => {
+          state.endpointUrl = '';
+          state.endpointEnabled = false;
+          configurePollingTimer();
+          saveState();
+          syncInputsFromState();
+          setEndpointFeedback('', false);
+          renderOverlay(false);
+        });
+
+        document.querySelectorAll('.pos-btn').forEach((btn) => {
+          btn.addEventListener('click', () => applyPosition(btn.getAttribute('data-pos')));
+        });
+
+        document.querySelectorAll('.backdrop-btn').forEach((btn) => {
+          btn.addEventListener('click', () => applyBackdrop(btn.getAttribute('data-backdrop')));
+        });
+
+        toggleDrawerBtnEl.addEventListener('click', () => toggleDrawer());
+        closeDrawerBtnEl.addEventListener('click', () => toggleDrawer(false));
+        hideUiBtnEl.addEventListener('click', () => customizerRootEl.classList.add('hidden'));
+
+        resetSessionBtnEl.addEventListener('click', () => {
+          state.wins = 0;
+          state.losses = 0;
+          state.rrDelta = 0;
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
+        });
+
+        document.addEventListener('keydown', (e) => {
+          const tag = (e.target && e.target.tagName) || '';
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+          if (e.key.toLowerCase() === 'c') {
+            customizerRootEl.classList.remove('hidden');
+            toggleDrawer();
+          } else if (e.key.toLowerCase() === 'h') {
+            customizerRootEl.classList.toggle('hidden');
+          }
+        });
+      }
+
+      function init() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          if (params.get('clean') === '1') {
+            customizerRootEl.classList.add('hidden');
+          }
+
+          document.documentElement.style.setProperty('--accent', state.accent);
+          document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
+          document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+
+          renderAccentGrid();
+          applyPosition(state.position);
+          applyBackdrop(state.backdrop);
+          syncInputsFromState();
+          bindEvents();
+          renderOverlay(false);
+          configurePollingTimer();
+
+          if (state.endpointEnabled && state.endpointUrl) {
+            syncFromEndpoint(false);
+          }
+        } catch (err) {
+          console.error('Error initializing Valorant overlay:', err);
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
