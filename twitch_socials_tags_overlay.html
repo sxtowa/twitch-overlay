@@ -26,7 +26,7 @@
   <style>
     :root {
       --accent: #f9a8d4;
-      --accent-glow: rgba(249, 168, 212, 0.34);
+      --accent-glow: rgba(249, 168, 212, 0.35);
       --accent-soft: rgba(249, 168, 212, 0.14);
     }
 
@@ -34,7 +34,7 @@
       box-sizing: border-box;
     }
 
-    /* Transparent root for 1920x1080 OBS Browser Source */
+    /* Strictly transparent by default for 1920x1080 OBS Browser Source */
     html,
     body {
       margin: 0;
@@ -84,13 +84,6 @@
       right: auto;
     }
 
-    .pos-bottom-right {
-      bottom: 24px;
-      right: 24px;
-      top: auto;
-      left: auto;
-    }
-
     .pos-top-left {
       top: 24px;
       left: 24px;
@@ -102,6 +95,13 @@
       top: 24px;
       right: 24px;
       bottom: auto;
+      left: auto;
+    }
+
+    .pos-bottom-right {
+      bottom: 24px;
+      right: 24px;
+      top: auto;
       left: auto;
     }
 
@@ -120,44 +120,42 @@
 </head>
 <body>
   <!-- ===================================================================== -->
-  <!-- MAIN REDES OVERLAY CONTAINER                                          -->
+  <!-- MAIN REDES OVERLAY CARD (ONLY "Redes" HEADER + ACTIVE SOCIAL ITEMS)   -->
   <!-- ===================================================================== -->
-  <div id="overlay-stage" class="relative h-full w-full max-w-[1920px]">
-    <aside
-      id="redes-widget"
-      class="redes-glass pos-bottom-left fixed z-10 w-[448px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
-      aria-label="Redes Overlay"
-    >
-      <!-- Top Accent Strip -->
-      <div
-        class="h-[2.5px] w-full"
-        style="background: linear-gradient(90deg, var(--accent), var(--accent-soft) 75%, transparent);"
-      ></div>
+  <aside
+    id="redes-widget"
+    class="redes-glass pos-bottom-left fixed z-10 w-[448px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
+    aria-label="Redes Overlay"
+  >
+    <!-- Top Accent Strip -->
+    <div
+      class="h-[2.5px] w-full"
+      style="background: linear-gradient(90deg, var(--accent), var(--accent-soft) 75%, transparent);"
+    ></div>
 
-      <div class="p-4">
-        <!-- Header strictly titled "Redes" with optional header symbols -->
-        <div class="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
-          <div class="flex min-w-0 items-center gap-2">
-            <span
-              class="h-2 w-2 shrink-0 rounded-full"
-              style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
-            ></span>
-            <span class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-200">
-              Redes
-            </span>
-            <span
-              id="header-symbols-display"
-              class="hidden truncate font-mono text-xs font-semibold tracking-wide"
-              style="color: var(--accent);"
-            ></span>
-          </div>
+    <div class="p-4">
+      <!-- Header strictly titled "Redes" (no active item counter badge) -->
+      <div class="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+        <div class="flex min-w-0 items-center gap-2">
+          <span
+            class="h-2 w-2 shrink-0 rounded-full"
+            style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
+          ></span>
+          <span class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-200">
+            Redes
+          </span>
+          <span
+            id="header-symbols-display"
+            class="hidden truncate font-mono text-xs font-semibold tracking-wide"
+            style="color: var(--accent);"
+          ></span>
         </div>
-
-        <!-- Active Social Items -->
-        <div id="redes-list" class="grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
       </div>
-    </aside>
-  </div>
+
+      <!-- Active Social Items (Platform SVG icons + handle + optional handle symbols) -->
+      <div id="redes-list" class="grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
+    </div>
+  </aside>
 
   <!-- ===================================================================== -->
   <!-- COLLAPSIBLE CUSTOMIZER DRAWER (Bottom-Right)                          -->
@@ -165,7 +163,7 @@
   <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
     <section
       id="customizer-drawer"
-      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[410px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[416px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
     >
       <!-- Drawer Header -->
       <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -205,20 +203,43 @@
         </div>
       </div>
 
-      <!-- 1. SOCIAL ITEMS -->
+      <!-- 1. SOCIAL ITEMS & "AÑADIR RED SOCIAL" FORM -->
       <div class="mt-3.5 space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
             1. Redes Sociales
           </span>
-          <button
-            id="add-item-btn"
-            type="button"
-            class="rounded-lg border border-pink-300/40 bg-pink-300/15 px-2.5 py-1 font-mono text-[10px] font-bold text-pink-200 transition hover:bg-pink-300/25 active:scale-95"
-          >
-            + Añadir Red
-          </button>
+          <span class="font-mono text-[10px] text-slate-400">
+            Añadir red social
+          </span>
         </div>
+
+        <!-- Clear working "Añadir red social" form -->
+        <div class="rounded-xl border border-pink-300/25 bg-slate-900/90 p-2.5">
+          <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center">
+            <select
+              id="new-platform-select"
+              aria-label="Seleccionar plataforma para añadir"
+              class="w-full rounded-lg border border-white/15 bg-slate-950 px-2.5 py-1.5 font-mono text-[11px] font-bold text-pink-200 outline-none focus:border-pink-300 sm:w-[138px] sm:shrink-0"
+            ></select>
+            <input
+              id="new-handle-input"
+              type="text"
+              placeholder="@tu_usuario"
+              aria-label="Usuario o enlace de la nueva red"
+              class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
+            />
+            <button
+              id="add-social-submit-btn"
+              type="button"
+              class="shrink-0 rounded-lg border border-pink-300/50 bg-pink-300/20 px-3 py-1.5 font-mono text-[10px] font-extrabold uppercase tracking-wider text-pink-100 transition hover:bg-pink-300/30 active:scale-95"
+            >
+              + Añadir
+            </button>
+          </div>
+        </div>
+
+        <!-- Existing Social Items Editor -->
         <div id="item-editor-list" class="space-y-2"></div>
       </div>
 
@@ -226,7 +247,7 @@
       <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            2. Símbolos (Encabezado y Nombre)
+            2. Símbolos Decorativos
           </span>
         </div>
 
@@ -256,7 +277,7 @@
         <!-- Quick-Add Preset Chips -->
         <div>
           <span class="block font-mono text-[10px] text-slate-400">
-            Añadir rápido al destino seleccionado
+            Chips rápidos para el destino seleccionado
           </span>
           <div id="preset-chips-grid" class="mt-1.5 flex flex-wrap gap-1.5"></div>
         </div>
@@ -359,7 +380,7 @@
       <!-- 3. POSITION, LAYOUT, ACCENT & PREVIEW BACKDROP -->
       <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-          3. Posición, Estilo y Color
+          3. Posición, Diseño y Color
         </div>
 
         <div>
@@ -371,13 +392,6 @@
               class="pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white"
             >
               ↙ Abajo Izquierda
-            </button>
-            <button
-              type="button"
-              data-pos="pos-bottom-right"
-              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              ↘ Abajo Derecha
             </button>
             <button
               type="button"
@@ -393,25 +407,32 @@
             >
               ↗ Arriba Derecha
             </button>
+            <button
+              type="button"
+              data-pos="pos-bottom-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↘ Abajo Derecha
+            </button>
           </div>
         </div>
 
         <div>
-          <span class="block font-mono text-[10px] text-slate-400">Estilo</span>
+          <span class="block font-mono text-[10px] text-slate-400">Diseño</span>
           <div class="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
             <button
               type="button"
               data-layout="card"
               class="layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200"
             >
-              Tarjeta (Card)
+              2 Columnas
             </button>
             <button
               type="button"
               data-layout="compact"
               class="layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
             >
-              Compacto Horizontal
+              Compacto Fila
             </button>
           </div>
         </div>
@@ -473,9 +494,9 @@
     (function () {
       'use strict';
 
-      const STORAGE_KEY = 'twitch_redes_overlay_v3';
+      const STORAGE_KEY = 'twitch_redes_overlay_v4';
 
-      // Platform SVG Icons (never plain platform text names on overlay items)
+      // All supported platforms (used in both "Añadir red social" and every item selector)
       const PLATFORMS = [
         {
           id: 'twitch',
@@ -483,9 +504,9 @@
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>`,
         },
         {
-          id: 'x',
-          name: 'X',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+          id: 'instagram',
+          name: 'Instagram',
+          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>`,
         },
         {
           id: 'tiktok',
@@ -498,9 +519,9 @@
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`,
         },
         {
-          id: 'instagram',
-          name: 'Instagram',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>`,
+          id: 'x',
+          name: 'X / Twitter',
+          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
         },
         {
           id: 'youtube',
@@ -519,40 +540,40 @@
         },
         {
           id: 'web',
-          name: 'Web',
+          name: 'Web / Enlace',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5a14.5 14.5 0 0 1 0 19"/><path d="M12 2.5a14.5 14.5 0 0 0 0 19"/></svg>`,
         },
       ];
 
-      // 11 Accent Color Presets (Rosa Pastel #f9a8d4 default first)
+      // 11 Accent Presets (Rosa Pastel #f9a8d4 default first)
       const ACCENT_PRESETS = [
         {
           id: 'rosa-pastel',
           name: 'Rosa Pastel',
           color: '#f9a8d4',
-          glow: 'rgba(249, 168, 212, 0.34)',
+          glow: 'rgba(249, 168, 212, 0.35)',
           soft: 'rgba(249, 168, 212, 0.14)',
         },
         {
-          id: 'spotify',
-          name: 'Spotify',
+          id: 'spotify-verde',
+          name: 'Spotify Verde',
           color: '#1db954',
           glow: 'rgba(29, 185, 84, 0.34)',
           soft: 'rgba(29, 185, 84, 0.14)',
         },
         {
-          id: 'twitch',
-          name: 'Twitch',
+          id: 'twitch-violeta',
+          name: 'Twitch Violeta',
           color: '#9146ff',
           glow: 'rgba(145, 70, 255, 0.36)',
           soft: 'rgba(145, 70, 255, 0.15)',
         },
         {
-          id: 'cyan',
-          name: 'Cyan',
-          color: '#06b6d4',
-          glow: 'rgba(6, 182, 212, 0.34)',
-          soft: 'rgba(6, 182, 212, 0.14)',
+          id: 'cian-neon',
+          name: 'Cian Neón',
+          color: '#22d3ee',
+          glow: 'rgba(34, 211, 238, 0.34)',
+          soft: 'rgba(34, 211, 238, 0.14)',
         },
         {
           id: 'lavanda',
@@ -562,8 +583,8 @@
           soft: 'rgba(196, 181, 253, 0.14)',
         },
         {
-          id: 'menta',
-          name: 'Menta',
+          id: 'menta-pastel',
+          name: 'Menta Pastel',
           color: '#6ee7b7',
           glow: 'rgba(110, 231, 183, 0.34)',
           soft: 'rgba(110, 231, 183, 0.14)',
@@ -576,18 +597,11 @@
           soft: 'rgba(253, 186, 116, 0.14)',
         },
         {
-          id: 'cielo',
-          name: 'Cielo',
-          color: '#7dd3fc',
-          glow: 'rgba(125, 211, 252, 0.34)',
-          soft: 'rgba(125, 211, 252, 0.14)',
-        },
-        {
-          id: 'neon-lima',
-          name: 'Neón Lima',
-          color: '#a3e635',
-          glow: 'rgba(163, 230, 53, 0.34)',
-          soft: 'rgba(163, 230, 53, 0.14)',
+          id: 'lila',
+          name: 'Lila',
+          color: '#e879f9',
+          glow: 'rgba(232, 121, 249, 0.34)',
+          soft: 'rgba(232, 121, 249, 0.14)',
         },
         {
           id: 'coral',
@@ -595,6 +609,13 @@
           color: '#fb7185',
           glow: 'rgba(251, 113, 133, 0.34)',
           soft: 'rgba(251, 113, 133, 0.14)',
+        },
+        {
+          id: 'azul-cielo',
+          name: 'Azul Cielo',
+          color: '#7dd3fc',
+          glow: 'rgba(125, 211, 252, 0.34)',
+          soft: 'rgba(125, 211, 252, 0.14)',
         },
         {
           id: 'dorado',
@@ -605,13 +626,13 @@
         },
       ];
 
-      const SYMBOL_PRESETS = ['Ი𐑼', 'ɞ', '♡', '✦', '✧', '⋆', '˚', '୨ৎ', '✿', '☾', '⚡', '♥'];
+      const SYMBOL_PRESETS = ['Ი𐑼', 'ɞ', '♡', '✦', '✧', '⋆', '˚', '୨ৎ', '★', '✿'];
 
       function createDefaultState() {
         return {
           items: [
             { id: 'soc-1', platform: 'twitch', handle: '@tu_canal', enabled: true },
-            { id: 'soc-2', platform: 'x', handle: '@tu_handle', enabled: true },
+            { id: 'soc-2', platform: 'instagram', handle: '@tu_ig', enabled: true },
             { id: 'soc-3', platform: 'tiktok', handle: '@tu_tiktok', enabled: true },
             { id: 'soc-4', platform: 'discord', handle: 'discord.gg/tu-sala', enabled: true },
           ],
@@ -621,8 +642,8 @@
           handleSymbols: ['Ი𐑼', 'ɞ'],
           handleSymbolPosition: 'after', // 'after' | 'around'
           activeSymbolTarget: 'header', // 'header' | 'handle'
-          position: 'pos-bottom-left', // 'pos-bottom-left' | 'pos-bottom-right' | 'pos-top-left' | 'pos-top-right'
-          layout: 'card', // 'card' | 'compact'
+          position: 'pos-bottom-left',
+          layout: 'card', // 'card' (2 Columnas) | 'compact' (Compacto Fila)
           backdrop: 'transparent', // 'transparent' | 'dark' | 'light'
           accent: ACCENT_PRESETS[0].color,
           accentGlow: ACCENT_PRESETS[0].glow,
@@ -632,9 +653,7 @@
 
       function sanitizeStringArray(arr, fallback) {
         if (!Array.isArray(arr)) return fallback.slice();
-        return arr
-          .map((s) => String(s || '').trim())
-          .filter((s) => s.length > 0);
+        return arr.map((s) => String(s || '').trim()).filter((s) => s.length > 0);
       }
 
       function loadState() {
@@ -647,15 +666,15 @@
 
           const items =
             Array.isArray(parsed.items) && parsed.items.length > 0
-              ? parsed.items.map((item, index) => ({
-                  id: String(item.id || `soc-${index}-${Date.now()}`),
+              ? parsed.items.map((item, idx) => ({
+                  id: String(item.id || `soc-${idx}-${Date.now()}`),
                   platform: PLATFORMS.some((p) => p.id === item.platform) ? item.platform : 'web',
                   handle: String(item.handle || ''),
                   enabled: item.enabled !== false,
                 }))
               : defaults.items;
 
-          const validPositions = ['pos-bottom-left', 'pos-bottom-right', 'pos-top-left', 'pos-top-right'];
+          const validPositions = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
           const position = validPositions.includes(parsed.position) ? parsed.position : defaults.position;
           const layout = parsed.layout === 'compact' ? 'compact' : 'card';
           const backdrop = ['transparent', 'dark', 'light'].includes(parsed.backdrop)
@@ -685,7 +704,7 @@
             accentSoft: typeof parsed.accentSoft === 'string' && parsed.accentSoft ? parsed.accentSoft : preset.soft,
           };
         } catch (err) {
-          console.error('Error loading overlay state:', err);
+          console.error('Error loading state:', err);
           return defaults;
         }
       }
@@ -696,7 +715,7 @@
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         } catch (err) {
-          console.error('Error saving overlay state:', err);
+          console.error('Error saving state:', err);
         }
       }
 
@@ -707,7 +726,10 @@
       const headerSymbolsDisplayEl = document.getElementById('header-symbols-display');
       const redesListEl = document.getElementById('redes-list');
       const itemEditorListEl = document.getElementById('item-editor-list');
-      const addItemBtn = document.getElementById('add-item-btn');
+
+      const newPlatformSelectEl = document.getElementById('new-platform-select');
+      const newHandleInputEl = document.getElementById('new-handle-input');
+      const addSocialSubmitBtn = document.getElementById('add-social-submit-btn');
 
       const presetChipsGridEl = document.getElementById('preset-chips-grid');
       const customSymbolInput = document.getElementById('custom-symbol-input');
@@ -742,6 +764,38 @@
 
       function getPlatform(id) {
         return PLATFORMS.find((p) => p.id === id) || PLATFORMS[PLATFORMS.length - 1];
+      }
+
+      function populateAddPlatformSelect() {
+        if (!newPlatformSelectEl) return;
+        const previousVal = newPlatformSelectEl.value || 'instagram';
+        newPlatformSelectEl.innerHTML = PLATFORMS.map(
+          (p) => `<option value="${p.id}">${escapeHtml(p.name)}</option>`
+        ).join('');
+        newPlatformSelectEl.value = PLATFORMS.some((p) => p.id === previousVal) ? previousVal : 'instagram';
+      }
+
+      function addNewSocialItem() {
+        const selectedPlatformId = newPlatformSelectEl ? newPlatformSelectEl.value : 'instagram';
+        const platformObj = getPlatform(selectedPlatformId);
+        const rawHandle = newHandleInputEl ? newHandleInputEl.value.trim() : '';
+        const finalHandle = rawHandle || `@tu_${platformObj.id}`;
+
+        state.items.push({
+          id: `soc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          platform: platformObj.id,
+          handle: finalHandle,
+          enabled: true,
+        });
+
+        if (newHandleInputEl) {
+          newHandleInputEl.value = '';
+          newHandleInputEl.focus();
+        }
+
+        saveState();
+        renderItemEditor();
+        renderOverlay();
       }
 
       // =========================================================================
@@ -905,7 +959,6 @@
       // OVERLAY & SOCIAL ITEMS RENDERING
       // =========================================================================
       function renderOverlay() {
-        // Header symbols
         const headerCombined = state.headerSymbols.join(' ').trim();
         if (state.headerSymbolsEnabled && headerCombined.length > 0) {
           headerSymbolsDisplayEl.textContent = headerCombined;
@@ -915,7 +968,6 @@
           headerSymbolsDisplayEl.classList.add('hidden');
         }
 
-        // Layout mode
         if (state.layout === 'compact') {
           widgetEl.classList.remove('w-[448px]');
           widgetEl.classList.add('w-auto', 'max-w-[calc(100vw-48px)]');
@@ -1007,7 +1059,7 @@
                   >${platform.svg}</span>
                   <select
                     aria-label="Plataforma"
-                    class="soc-platform-select w-[92px] shrink-0 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 font-mono text-[10px] font-bold text-pink-200 outline-none focus:border-pink-300"
+                    class="soc-platform-select w-[108px] shrink-0 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 font-mono text-[10px] font-bold text-pink-200 outline-none focus:border-pink-300"
                   >
                     ${selectHtml}
                   </select>
@@ -1082,7 +1134,7 @@
       // POSITION, LAYOUT, BACKDROP & ACCENT PALETTE
       // =========================================================================
       function applyPosition(pos) {
-        const valid = ['pos-bottom-left', 'pos-bottom-right', 'pos-top-left', 'pos-top-right'];
+        const valid = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
         const chosen = valid.includes(pos) ? pos : 'pos-bottom-left';
         state.position = chosen;
         widgetEl.classList.remove(...valid);
@@ -1188,17 +1240,18 @@
         toggleDrawerBtn.classList.toggle('opacity-100', shouldOpen);
       }
 
-      addItemBtn.addEventListener('click', () => {
-        state.items.push({
-          id: `soc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          platform: 'web',
-          handle: '@nuevo_usuario',
-          enabled: true,
+      if (addSocialSubmitBtn) {
+        addSocialSubmitBtn.addEventListener('click', addNewSocialItem);
+      }
+
+      if (newHandleInputEl) {
+        newHandleInputEl.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            addNewSocialItem();
+          }
         });
-        saveState();
-        renderItemEditor();
-        renderOverlay();
-      });
+      }
 
       document.querySelectorAll('.target-tab-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
@@ -1275,14 +1328,11 @@
       });
 
       function initUI() {
-        const matchedPreset =
-          ACCENT_PRESETS.find((p) => p.color.toLowerCase() === String(state.accent || '').toLowerCase()) ||
-          ACCENT_PRESETS[0];
-
         document.documentElement.style.setProperty('--accent', state.accent);
         document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
         document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
 
+        populateAddPlatformSelect();
         renderPresetChips();
         renderAccentGrid();
         applyPosition(state.position);
@@ -1291,7 +1341,6 @@
         syncSymbolControls();
         renderItemEditor();
         renderOverlay();
-        void matchedPreset;
       }
 
       try {
@@ -1301,7 +1350,7 @@
         }
         initUI();
       } catch (err) {
-        console.error('Error initializing Twitch Redes Overlay:', err);
+        console.error('Error initializing Redes Overlay:', err);
       }
     })();
   </script>
