@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Twitch Socials / Tags Overlay</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      --accent: #f9a8d4;
+      --accent-glow: rgba(249, 168, 212, 0.34);
+      --accent-soft: rgba(249, 168, 212, 0.14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Strictly transparent background by default for 1920x1080 OBS Browser Source */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      user-select: none;
+    }
+
+    /* Optional preview backdrops inside customizer (never affects OBS transparency) */
+    body.preview-dark {
+      background-color: #07090f;
+      background-image:
+        radial-gradient(circle at 20% 85%, var(--accent-soft), transparent 48%),
+        radial-gradient(circle at 82% 18%, rgba(145, 70, 255, 0.08), transparent 45%);
+    }
+
+    body.preview-light {
+      background-color: #e2e8f0;
+      background-image:
+        linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* Subtle animated ambient glow behind the glass card */
+    .ambient-aura {
+      position: absolute;
+      width: 540px;
+      height: 340px;
+      max-width: 82vw;
+      border-radius: 9999px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      filter: blur(42px);
+      pointer-events: none;
+      animation: auraPulse 4.6s ease-in-out infinite;
+    }
+
+    @keyframes auraPulse {
+      0%, 100% {
+        opacity: 0.55;
+        transform: scale(0.96);
+      }
+      50% {
+        opacity: 0.92;
+        transform: scale(1.04);
+      }
+    }
+
+    /* Dark cyber-minimalist glassmorphism card */
+    .socials-glass {
+      position: relative;
+      background: linear-gradient(150deg, rgba(11, 14, 24, 0.88), rgba(17, 22, 36, 0.78));
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow:
+        0 20px 48px -12px rgba(0, 0, 0, 0.72),
+        0 0 32px -10px var(--accent-glow),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
+      transition: box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+
+    /* Corner placement utilities for 1920x1080 OBS browser source */
+    .pos-bottom-left {
+      bottom: 24px;
+      left: 24px;
+      top: auto;
+      right: auto;
+    }
+
+    .pos-bottom-right {
+      bottom: 24px;
+      right: 24px;
+      top: auto;
+      left: auto;
+    }
+
+    .pos-top-left {
+      top: 24px;
+      left: 24px;
+      bottom: auto;
+      right: auto;
+    }
+
+    .pos-top-right {
+      top: 24px;
+      right: 24px;
+      bottom: auto;
+      left: auto;
+    }
+
+    /* Subtle scanline sheen */
+    .glass-sheen {
+      background: linear-gradient(
+        115deg,
+        transparent 25%,
+        rgba(255, 255, 255, 0.03) 48%,
+        transparent 72%
+      );
+      background-size: 220% 100%;
+      animation: sheenSweep 9s linear infinite;
+    }
+
+    @keyframes sheenSweep {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Custom scrollbar for customizer drawer */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+      border-radius: 999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.35);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===================================================================== -->
+  <!-- SOCIAL HANDLES / TAGS MODULE (Transparent 1920x1080 OBS Overlay)     -->
+  <!-- ===================================================================== -->
+  <aside
+    id="socials-widget"
+    class="socials-glass glass-sheen pos-bottom-left fixed z-10 w-[440px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
+    aria-label="Twitch Social Handles and Tags Overlay"
+  >
+    <!-- Top Accent Bar -->
+    <div
+      class="h-[2.5px] w-full"
+      style="background: linear-gradient(90deg, var(--accent), rgba(255,255,255,0.28) 70%, transparent);"
+    ></div>
+
+    <div class="p-4">
+      <!-- Compact Header -->
+      <div class="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+        <div class="flex items-center gap-2">
+          <span
+            class="h-2 w-2 rounded-full"
+            style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
+          ></span>
+          <span class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-300">
+            REDES &amp; TAGS
+          </span>
+        </div>
+        <span
+          id="active-tags-count"
+          class="font-mono text-[10px] font-semibold text-slate-400"
+        >
+          4 TAGS
+        </span>
+      </div>
+
+      <!-- Dynamic Social Tags Container -->
+      <div id="socials-list" class="grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
+    </div>
+  </aside>
+
+  <!-- ===================================================================== -->
+  <!-- COLLAPSIBLE CUSTOMIZER DRAWER (Bottom-Right)                          -->
+  <!-- ===================================================================== -->
+  <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <section
+      id="customizer-drawer"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[385px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+    >
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+        <div>
+          <h2 class="text-xs font-bold uppercase tracking-wider text-white">
+            Socials Overlay Setup
+          </h2>
+          <p class="font-mono text-[10px] text-slate-400">
+            Atajos: [C] Panel • [H] Ocultar UI • ?clean=1
+          </p>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button
+            id="hide-ui-btn"
+            type="button"
+            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
+            title="Ocultar interfaz de configuración (Atajo: H)"
+          >
+            Hide UI
+          </button>
+          <button
+            id="close-drawer-btn"
+            type="button"
+            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-slate-300 hover:bg-white/10 hover:text-white"
+            title="Cerrar panel"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- 1. Manage Social Handles / Tags -->
+      <div class="mt-3.5 space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+            1. Redes y Tags
+          </span>
+          <button
+            id="add-tag-btn"
+            type="button"
+            class="rounded-lg border border-pink-300/40 bg-pink-300/15 px-2.5 py-1 font-mono text-[10px] font-bold text-pink-200 transition hover:bg-pink-300/25 active:scale-95"
+          >
+            + Añadir Tag
+          </button>
+        </div>
+
+        <div id="tag-editor-list" class="space-y-2"></div>
+      </div>
+
+      <!-- 2. Corner Placement & Layout Mode -->
+      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
+        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+          2. Posición y Diseño
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Esquina en pantalla</span>
+          <div class="mt-1.5 grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              data-pos="pos-bottom-left"
+              class="pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white"
+            >
+              ↙ Bottom Left
+            </button>
+            <button
+              type="button"
+              data-pos="pos-bottom-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↘ Bottom Right
+            </button>
+            <button
+              type="button"
+              data-pos="pos-top-left"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↖ Top Left
+            </button>
+            <button
+              type="button"
+              data-pos="pos-top-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↗ Top Right
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Estilo de distribución</span>
+          <div class="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+            <button
+              type="button"
+              data-layout="grid"
+              class="layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200"
+            >
+              Cuadrícula (2 Col)
+            </button>
+            <button
+              type="button"
+              data-layout="compact-row"
+              class="layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Horizontal Compacto
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Accent Color & Preview Backdrop -->
+      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
+        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+          3. Color de Acento y Vista Previa
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Color de acento</span>
+          <div id="accent-presets-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">
+            Fondo de vista previa (OBS siempre es transparente)
+          </span>
+          <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+            <button
+              type="button"
+              data-backdrop="transparent"
+              class="backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200"
+            >
+              Transparente
+            </button>
+            <button
+              type="button"
+              data-backdrop="dark"
+              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Oscuro
+            </button>
+            <button
+              type="button"
+              data-backdrop="light"
+              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Claro
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Discreet Floating Toggle Pill -->
+    <button
+      id="toggle-drawer-btn"
+      type="button"
+      title="Configurar Overlay de Redes (Atajo: C)"
+      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-60 shadow-lg backdrop-blur-md transition hover:border-pink-300/50 hover:text-pink-200 hover:opacity-100 focus:opacity-100"
+      aria-expanded="false"
+      aria-controls="customizer-drawer"
+    >
+      <span
+        class="h-2 w-2 rounded-full"
+        style="background-color: var(--accent);"
+      ></span>
+      <span>Socials Setup</span>
+    </button>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // =========================================================================
+      // DEFAULT SOCIALS / TAGS & STORAGE KEYS
+      // =========================================================================
+      const ACCENT_PRESETS = [
+        {
+          id: 'pastel-pink',
+          name: 'Rosa Pastel',
+          color: '#f9a8d4',
+          glow: 'rgba(249, 168, 212, 0.34)',
+          soft: 'rgba(249, 168, 212, 0.14)',
+        },
+        {
+          id: 'pastel-lilac',
+          name: 'Lila Pastel',
+          color: '#c4b5fd',
+          glow: 'rgba(196, 181, 253, 0.34)',
+          soft: 'rgba(196, 181, 253, 0.14)',
+        },
+        {
+          id: 'pastel-mint',
+          name: 'Menta Pastel',
+          color: '#6ee7b7',
+          glow: 'rgba(110, 231, 183, 0.34)',
+          soft: 'rgba(110, 231, 183, 0.14)',
+        },
+        {
+          id: 'pastel-peach',
+          name: 'Melocotón Pastel',
+          color: '#fdba74',
+          glow: 'rgba(253, 186, 116, 0.34)',
+          soft: 'rgba(253, 186, 116, 0.14)',
+        },
+        {
+          id: 'pastel-sky',
+          name: 'Azul Cielo Pastel',
+          color: '#93c5fd',
+          glow: 'rgba(147, 197, 253, 0.34)',
+          soft: 'rgba(147, 197, 253, 0.14)',
+        },
+        {
+          id: 'neon-lavender',
+          name: 'Lavanda Neón',
+          color: '#a855f7',
+          glow: 'rgba(168, 85, 247, 0.36)',
+          soft: 'rgba(168, 85, 247, 0.15)',
+        },
+        {
+          id: 'electric-cyan',
+          name: 'Cian Eléctrico',
+          color: '#22d3ee',
+          glow: 'rgba(34, 211, 238, 0.34)',
+          soft: 'rgba(34, 211, 238, 0.14)',
+        },
+        {
+          id: 'emerald-green',
+          name: 'Verde Esmeralda',
+          color: '#10b981',
+          glow: 'rgba(16, 185, 129, 0.34)',
+          soft: 'rgba(16, 185, 129, 0.14)',
+        },
+        {
+          id: 'coral',
+          name: 'Coral',
+          color: '#fb7185',
+          glow: 'rgba(251, 113, 133, 0.34)',
+          soft: 'rgba(251, 113, 133, 0.14)',
+        },
+        {
+          id: 'golden',
+          name: 'Dorado',
+          color: '#fbbf24',
+          glow: 'rgba(251, 191, 36, 0.34)',
+          soft: 'rgba(251, 191, 36, 0.14)',
+        },
+        {
+          id: 'arctic-white',
+          name: 'Blanco Ártico',
+          color: '#e2e8f0',
+          glow: 'rgba(226, 232, 240, 0.30)',
+          soft: 'rgba(226, 232, 240, 0.12)',
+        },
+      ];
+
+      const DEFAULT_TAGS = [
+        { id: 'tag-twitch', label: 'TWITCH', handle: '@tu_canal', enabled: true },
+        { id: 'tag-x', label: 'X / TW', handle: '@tu_handle', enabled: true },
+        { id: 'tag-tiktok', label: 'TIKTOK', handle: '@tu_tiktok', enabled: true },
+        { id: 'tag-discord', label: 'DISCORD', handle: 'discord.gg/tu-clan', enabled: true },
+        { id: 'tag-instagram', label: 'IG', handle: '@tu_ig', enabled: false },
+        { id: 'tag-youtube', label: 'YT', handle: '@tu_youtube', enabled: false },
+      ];
+
+      const STORAGE = {
+        TAGS: 'tw_socials_tags_v1',
+        POSITION: 'tw_socials_position_v1',
+        LAYOUT: 'tw_socials_layout_v1',
+        ACCENT: 'tw_socials_accent_v1',
+        ACCENT_GLOW: 'tw_socials_accent_glow_v1',
+        ACCENT_SOFT: 'tw_socials_accent_soft_v1',
+      };
+
+      function loadTags() {
+        try {
+          const raw = localStorage.getItem(STORAGE.TAGS);
+          if (!raw) return DEFAULT_TAGS.map((t) => ({ ...t }));
+          const parsed = JSON.parse(raw);
+          if (!Array.isArray(parsed) || parsed.length === 0) {
+            return DEFAULT_TAGS.map((t) => ({ ...t }));
+          }
+          return parsed.map((item, idx) => ({
+            id: String(item.id || `tag-${idx}-${Date.now()}`),
+            label: String(item.label || 'TAG'),
+            handle: String(item.handle || ''),
+            enabled: item.enabled !== false,
+          }));
+        } catch (err) {
+          console.error('Error loading tags from localStorage:', err);
+          return DEFAULT_TAGS.map((t) => ({ ...t }));
+        }
+      }
+
+      const state = {
+        tags: loadTags(),
+        position: localStorage.getItem(STORAGE.POSITION) || 'pos-bottom-left',
+        layout: localStorage.getItem(STORAGE.LAYOUT) || 'grid',
+      };
+
+      // =========================================================================
+      // DOM ELEMENTS
+      // =========================================================================
+      const widgetEl = document.getElementById('socials-widget');
+      const socialsListEl = document.getElementById('socials-list');
+      const activeTagsCountEl = document.getElementById('active-tags-count');
+      const tagEditorListEl = document.getElementById('tag-editor-list');
+      const addTagBtn = document.getElementById('add-tag-btn');
+      const accentPresetsGridEl = document.getElementById('accent-presets-grid');
+
+      const customizerRootEl = document.getElementById('customizer-root');
+      const drawerEl = document.getElementById('customizer-drawer');
+      const toggleDrawerBtn = document.getElementById('toggle-drawer-btn');
+      const closeDrawerBtn = document.getElementById('close-drawer-btn');
+      const hideUiBtn = document.getElementById('hide-ui-btn');
+
+      // =========================================================================
+      // RENDERING SOCIALS OVERLAY & EDITOR
+      // =========================================================================
+      function saveTags() {
+        try {
+          localStorage.setItem(STORAGE.TAGS, JSON.stringify(state.tags));
+        } catch (err) {
+          console.error('Error saving tags to localStorage:', err);
+        }
+      }
+
+      function escapeHtml(text) {
+        return String(text || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function renderOverlayTags() {
+        const visibleTags = state.tags.filter((t) => t.enabled);
+        activeTagsCountEl.textContent = `${visibleTags.length} ${visibleTags.length === 1 ? 'TAG' : 'TAGS'}`;
+
+        if (state.layout === 'compact-row') {
+          widgetEl.classList.remove('w-[440px]');
+          widgetEl.classList.add('w-auto', 'max-w-[calc(100vw-48px)]');
+          socialsListEl.className = 'flex flex-wrap items-center gap-2';
+        } else {
+          widgetEl.classList.remove('w-auto');
+          widgetEl.classList.add('w-[440px]', 'max-w-[calc(100vw-48px)]');
+          socialsListEl.className = 'grid grid-cols-1 gap-2 sm:grid-cols-2';
+        }
+
+        if (visibleTags.length === 0) {
+          socialsListEl.innerHTML = `
+            <div class="col-span-full rounded-xl border border-dashed border-white/15 bg-slate-950/45 px-3.5 py-2.5 text-center font-mono text-[11px] text-slate-400">
+              Activa o añade redes en <span class="text-pink-200">Socials Setup</span>
+            </div>
+          `;
+          return;
+        }
+
+        socialsListEl.innerHTML = visibleTags
+          .map((tag) => {
+            const label = escapeHtml((tag.label || 'TAG').toUpperCase());
+            const handle = escapeHtml(tag.handle || '@handle');
+            if (state.layout === 'compact-row') {
+              return `
+                <div class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-950/65 px-3 py-1.5">
+                  <span class="font-mono text-[10px] font-bold uppercase tracking-wider" style="color: var(--accent);">${label}</span>
+                  <span class="font-mono text-xs font-semibold text-slate-100">${handle}</span>
+                </div>
+              `;
+            }
+            return `
+              <div class="flex items-center gap-2.5 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                <span class="shrink-0 rounded-md bg-white/5 px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-wider" style="color: var(--accent);">${label}</span>
+                <span class="min-w-0 flex-1 truncate font-mono text-xs font-semibold text-slate-100">${handle}</span>
+              </div>
+            `;
+          })
+          .join('');
+      }
+
+      function renderTagEditor() {
+        tagEditorListEl.innerHTML = state.tags
+          .map(
+            (tag) => `
+          <div
+            data-tag-id="${escapeHtml(tag.id)}"
+            class="rounded-xl border border-white/10 bg-slate-900/80 p-2 ${tag.enabled ? '' : 'opacity-60'}"
+          >
+            <div class="flex items-center gap-1.5">
+              <input
+                type="checkbox"
+                ${tag.enabled ? 'checked' : ''}
+                title="Mostrar / ocultar este tag"
+                class="tag-toggle-cb h-3.5 w-3.5 shrink-0 cursor-pointer accent-pink-300"
+              />
+              <input
+                type="text"
+                value="${escapeHtml(tag.label)}"
+                placeholder="RED"
+                maxlength="12"
+                class="tag-label-input w-[74px] shrink-0 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-[10px] font-bold uppercase text-pink-200 outline-none focus:border-pink-300"
+              />
+              <input
+                type="text"
+                value="${escapeHtml(tag.handle)}"
+                placeholder="@usuario o enlace"
+                class="tag-handle-input min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
+              />
+              <button
+                type="button"
+                title="Eliminar tag"
+                class="tag-delete-btn shrink-0 rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-bold text-slate-400 transition hover:border-rose-400/40 hover:bg-rose-500/15 hover:text-rose-300"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        `
+          )
+          .join('');
+
+        // Bind per-row listeners
+        tagEditorListEl.querySelectorAll('[data-tag-id]').forEach((row) => {
+          const id = row.getAttribute('data-tag-id');
+          const tag = state.tags.find((t) => t.id === id);
+          if (!tag) return;
+
+          const cb = row.querySelector('.tag-toggle-cb');
+          const labelInput = row.querySelector('.tag-label-input');
+          const handleInput = row.querySelector('.tag-handle-input');
+          const deleteBtn = row.querySelector('.tag-delete-btn');
+
+          cb.addEventListener('change', () => {
+            tag.enabled = cb.checked;
+            row.classList.toggle('opacity-60', !tag.enabled);
+            saveTags();
+            renderOverlayTags();
+          });
+
+          labelInput.addEventListener('input', () => {
+            tag.label = labelInput.value;
+            saveTags();
+            renderOverlayTags();
+          });
+
+          handleInput.addEventListener('input', () => {
+            tag.handle = handleInput.value;
+            saveTags();
+            renderOverlayTags();
+          });
+
+          deleteBtn.addEventListener('click', () => {
+            state.tags = state.tags.filter((t) => t.id !== id);
+            saveTags();
+            renderTagEditor();
+            renderOverlayTags();
+          });
+        });
+      }
+
+      addTagBtn.addEventListener('click', () => {
+        const newTag = {
+          id: `tag-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          label: 'TAG',
+          handle: '@nuevo_handle',
+          enabled: true,
+        };
+        state.tags.push(newTag);
+        saveTags();
+        renderTagEditor();
+        renderOverlayTags();
+      });
+
+      // =========================================================================
+      // POSITION, LAYOUT, ACCENT & CUSTOMIZER CONTROLS
+      // =========================================================================
+      function applyPosition(posClass) {
+        const valid = ['pos-bottom-left', 'pos-bottom-right', 'pos-top-left', 'pos-top-right'];
+        const chosen = valid.includes(posClass) ? posClass : 'pos-bottom-left';
+        state.position = chosen;
+        widgetEl.classList.remove(...valid);
+        widgetEl.classList.add(chosen);
+        localStorage.setItem(STORAGE.POSITION, chosen);
+
+        document.querySelectorAll('.pos-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-pos') === chosen;
+          btn.className = active
+            ? 'pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white'
+            : 'pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25';
+        });
+      }
+
+      function applyLayout(layoutMode) {
+        const chosen = layoutMode === 'compact-row' ? 'compact-row' : 'grid';
+        state.layout = chosen;
+        localStorage.setItem(STORAGE.LAYOUT, chosen);
+
+        document.querySelectorAll('.layout-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-layout') === chosen;
+          btn.className = active
+            ? 'layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200'
+            : 'layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
+        });
+
+        renderOverlayTags();
+      }
+
+      function applyAccent(color, glow, soft) {
+        const matched =
+          ACCENT_PRESETS.find((p) => p.color.toLowerCase() === String(color || '').toLowerCase()) ||
+          ACCENT_PRESETS[0];
+
+        const nextColor = matched.color;
+        const nextGlow = glow || matched.glow;
+        const nextSoft = soft || matched.soft;
+
+        document.documentElement.style.setProperty('--accent', nextColor);
+        document.documentElement.style.setProperty('--accent-glow', nextGlow);
+        document.documentElement.style.setProperty('--accent-soft', nextSoft);
+        localStorage.setItem(STORAGE.ACCENT, nextColor);
+        localStorage.setItem(STORAGE.ACCENT_GLOW, nextGlow);
+        localStorage.setItem(STORAGE.ACCENT_SOFT, nextSoft);
+
+        renderAccentPresets(nextColor);
+      }
+
+      function renderAccentPresets(activeColor) {
+        if (!accentPresetsGridEl) return;
+        const current = String(activeColor || ACCENT_PRESETS[0].color).toLowerCase();
+
+        accentPresetsGridEl.innerHTML = ACCENT_PRESETS.map((preset) => {
+          const isActive = preset.color.toLowerCase() === current;
+          return `
+            <button
+              type="button"
+              data-color="${preset.color}"
+              data-glow="${preset.glow}"
+              data-soft="${preset.soft}"
+              title="${escapeHtml(preset.name)} (${preset.color})"
+              class="color-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
+                isActive
+                  ? 'border-white/60 bg-slate-800/95 font-bold text-white shadow-sm'
+                  : 'border-white/10 bg-slate-900 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
+              }"
+            >
+              <span
+                class="h-2.5 w-2.5 shrink-0 rounded-full"
+                style="background-color: ${preset.color}; box-shadow: 0 0 8px ${preset.glow};"
+              ></span>
+              <span class="truncate">${escapeHtml(preset.name)}</span>
+            </button>
+          `;
+        }).join('');
+
+        accentPresetsGridEl.querySelectorAll('.color-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            applyAccent(
+              btn.getAttribute('data-color'),
+              btn.getAttribute('data-glow'),
+              btn.getAttribute('data-soft')
+            );
+          });
+        });
+      }
+
+      function toggleDrawer(force) {
+        const shouldOpen = typeof force === 'boolean' ? force : drawerEl.classList.contains('hidden');
+        drawerEl.classList.toggle('hidden', !shouldOpen);
+        toggleDrawerBtn.setAttribute('aria-expanded', String(shouldOpen));
+        toggleDrawerBtn.classList.toggle('opacity-100', shouldOpen);
+      }
+
+      document.querySelectorAll('.pos-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyPosition(btn.getAttribute('data-pos')));
+      });
+
+      document.querySelectorAll('.layout-btn').forEach((btn) => {
+        btn.addEventListener('click', () => applyLayout(btn.getAttribute('data-layout')));
+      });
+
+      document.querySelectorAll('.backdrop-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const mode = btn.getAttribute('data-backdrop');
+          document.body.classList.remove('preview-dark', 'preview-light');
+          if (mode === 'dark') document.body.classList.add('preview-dark');
+          if (mode === 'light') document.body.classList.add('preview-light');
+
+          document.querySelectorAll('.backdrop-btn').forEach((b) => {
+            const active = b.getAttribute('data-backdrop') === mode;
+            b.className = active
+              ? 'backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200'
+              : 'backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
+          });
+        });
+      });
+
+      toggleDrawerBtn.addEventListener('click', () => toggleDrawer());
+      closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
+      hideUiBtn.addEventListener('click', () => customizerRootEl.classList.add('hidden'));
+
+      document.addEventListener('keydown', (e) => {
+        const tag = (e.target && e.target.tagName) || '';
+        if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+        if (e.key.toLowerCase() === 'c') {
+          customizerRootEl.classList.remove('hidden');
+          toggleDrawer();
+        } else if (e.key.toLowerCase() === 'h') {
+          customizerRootEl.classList.toggle('hidden');
+        }
+      });
+
+      // =========================================================================
+      // INITIALIZATION
+      // =========================================================================
+      function init() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('clean') === '1') {
+          customizerRootEl.classList.add('hidden');
+        }
+
+        const savedAccent = localStorage.getItem(STORAGE.ACCENT);
+        const savedGlow = localStorage.getItem(STORAGE.ACCENT_GLOW);
+        const savedSoft = localStorage.getItem(STORAGE.ACCENT_SOFT);
+        if (savedAccent && savedGlow && savedSoft) {
+          applyAccent(savedAccent, savedGlow, savedSoft);
+        } else {
+          applyAccent(ACCENT_PRESETS[0].color, ACCENT_PRESETS[0].glow, ACCENT_PRESETS[0].soft);
+        }
+
+        applyPosition(state.position);
+        applyLayout(state.layout);
+        renderTagEditor();
+        renderOverlayTags();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
