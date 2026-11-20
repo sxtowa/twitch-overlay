@@ -225,25 +225,19 @@
   </style>
 </head>
 <body>
-  <!-- ===================================================================== -->
-  <!-- MAIN SPOTIFY "NOW PLAYING" OVERLAY CARD                               -->
-  <!-- ===================================================================== -->
   <aside
     id="spotify-widget"
     class="spotify-glass pos-bottom-left is-playing fixed z-20 w-[390px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
     aria-label="Spotify Now Playing Overlay"
   >
-    <!-- Top subtle ambient highlight line -->
     <div
       class="h-[2px] w-full opacity-80"
       style="background: linear-gradient(90deg, var(--accent), transparent 85%);"
     ></div>
 
     <div class="p-3.5 pb-3">
-      <!-- Micro Header: NOW PLAYING + Spotify Icon + Timestamps -->
       <div class="mb-2.5 flex items-center justify-between">
         <div class="flex items-center gap-1.5">
-          <!-- Spotify SVG Icon -->
           <svg
             class="h-3.5 w-3.5 shrink-0"
             style="color: var(--accent);"
@@ -263,7 +257,6 @@
           </span>
         </div>
 
-        <!-- Elapsed / Duration -->
         <div class="font-mono text-[10px] font-semibold tracking-wider text-slate-400">
           <span id="time-elapsed" class="text-slate-200">1:24</span>
           <span class="mx-0.5 text-slate-500">/</span>
@@ -271,9 +264,7 @@
         </div>
       </div>
 
-      <!-- Main Body: Cover + Track Info + Equalizer -->
       <div class="flex items-center gap-3.5">
-        <!-- 56x56 Album Cover with Animated Playing Indicator -->
         <div class="relative h-14 w-14 shrink-0">
           <img
             id="album-cover"
@@ -281,7 +272,6 @@
             alt="Album Cover"
             class="h-14 w-14 rounded-xl border border-white/20 bg-slate-900 object-cover shadow-lg"
           />
-          <!-- Animated vinyl/equalizer indicator badge -->
           <div
             class="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-slate-900 bg-slate-950 shadow-md"
           >
@@ -296,7 +286,6 @@
           </div>
         </div>
 
-        <!-- Track Title (with Marquee) & Artist -->
         <div class="min-w-0 flex-1">
           <div id="title-marquee" class="marquee-wrapper">
             <div id="title-track" class="marquee-track">
@@ -323,7 +312,6 @@
           </p>
         </div>
 
-        <!-- Animated Audio Equalizer Bars -->
         <div
           class="flex h-6 shrink-0 items-end gap-[3px] rounded-lg border border-white/5 bg-white/[0.03] px-2 py-1"
           aria-hidden="true"
@@ -336,7 +324,6 @@
       </div>
     </div>
 
-    <!-- Thin Progress Bar Along Bottom Edge -->
     <div class="h-[3px] w-full bg-white/10">
       <div
         id="progress-bar"
@@ -350,16 +337,11 @@
     </div>
   </aside>
 
-  <!-- ===================================================================== -->
-  <!-- DISCREET COLLAPSIBLE CUSTOMIZER & SPOTIFY SETUP PANEL                 -->
-  <!-- ===================================================================== -->
   <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-    <!-- Collapsible Drawer -->
     <section
       id="customizer-drawer"
       class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[370px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
     >
-      <!-- Header -->
       <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
         <div>
           <h2 class="text-xs font-bold uppercase tracking-wider text-white">
@@ -389,7 +371,6 @@
         </div>
       </div>
 
-      <!-- SECTION 1: LIVE SPOTIFY CONNECTION (PKCE OAuth) -->
       <div class="mt-3.5 rounded-xl border border-white/10 bg-slate-900/75 p-3">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
@@ -417,7 +398,6 @@
           <br />2. Añade esta <span class="text-slate-200">Redirect URI</span> exacta en tu App:
         </p>
 
-        <!-- Redirect URI Copy Box -->
         <div class="mt-1.5 flex items-center gap-1.5">
           <input
             id="redirect-uri-display"
@@ -434,7 +414,6 @@
           </button>
         </div>
 
-        <!-- Local file warning if opened via file:// -->
         <div
           id="file-protocol-note"
           class="mt-2 hidden rounded-lg border border-amber-400/25 bg-amber-500/10 p-2 text-[10px] leading-relaxed text-amber-200"
@@ -442,7 +421,6 @@
           <strong>Nota sobre archivos locales:</strong> Spotify exige <code class="text-white">http://127.0.0.1</code> o <code class="text-white">https://</code> para autorizar OAuth. Puedes servir esta carpeta con <code class="text-white">npx serve</code> o subir el HTML gratis (GitHub Pages / Netlify / Vercel) y pegar la URL en OBS.
         </div>
 
-        <!-- Client ID Input -->
         <div class="mt-2.5">
           <label
             for="spotify-client-id"
@@ -458,9 +436,1058 @@
           />
         </div>
 
-        <!-- Auth Buttons -->
         <div class="mt-2.5 flex items-center gap-2">
           <button
             id="connect-spotify-btn"
             type="button"
-            class="flex-1 rounded-xl bg-emerald-500 px-3 py-2 text-xs font-extrabold text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald
+            class="flex-1 rounded-xl bg-emerald-500 px-3 py-2 text-xs font-extrabold text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-400 active:scale-[0.98]"
+          >
+            Conectar con Spotify
+          </button>
+          <button
+            id="disconnect-spotify-btn"
+            type="button"
+            class="hidden rounded-xl border border-rose-400/35 bg-rose-500/15 px-3 py-2 font-mono text-xs font-semibold text-rose-300 transition hover:bg-rose-500/25"
+          >
+            Desconectar
+          </button>
+        </div>
+        <p id="auth-feedback" class="mt-1.5 hidden font-mono text-[10px] text-rose-300"></p>
+      </div>
+
+      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
+        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+          2. Posición y Apariencia
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Esquina en pantalla</span>
+          <div class="mt-1.5 grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              data-pos="pos-bottom-left"
+              class="pos-btn rounded-lg border border-emerald-400/50 bg-emerald-500/15 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-white"
+            >
+              ↙ Abajo Izquierda
+            </button>
+            <button
+              type="button"
+              data-pos="pos-top-left"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↖ Arriba Izquierda
+            </button>
+            <button
+              type="button"
+              data-pos="pos-top-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↗ Arriba Derecha
+            </button>
+            <button
+              type="button"
+              data-pos="pos-bottom-right"
+              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25"
+            >
+              ↘ Abajo Derecha
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">Color de acento</span>
+          <div id="spotify-accent-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
+        </div>
+
+        <label
+          class="flex cursor-pointer items-center justify-between rounded-xl border border-white/10 bg-slate-900/80 px-3 py-2"
+        >
+          <div>
+            <span class="block text-xs font-semibold text-slate-200">Ocultar tarjeta al pausar</span>
+            <span class="block font-mono text-[10px] text-slate-400">
+              Desaparece suavemente si no suena nada
+            </span>
+          </div>
+          <input
+            id="auto-hide-toggle"
+            type="checkbox"
+            class="h-4 w-4 accent-emerald-500"
+          />
+        </label>
+
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">
+            Fondo de vista previa (OBS siempre es transparente)
+          </span>
+          <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+            <button
+              type="button"
+              data-backdrop="transparent"
+              class="backdrop-btn rounded-lg bg-emerald-500/20 px-2 py-1 font-mono text-[10px] font-semibold text-emerald-300"
+            >
+              Transparente
+            </button>
+            <button
+              type="button"
+              data-backdrop="dark"
+              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Oscuro
+            </button>
+            <button
+              type="button"
+              data-backdrop="light"
+              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+            >
+              Claro
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <button
+      id="toggle-drawer-btn"
+      type="button"
+      title="Configurar Spotify Overlay (Atajo: C)"
+      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-55 shadow-lg backdrop-blur-md transition hover:border-emerald-400/50 hover:text-emerald-300 hover:opacity-100 focus:opacity-100"
+      aria-expanded="false"
+      aria-controls="customizer-drawer"
+    >
+      <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+      <span>Spotify Setup</span>
+    </button>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      function makeIllustratedCover(variant) {
+        const artworks = {
+          telemetry: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+            <defs>
+              <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#090d1f"/>
+                <stop offset="48%" stop-color="#1e1b4b"/>
+                <stop offset="100%" stop-color="#065f46"/>
+              </linearGradient>
+              <linearGradient id="sun1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#5eead4"/>
+                <stop offset="50%" stop-color="#38bdf8"/>
+                <stop offset="100%" stop-color="#a855f7"/>
+              </linearGradient>
+              <linearGradient id="grid1" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.85"/>
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0.1"/>
+              </linearGradient>
+            </defs>
+            <rect width="300" height="300" fill="url(#bg1)"/>
+            <circle cx="52" cy="48" r="2" fill="#fff" opacity="0.8"/>
+            <circle cx="242" cy="36" r="2.5" fill="#5eead4" opacity="0.9"/>
+            <circle cx="212" cy="74" r="1.5" fill="#fff" opacity="0.7"/>
+            <circle cx="88" cy="82" r="1.5" fill="#f9a8d4" opacity="0.8"/>
+            <circle cx="150" cy="138" r="76" fill="url(#sun1)"/>
+            <rect x="65" y="138" width="170" height="5" fill="#131638"/>
+            <rect x="65" y="152" width="170" height="7" fill="#131638"/>
+            <rect x="65" y="168" width="170" height="10" fill="#131638"/>
+            <polygon points="0,192 58,136 112,182 168,128 232,180 300,142 300,205 0,205" fill="#070a18"/>
+            <rect x="0" y="198" width="300" height="102" fill="#060914"/>
+            <g stroke="url(#grid1)" stroke-width="2">
+              <line x1="0" y1="210" x2="300" y2="210"/>
+              <line x1="0" y1="230" x2="300" y2="230"/>
+              <line x1="0" y1="256" x2="300" y2="256"/>
+              <line x1="0" y1="286" x2="300" y2="286"/>
+              <line x1="150" y1="198" x2="150" y2="300"/>
+              <line x1="115" y1="198" x2="35" y2="300"/>
+              <line x1="185" y1="198" x2="265" y2="300"/>
+              <line x1="80" y1="198" x2="-45" y2="300"/>
+              <line x1="220" y1="198" x2="345" y2="300"/>
+            </g>
+            <rect x="18" y="18" width="66" height="20" rx="4" fill="rgba(0,0,0,0.55)" stroke="rgba(255,255,255,0.25)"/>
+            <text x="26" y="32" fill="#5eead4" font-family="monospace" font-size="11" font-weight="bold">STEREO // 01</text>
+          </svg>`,
+
+          tokyo: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+            <defs>
+              <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2e1065"/>
+                <stop offset="50%" stop-color="#be185d"/>
+                <stop offset="100%" stop-color="#f9a8d4"/>
+              </linearGradient>
+              <radialGradient id="moon2" cx="50%" cy="42%" r="42%">
+                <stop offset="0%" stop-color="#fff1f2"/>
+                <stop offset="55%" stop-color="#f9a8d4"/>
+                <stop offset="100%" stop-color="#ec4899" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <rect width="300" height="300" fill="url(#bg2)"/>
+            <circle cx="150" cy="126" r="96" fill="url(#moon2)"/>
+            <circle cx="150" cy="126" r="56" fill="#fff5f7"/>
+            <g fill="#160929">
+              <rect x="14" y="145" width="34" height="155"/>
+              <rect x="54" y="112" width="42" height="188"/>
+              <rect x="104" y="156" width="36" height="144"/>
+              <rect x="148" y="96" width="48" height="204"/>
+              <rect x="204" y="132" width="38" height="168"/>
+              <rect x="248" y="118" width="40" height="182"/>
+            </g>
+            <g fill="#f9a8d4" opacity="0.85">
+              <rect x="64" y="126" width="8" height="14"/>
+              <rect x="78" y="126" width="8" height="14"/>
+              <rect x="64" y="150" width="8" height="14"/>
+              <rect x="158" y="112" width="10" height="18"/>
+              <rect x="176" y="112" width="10" height="18"/>
+              <rect x="158" y="142" width="10" height="18"/>
+              <rect x="214" y="148" width="8" height="12"/>
+              <rect x="258" y="134" width="9" height="15"/>
+            </g>
+            <rect x="0" y="232" width="300" height="68" fill="#0d051a" opacity="0.88"/>
+            <text x="20" y="274" fill="#f9a8d4" font-family="sans-serif" font-size="22" font-weight="900" letter-spacing="2">TOKYO 84</text>
+          </svg>`,
+
+          orbital: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+            <defs>
+              <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#020617"/>
+                <stop offset="55%" stop-color="#0c4a6e"/>
+                <stop offset="100%" stop-color="#1d4ed8"/>
+              </linearGradient>
+              <radialGradient id="planet3" cx="35%" cy="35%" r="65%">
+                <stop offset="0%" stop-color="#7dd3fc"/>
+                <stop offset="45%" stop-color="#0284c7"/>
+                <stop offset="100%" stop-color="#082f49"/>
+              </radialGradient>
+            </defs>
+            <rect width="300" height="300" fill="url(#bg3)"/>
+            <circle cx="44" cy="64" r="2" fill="#e0f2fe"/>
+            <circle cx="252" cy="54" r="2.5" fill="#38bdf8"/>
+            <circle cx="234" cy="238" r="2" fill="#fff"/>
+            <circle cx="62" cy="242" r="1.8" fill="#7dd3fc"/>
+            <circle cx="150" cy="150" r="68" fill="url(#planet3)"/>
+            <ellipse cx="150" cy="150" rx="124" ry="34" transform="rotate(-24 150 150)" fill="none" stroke="#bae6fd" stroke-width="10" opacity="0.85"/>
+            <ellipse cx="150" cy="150" rx="104" ry="26" transform="rotate(-24 150 150)" fill="none" stroke="#38bdf8" stroke-width="4"/>
+            <text x="18" y="282" fill="#bae6fd" font-family="monospace" font-size="13" font-weight="bold" letter-spacing="3">ORBITAL // LP</text>
+          </svg>`,
+
+          lobby: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+            <defs>
+              <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1f112b"/>
+                <stop offset="52%" stop-color="#831843"/>
+                <stop offset="100%" stop-color="#f59e0b"/>
+              </linearGradient>
+            </defs>
+            <rect width="300" height="300" fill="url(#bg4)"/>
+            <rect x="28" y="34" width="244" height="232" rx="22" fill="rgba(12,10,20,0.62)" stroke="rgba(255,255,255,0.22)" stroke-width="2"/>
+            <circle cx="150" cy="136" r="62" fill="#09090b" stroke="#f9a8d4" stroke-width="3"/>
+            <circle cx="150" cy="136" r="44" fill="none" stroke="rgba(255,255,255,0.16)" stroke-width="2"/>
+            <circle cx="150" cy="136" r="24" fill="#f472b6"/>
+            <circle cx="150" cy="136" r="7" fill="#09090b"/>
+            <rect x="56" y="218" width="188" height="26" rx="8" fill="rgba(249,168,212,0.18)"/>
+            <text x="76" y="236" fill="#fbcfe8" font-family="monospace" font-size="13" font-weight="bold" letter-spacing="2">LO-FI // FM 98.4</text>
+          </svg>`,
+        };
+
+        const raw = artworks[variant] || artworks.telemetry;
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(raw);
+      }
+
+      const DEMO_TRACKS = [
+        {
+          title: 'Midnight Telemetry (feat. Aura)',
+          artist: 'Kairo & NeonPulse',
+          durationMs: 225000,
+          progressMs: 84000,
+          cover: makeIllustratedCover('telemetry'),
+        },
+        {
+          title: 'Hyperdrive Over Tokyo Skies (Extended Synthwave Mix)',
+          artist: 'Valkyrie99, CyberFox',
+          durationMs: 268000,
+          progressMs: 42000,
+          cover: makeIllustratedCover('tokyo'),
+        },
+        {
+          title: 'Low Latency Dreams',
+          artist: 'OrbitalMint',
+          durationMs: 194000,
+          progressMs: 115000,
+          cover: makeIllustratedCover('orbital'),
+        },
+        {
+          title: 'Afterhours Lobby Chill',
+          artist: 'LunaVibe & GlitchKitty',
+          durationMs: 182000,
+          progressMs: 30000,
+          cover: makeIllustratedCover('lobby'),
+        },
+      ];
+
+      const STORAGE = {
+        CLIENT_ID: 'sp_overlay_client_id',
+        VERIFIER: 'sp_overlay_pkce_verifier',
+        ACCESS_TOKEN: 'sp_overlay_access_token',
+        REFRESH_TOKEN: 'sp_overlay_refresh_token',
+        EXPIRES_AT: 'sp_overlay_expires_at',
+        POSITION: 'sp_overlay_position',
+        ACCENT: 'sp_overlay_accent',
+        ACCENT_GLOW: 'sp_overlay_accent_glow',
+        ACCENT_SOFT: 'sp_overlay_accent_soft',
+        AUTO_HIDE: 'sp_overlay_auto_hide',
+      };
+
+      const ACCENT_PRESETS = [
+        {
+          id: 'pastel-pink',
+          name: 'Rosa Pastel',
+          color: '#f9a8d4',
+          glow: 'rgba(249, 168, 212, 0.35)',
+          soft: 'rgba(249, 168, 212, 0.14)',
+        },
+        {
+          id: 'pastel-lilac',
+          name: 'Lila Pastel',
+          color: '#d8b4fe',
+          glow: 'rgba(216, 180, 254, 0.35)',
+          soft: 'rgba(216, 180, 254, 0.14)',
+        },
+        {
+          id: 'pastel-mint',
+          name: 'Menta Pastel',
+          color: '#6ee7b7',
+          glow: 'rgba(110, 231, 183, 0.35)',
+          soft: 'rgba(110, 231, 183, 0.14)',
+        },
+        {
+          id: 'pastel-sky',
+          name: 'Cielo Pastel',
+          color: '#7dd3fc',
+          glow: 'rgba(125, 211, 252, 0.35)',
+          soft: 'rgba(125, 211, 252, 0.14)',
+        },
+        {
+          id: 'pastel-peach',
+          name: 'Durazno Pastel',
+          color: '#fdba74',
+          glow: 'rgba(253, 186, 116, 0.35)',
+          soft: 'rgba(253, 186, 116, 0.14)',
+        },
+        {
+          id: 'pastel-lemon',
+          name: 'Limón Pastel',
+          color: '#fde047',
+          glow: 'rgba(253, 224, 71, 0.35)',
+          soft: 'rgba(253, 224, 71, 0.14)',
+        },
+        {
+          id: 'pastel-coral',
+          name: 'Coral Pastel',
+          color: '#fda4af',
+          glow: 'rgba(253, 164, 175, 0.35)',
+          soft: 'rgba(253, 164, 175, 0.14)',
+        },
+        {
+          id: 'pastel-periwinkle',
+          name: 'Lavanda Azul',
+          color: '#a5b4fc',
+          glow: 'rgba(165, 180, 252, 0.35)',
+          soft: 'rgba(165, 180, 252, 0.14)',
+        },
+        {
+          id: 'spotify-green',
+          name: 'Verde Spotify',
+          color: '#1db954',
+          glow: 'rgba(29, 185, 84, 0.35)',
+          soft: 'rgba(29, 185, 84, 0.14)',
+        },
+        {
+          id: 'cyber-cyan',
+          name: 'Cian Neón',
+          color: '#22d3ee',
+          glow: 'rgba(34, 211, 238, 0.35)',
+          soft: 'rgba(34, 211, 238, 0.14)',
+        },
+        {
+          id: 'twitch-violet',
+          name: 'Violeta Stream',
+          color: '#a855f7',
+          glow: 'rgba(168, 85, 247, 0.35)',
+          soft: 'rgba(168, 85, 247, 0.14)',
+        },
+      ];
+
+      const DEFAULT_ACCENT = ACCENT_PRESETS[0];
+
+      const state = {
+        mode: 'demo',
+        demoIndex: 0,
+        isPlaying: true,
+        title: DEMO_TRACKS[0].title,
+        artist: DEMO_TRACKS[0].artist,
+        cover: DEMO_TRACKS[0].cover,
+        durationMs: DEMO_TRACKS[0].durationMs,
+        progressMs: DEMO_TRACKS[0].progressMs,
+        lastTickAt: Date.now(),
+        autoHide: false,
+        position: 'pos-bottom-left',
+        accent: DEFAULT_ACCENT.color,
+        accentGlow: DEFAULT_ACCENT.glow,
+        accentSoft: DEFAULT_ACCENT.soft,
+        uiHidden: false,
+        drawerOpen: false,
+      };
+
+      const dom = {
+        widget: document.getElementById('spotify-widget'),
+        statusLabel: document.getElementById('status-label'),
+        timeElapsed: document.getElementById('time-elapsed'),
+        timeDuration: document.getElementById('time-duration'),
+        albumCover: document.getElementById('album-cover'),
+        titleMarquee: document.getElementById('title-marquee'),
+        trackTitle: document.getElementById('track-title'),
+        trackTitleClone: document.getElementById('track-title-clone'),
+        trackArtist: document.getElementById('track-artist'),
+        progressBar: document.getElementById('progress-bar'),
+
+        customizerRoot: document.getElementById('customizer-root'),
+        drawer: document.getElementById('customizer-drawer'),
+        toggleDrawerBtn: document.getElementById('toggle-drawer-btn'),
+        closeDrawerBtn: document.getElementById('close-drawer-btn'),
+        hideUiBtn: document.getElementById('hide-ui-btn'),
+
+        connectionBadge: document.getElementById('connection-badge'),
+        redirectUriDisplay: document.getElementById('redirect-uri-display'),
+        copyUriBtn: document.getElementById('copy-uri-btn'),
+        fileProtocolNote: document.getElementById('file-protocol-note'),
+        clientIdInput: document.getElementById('spotify-client-id'),
+        connectBtn: document.getElementById('connect-spotify-btn'),
+        disconnectBtn: document.getElementById('disconnect-spotify-btn'),
+        authFeedback: document.getElementById('auth-feedback'),
+
+        posBtns: Array.from(document.querySelectorAll('.pos-btn')),
+        accentGrid: document.getElementById('spotify-accent-grid'),
+        autoHideToggle: document.getElementById('auto-hide-toggle'),
+        backdropBtns: Array.from(document.querySelectorAll('.backdrop-btn')),
+      };
+
+      // Always use the canonical GitHub Pages URL as Redirect URI for Spotify PKCE OAuth
+      function getRedirectUri() {
+        return 'https://sxtowa.github.io/twitch-overlay/twitch_spotify_now_playing_overlay.html';
+      }
+
+      function formatMs(ms) {
+        const safe = Math.max(0, Math.floor((ms || 0) / 1000));
+        const mins = Math.floor(safe / 60);
+        const secs = safe % 60;
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      }
+
+      function setAuthFeedback(msg, isError = true) {
+        if (!msg) {
+          dom.authFeedback.classList.add('hidden');
+          dom.authFeedback.textContent = '';
+          return;
+        }
+        dom.authFeedback.textContent = msg;
+        dom.authFeedback.className = `mt-1.5 font-mono text-[10px] ${
+          isError ? 'text-rose-300' : 'text-emerald-300'
+        }`;
+        dom.authFeedback.classList.remove('hidden');
+      }
+
+      function updateMarquee() {
+        dom.titleMarquee.classList.remove('is-scrolling');
+        dom.trackTitleClone.classList.add('hidden');
+
+        requestAnimationFrame(() => {
+          const containerWidth = dom.titleMarquee.clientWidth;
+          const textWidth = dom.trackTitle.scrollWidth;
+          if (textWidth > containerWidth + 4 && containerWidth > 0) {
+            dom.trackTitleClone.classList.remove('hidden');
+            dom.titleMarquee.classList.add('is-scrolling');
+          }
+        });
+      }
+
+      function renderOverlay() {
+        dom.widget.classList.toggle('is-playing', state.isPlaying);
+        dom.widget.classList.toggle('is-paused', !state.isPlaying);
+
+        if (state.mode === 'live') {
+          dom.statusLabel.textContent = state.isPlaying ? 'NOW PLAYING • LIVE' : 'PAUSED • LIVE';
+        } else {
+          dom.statusLabel.textContent = state.isPlaying ? 'NOW PLAYING • DEMO' : 'PAUSED • DEMO';
+        }
+
+        const shouldHideCard = state.autoHide && !state.isPlaying;
+        dom.widget.classList.toggle('widget-hidden', shouldHideCard);
+
+        if (dom.trackTitle.textContent !== state.title) {
+          dom.trackTitle.textContent = state.title;
+          dom.trackTitleClone.textContent = state.title;
+          updateMarquee();
+        }
+        dom.trackArtist.textContent = state.artist;
+
+        if (state.cover && dom.albumCover.getAttribute('src') !== state.cover) {
+          dom.albumCover.setAttribute('src', state.cover);
+        }
+
+        const clampedProgress = Math.min(state.progressMs, state.durationMs || state.progressMs);
+        const pct =
+          state.durationMs > 0 ? Math.max(0, Math.min(100, (clampedProgress / state.durationMs) * 100)) : 0;
+
+        dom.progressBar.style.width = `${pct.toFixed(2)}%`;
+        dom.timeElapsed.textContent = formatMs(clampedProgress);
+        dom.timeDuration.textContent = formatMs(state.durationMs);
+
+        if (state.mode === 'live') {
+          dom.connectionBadge.textContent = 'EN VIVO';
+          dom.connectionBadge.className =
+            'rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-emerald-300';
+          dom.disconnectBtn.classList.remove('hidden');
+        } else {
+          dom.connectionBadge.textContent = 'MODO DEMO';
+          dom.connectionBadge.className =
+            'rounded-full border border-amber-400/30 bg-amber-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-300';
+          dom.disconnectBtn.classList.add('hidden');
+        }
+      }
+
+      function applyPosition(posClass) {
+        const allowed = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
+        const target = allowed.includes(posClass) ? posClass : 'pos-bottom-left';
+        state.position = target;
+
+        allowed.forEach((cls) => dom.widget.classList.remove(cls));
+        dom.widget.classList.add(target);
+
+        dom.posBtns.forEach((btn) => {
+          const active = btn.dataset.pos === target;
+          btn.className = active
+            ? 'pos-btn rounded-lg border border-emerald-400/50 bg-emerald-500/15 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-white'
+            : 'pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25';
+        });
+
+        try {
+          localStorage.setItem(STORAGE.POSITION, target);
+        } catch (_) {}
+      }
+
+      function hexToRgb(hex) {
+        const clean = (hex || '').replace('#', '').trim();
+        if (clean.length !== 6) return null;
+        const num = parseInt(clean, 16);
+        if (Number.isNaN(num)) return null;
+        return {
+          r: (num >> 16) & 255,
+          g: (num >> 8) & 255,
+          b: num & 255,
+        };
+      }
+
+      function syncAccentPresetButtons() {
+        const buttons = dom.accentGrid ? Array.from(dom.accentGrid.querySelectorAll('[data-accent]')) : [];
+        buttons.forEach((btn) => {
+          const active = (btn.dataset.accent || '').toLowerCase() === (state.accent || '').toLowerCase();
+          btn.classList.toggle('border-white/80', active);
+          btn.classList.toggle('bg-white/15', active);
+          btn.classList.toggle('text-white', active);
+          btn.classList.toggle('border-white/10', !active);
+          btn.classList.toggle('bg-slate-900', !active);
+          btn.classList.toggle('text-slate-300', !active);
+        });
+      }
+
+      function renderAccentPresets() {
+        if (!dom.accentGrid) return;
+        dom.accentGrid.innerHTML = '';
+
+        ACCENT_PRESETS.forEach((preset) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.accent = preset.color;
+          btn.dataset.glow = preset.glow;
+          btn.dataset.soft = preset.soft;
+          btn.className =
+            'flex items-center gap-2 rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 text-left font-mono text-[10px] font-semibold text-slate-300 transition hover:border-white/25';
+
+          const swatch = document.createElement('span');
+          swatch.className = 'h-3 w-3 shrink-0 rounded-full border border-white/25';
+          swatch.style.backgroundColor = preset.color;
+
+          const label = document.createElement('span');
+          label.className = 'truncate';
+          label.textContent = preset.name;
+
+          btn.appendChild(swatch);
+          btn.appendChild(label);
+
+          btn.addEventListener('click', () => {
+            applyAccent(preset.color, preset.glow, preset.soft);
+          });
+
+          dom.accentGrid.appendChild(btn);
+        });
+
+        syncAccentPresetButtons();
+      }
+
+      function applyAccent(hexColor, customGlow, customSoft) {
+        const rgb = hexToRgb(hexColor);
+        const color = rgb ? `#${hexColor.replace('#', '').trim()}` : DEFAULT_ACCENT.color;
+        const glow =
+          customGlow || (rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.35)` : DEFAULT_ACCENT.glow);
+        const soft =
+          customSoft || (rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.14)` : DEFAULT_ACCENT.soft);
+
+        state.accent = color;
+        state.accentGlow = glow;
+        state.accentSoft = soft;
+
+        document.documentElement.style.setProperty('--accent', color);
+        document.documentElement.style.setProperty('--accent-glow', glow);
+        document.documentElement.style.setProperty('--accent-soft', soft);
+
+        syncAccentPresetButtons();
+
+        try {
+          localStorage.setItem(STORAGE.ACCENT, color);
+          localStorage.setItem(STORAGE.ACCENT_GLOW, glow);
+          localStorage.setItem(STORAGE.ACCENT_SOFT, soft);
+        } catch (_) {}
+      }
+
+      function setDrawerOpen(open) {
+        state.drawerOpen = Boolean(open);
+        dom.drawer.classList.toggle('hidden', !state.drawerOpen);
+        dom.toggleDrawerBtn.setAttribute('aria-expanded', String(state.drawerOpen));
+      }
+
+      function setUiHidden(hidden) {
+        state.uiHidden = Boolean(hidden);
+        dom.customizerRoot.classList.toggle('hidden', state.uiHidden);
+      }
+
+      function applyBackdrop(mode) {
+        document.body.classList.remove('preview-dark', 'preview-light');
+        if (mode === 'dark') document.body.classList.add('preview-dark');
+        if (mode === 'light') document.body.classList.add('preview-light');
+
+        dom.backdropBtns.forEach((btn) => {
+          const active = btn.dataset.backdrop === mode;
+          btn.className = active
+            ? 'backdrop-btn rounded-lg bg-emerald-500/20 px-2 py-1 font-mono text-[10px] font-semibold text-emerald-300'
+            : 'backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
+        });
+      }
+
+      function loadDemoTrack(index, autoPlay = true) {
+        const safeIdx = ((index % DEMO_TRACKS.length) + DEMO_TRACKS.length) % DEMO_TRACKS.length;
+        const track = DEMO_TRACKS[safeIdx];
+        state.demoIndex = safeIdx;
+        state.title = track.title;
+        state.artist = track.artist;
+        state.cover = track.cover;
+        state.durationMs = track.durationMs;
+        state.progressMs = track.progressMs;
+        state.isPlaying = autoPlay;
+        state.lastTickAt = Date.now();
+        renderOverlay();
+      }
+
+      function tickPlaybackClock() {
+        const now = Date.now();
+        const delta = now - state.lastTickAt;
+        state.lastTickAt = now;
+
+        if (!state.isPlaying || delta <= 0) return;
+
+        state.progressMs += delta;
+
+        if (state.mode === 'demo') {
+          if (state.progressMs >= state.durationMs) {
+            loadDemoTrack(state.demoIndex + 1, true);
+          } else {
+            renderOverlay();
+          }
+        } else {
+          if (state.durationMs > 0 && state.progressMs > state.durationMs) {
+            state.progressMs = state.durationMs;
+          }
+          renderOverlay();
+        }
+      }
+
+      function generateRandomString(length) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+        const array = new Uint8Array(length);
+        crypto.getRandomValues(array);
+        return Array.from(array, (byte) => chars[byte % chars.length]).join('');
+      }
+
+      async function sha256Base64Url(plain) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(plain);
+        const digest = await crypto.subtle.digest('SHA-256', data);
+        const bytes = new Uint8Array(digest);
+        let str = '';
+        for (let i = 0; i < bytes.length; i++) {
+          str += String.fromCharCode(bytes[i]);
+        }
+        return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+
+      async function startSpotifyLogin() {
+        setAuthFeedback('');
+        const clientId = (dom.clientIdInput.value || '').trim();
+        if (!clientId) {
+          setAuthFeedback('Introduce tu Spotify Client ID antes de conectar.');
+          dom.clientIdInput.focus();
+          return;
+        }
+
+        if (window.location.protocol === 'file:') {
+          setAuthFeedback(
+            'Abre este archivo desde http://127.0.0.1 o https:// (GitHub Pages / servidor local) para usar Spotify OAuth.'
+          );
+          return;
+        }
+
+        try {
+          localStorage.setItem(STORAGE.CLIENT_ID, clientId);
+          const verifier = generateRandomString(64);
+          const challenge = await sha256Base64Url(verifier);
+          localStorage.setItem(STORAGE.VERIFIER, verifier);
+
+          const params = new URLSearchParams({
+            client_id: clientId,
+            response_type: 'code',
+            redirect_uri: getRedirectUri(),
+            code_challenge_method: 'S256',
+            code_challenge: challenge,
+            scope: 'user-read-currently-playing user-read-playback-state',
+          });
+
+          window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
+        } catch (err) {
+          setAuthFeedback(`Error iniciando OAuth: ${err.message || err}`);
+        }
+      }
+
+      async function exchangeCodeForToken(code) {
+        const clientId = (localStorage.getItem(STORAGE.CLIENT_ID) || dom.clientIdInput.value || '').trim();
+        const verifier = localStorage.getItem(STORAGE.VERIFIER);
+
+        if (!clientId || !verifier) {
+          setAuthFeedback('Falta Client ID o code_verifier para completar el login.');
+          return false;
+        }
+
+        const body = new URLSearchParams({
+          client_id: clientId,
+          grant_type: 'authorization_code',
+          code,
+          redirect_uri: getRedirectUri(),
+          code_verifier: verifier,
+        });
+
+        const res = await fetch('https://accounts.spotify.com/api/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString(),
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.access_token) {
+          throw new Error(data.error_description || data.error || 'No se obtuvo access_token');
+        }
+
+        saveTokenPayload(data);
+        localStorage.removeItem(STORAGE.VERIFIER);
+        return true;
+      }
+
+      async function refreshAccessToken() {
+        const clientId = (localStorage.getItem(STORAGE.CLIENT_ID) || '').trim();
+        const refreshToken = localStorage.getItem(STORAGE.REFRESH_TOKEN);
+        if (!clientId || !refreshToken) return false;
+
+        const body = new URLSearchParams({
+          client_id: clientId,
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+        });
+
+        const res = await fetch('https://accounts.spotify.com/api/token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: body.toString(),
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.access_token) {
+          return false;
+        }
+
+        saveTokenPayload(data);
+        return true;
+      }
+
+      function saveTokenPayload(data) {
+        localStorage.setItem(STORAGE.ACCESS_TOKEN, data.access_token);
+        if (data.refresh_token) {
+          localStorage.setItem(STORAGE.REFRESH_TOKEN, data.refresh_token);
+        }
+        const expiresInSec = Number(data.expires_in || 3600);
+        const expiresAt = Date.now() + Math.max(60, expiresInSec - 45) * 1000;
+        localStorage.setItem(STORAGE.EXPIRES_AT, String(expiresAt));
+      }
+
+      async function getValidAccessToken() {
+        const token = localStorage.getItem(STORAGE.ACCESS_TOKEN);
+        const expiresAt = Number(localStorage.getItem(STORAGE.EXPIRES_AT) || 0);
+
+        if (token && Date.now() < expiresAt) {
+          return token;
+        }
+        if (localStorage.getItem(STORAGE.REFRESH_TOKEN)) {
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            return localStorage.getItem(STORAGE.ACCESS_TOKEN);
+          }
+        }
+        return null;
+      }
+
+      function disconnectSpotify() {
+        localStorage.removeItem(STORAGE.ACCESS_TOKEN);
+        localStorage.removeItem(STORAGE.REFRESH_TOKEN);
+        localStorage.removeItem(STORAGE.EXPIRES_AT);
+        localStorage.removeItem(STORAGE.VERIFIER);
+        state.mode = 'demo';
+        setAuthFeedback('Sesión cerrada. Volviendo a modo demo.', false);
+        loadDemoTrack(state.demoIndex, true);
+      }
+
+      async function pollSpotifyPlayback() {
+        if (state.mode !== 'live') return;
+
+        try {
+          const token = await getValidAccessToken();
+          if (!token) {
+            state.mode = 'demo';
+            setAuthFeedback('La sesión de Spotify expiró. Conecta de nuevo.');
+            renderOverlay();
+            return;
+          }
+
+          const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (res.status === 401) {
+            const refreshed = await refreshAccessToken();
+            if (!refreshed) {
+              disconnectSpotify();
+            }
+            return;
+          }
+
+          if (res.status === 204 || res.status === 404) {
+            state.isPlaying = false;
+            state.lastTickAt = Date.now();
+            renderOverlay();
+            return;
+          }
+
+          if (!res.ok) return;
+
+          const payload = await res.json();
+          if (!payload || !payload.item) {
+            state.isPlaying = false;
+            state.lastTickAt = Date.now();
+            renderOverlay();
+            return;
+          }
+
+          const item = payload.item;
+          const artists = Array.isArray(item.artists)
+            ? item.artists.map((a) => a.name).join(', ')
+            : 'Artista desconocido';
+          const images = item.album && Array.isArray(item.album.images) ? item.album.images : [];
+          const coverUrl =
+            (images[1] && images[1].url) || (images[0] && images[0].url) || state.cover;
+
+          state.title = item.name || 'Sin título';
+          state.artist = artists;
+          state.cover = coverUrl;
+          state.durationMs = Number(item.duration_ms || 0);
+          state.progressMs = Number(payload.progress_ms || 0);
+          state.isPlaying = Boolean(payload.is_playing);
+          state.lastTickAt = Date.now();
+
+          renderOverlay();
+        } catch (_) {}
+      }
+
+      async function handleOAuthCallbackIfPresent() {
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get('code');
+        const error = url.searchParams.get('error');
+
+        if (error) {
+          url.searchParams.delete('error');
+          window.history.replaceState({}, document.title, url.toString());
+          setAuthFeedback(`Spotify denegó el acceso (${error}).`);
+          setDrawerOpen(true);
+          return;
+        }
+
+        if (code) {
+          url.searchParams.delete('code');
+          url.searchParams.delete('state');
+          window.history.replaceState({}, document.title, url.toString());
+          setAuthFeedback('Completando autorización con Spotify...', false);
+          try {
+            const ok = await exchangeCodeForToken(code);
+            if (ok) {
+              state.mode = 'live';
+              setAuthFeedback('¡Conectado a Spotify en vivo!', false);
+              await pollSpotifyPlayback();
+            }
+          } catch (err) {
+            setAuthFeedback(`Error al intercambiar código: ${err.message || err}`);
+            setDrawerOpen(true);
+          }
+        }
+      }
+
+      function bindEvents() {
+        dom.toggleDrawerBtn.addEventListener('click', () => {
+          setDrawerOpen(!state.drawerOpen);
+        });
+
+        dom.closeDrawerBtn.addEventListener('click', () => {
+          setDrawerOpen(false);
+        });
+
+        dom.hideUiBtn.addEventListener('click', () => {
+          setDrawerOpen(false);
+          setUiHidden(true);
+        });
+
+        dom.copyUriBtn.addEventListener('click', async () => {
+          const val = dom.redirectUriDisplay.value;
+          try {
+            await navigator.clipboard.writeText(val);
+            dom.copyUriBtn.textContent = 'Copiado';
+            setTimeout(() => {
+              dom.copyUriBtn.textContent = 'Copiar';
+            }, 1500);
+          } catch (_) {
+            dom.redirectUriDisplay.select();
+            document.execCommand('copy');
+          }
+        });
+
+        dom.connectBtn.addEventListener('click', startSpotifyLogin);
+        dom.disconnectBtn.addEventListener('click', disconnectSpotify);
+
+        dom.posBtns.forEach((btn) => {
+          btn.addEventListener('click', () => applyPosition(btn.dataset.pos));
+        });
+
+        dom.autoHideToggle.addEventListener('change', () => {
+          state.autoHide = dom.autoHideToggle.checked;
+          try {
+            localStorage.setItem(STORAGE.AUTO_HIDE, String(state.autoHide));
+          } catch (_) {}
+          renderOverlay();
+        });
+
+        dom.backdropBtns.forEach((btn) => {
+          btn.addEventListener('click', () => applyBackdrop(btn.dataset.backdrop));
+        });
+
+        window.addEventListener('keydown', (e) => {
+          const tag = (e.target && e.target.tagName) || '';
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+
+          if (e.key === 'c' || e.key === 'C') {
+            if (state.uiHidden) setUiHidden(false);
+            setDrawerOpen(!state.drawerOpen);
+          } else if (e.key === 'h' || e.key === 'H') {
+            setDrawerOpen(false);
+            setUiHidden(!state.uiHidden);
+          } else if (e.key === 'Escape' && state.drawerOpen) {
+            setDrawerOpen(false);
+          }
+        });
+
+        window.addEventListener('resize', updateMarquee);
+      }
+
+      async function init() {
+        renderAccentPresets();
+
+        dom.redirectUriDisplay.value = getRedirectUri();
+        if (window.location.protocol === 'file:') {
+          dom.fileProtocolNote.classList.remove('hidden');
+        }
+
+        try {
+          const savedClientId = localStorage.getItem(STORAGE.CLIENT_ID);
+          if (savedClientId) dom.clientIdInput.value = savedClientId;
+
+          const savedPos = localStorage.getItem(STORAGE.POSITION);
+          if (savedPos) applyPosition(savedPos);
+          else applyPosition('pos-bottom-left');
+
+          const savedAccent = localStorage.getItem(STORAGE.ACCENT);
+          const savedGlow = localStorage.getItem(STORAGE.ACCENT_GLOW);
+          const savedSoft = localStorage.getItem(STORAGE.ACCENT_SOFT);
+          if (savedAccent) {
+            applyAccent(savedAccent, savedGlow, savedSoft);
+          } else {
+            applyAccent(DEFAULT_ACCENT.color, DEFAULT_ACCENT.glow, DEFAULT_ACCENT.soft);
+          }
+
+          const savedAutoHide = localStorage.getItem(STORAGE.AUTO_HIDE);
+          if (savedAutoHide === 'true') {
+            state.autoHide = true;
+            dom.autoHideToggle.checked = true;
+          }
+        } catch (_) {}
+
+        bindEvents();
+
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('clean') === '1') {
+          setUiHidden(true);
+        }
+
+        loadDemoTrack(0, true);
+
+        await handleOAuthCallbackIfPresent();
+
+        if (state.mode !== 'live') {
+          const existingToken = await getValidAccessToken();
+          if (existingToken) {
+            state.mode = 'live';
+            await pollSpotifyPlayback();
+          }
+        }
+
+        renderOverlay();
+
+        setInterval(tickPlaybackClock, 250);
+        setInterval(pollSpotifyPlayback, 3500);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
