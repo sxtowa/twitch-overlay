@@ -12,7 +12,6 @@
     rel="stylesheet"
   />
   <script>
-    // Configure Tailwind font families for UI headings and monospace counters
     tailwind.config = {
       theme: {
         extend: {
@@ -35,7 +34,6 @@
       box-sizing: border-box;
     }
 
-    /* Transparent background by default for 1920x1080 OBS Browser Source */
     html,
     body {
       margin: 0;
@@ -48,7 +46,6 @@
       user-select: none;
     }
 
-    /* Optional preview backdrops inside customizer (OBS stays transparent) */
     body.preview-dark {
       background-color: #07090f;
       background-image:
@@ -64,10 +61,9 @@
       background-size: 32px 32px;
     }
 
-    /* Cyber-minimalist glassmorphism overlay card */
     .val-glass {
       position: relative;
-      background: linear-gradient(145deg, rgba(12, 14, 22, 0.88), rgba(16, 20, 32, 0.8));
+      background: linear-gradient(145deg, rgba(12, 14, 22, 0.88), rgba(16, 20, 32, 0.82));
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       border: 1px solid rgba(255, 255, 255, 0.11);
@@ -78,7 +74,6 @@
       transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.25s ease;
     }
 
-    /* Subtle pulse feedback when stats update */
     .val-pulse {
       transform: translateY(-2px) scale(1.01);
       border-color: var(--accent);
@@ -88,7 +83,6 @@
         inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
     }
 
-    /* Corner positioning classes */
     .pos-bottom-left {
       bottom: 24px;
       left: 24px;
@@ -117,7 +111,6 @@
       left: auto;
     }
 
-    /* Custom scrollbar for control panel */
     .custom-scroll::-webkit-scrollbar {
       width: 5px;
     }
@@ -133,7 +126,7 @@
 </head>
 <body>
   <!-- ===================================================================== -->
-  <!-- MAIN VALORANT STREAM STATS OVERLAY CARD                               -->
+  <!-- MAIN VALORANT STREAM STATS OVERLAY CARD (1920x1080 OBS TRANSPARENT)   -->
   <!-- ===================================================================== -->
   <aside
     id="valorant-widget"
@@ -147,7 +140,7 @@
     ></div>
 
     <div class="p-4">
-      <!-- Header: Emblem + Riot ID & Tag + Hoy RR Delta -->
+      <!-- Header: Valorant Emblem + Riot ID & Tag + Hoy RR Delta -->
       <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
         <div class="flex min-w-0 items-center gap-2">
           <span
@@ -160,12 +153,12 @@
             </svg>
           </span>
           <div class="min-w-0">
-            <div class="flex items-baseline gap-1.5">
+            <div class="flex items-baseline gap-1">
               <span id="display-riot-name" class="truncate text-sm font-extrabold tracking-tight text-white">
-                Riot ID
+                RiotID
               </span>
               <span id="display-riot-tag" class="shrink-0 font-mono text-xs font-semibold text-slate-400">
-                #Tag
+                #TAG
               </span>
             </div>
           </div>
@@ -185,14 +178,15 @@
         </div>
       </div>
 
-      <!-- Rank Tier + Current RR + 0-100 Progress Bar -->
+      <!-- Compact Rank Tier Card (Official In-Game Rank Icon + Rank Name + RR + 0-100 Progress Bar) -->
       <div class="mt-3 rounded-xl border border-white/10 bg-slate-950/60 p-3">
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2">
-            <span
-              class="h-2.5 w-2.5 shrink-0 rounded-full"
-              style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
-            ></span>
+            <div
+              id="display-rank-icon"
+              class="flex h-6 w-6 shrink-0 items-center justify-center"
+              aria-hidden="true"
+            ></div>
             <span id="display-rank-tier" class="text-sm font-extrabold tracking-tight text-white">
               Unranked
             </span>
@@ -254,30 +248,30 @@
         id="combat-stats-row"
         class="mt-2 hidden grid-cols-3 gap-2"
       >
-        <div id="stat-card-kd" class="hidden rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+        <div id="stat-card-kd" class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             K/D
           </span>
           <span id="display-kd" class="mt-0.5 block font-mono text-xs font-bold text-slate-100">
-            1.28
+            0.00
           </span>
         </div>
 
-        <div id="stat-card-acs" class="hidden rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+        <div id="stat-card-acs" class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             ACS
           </span>
           <span id="display-acs" class="mt-0.5 block font-mono text-xs font-bold text-slate-100">
-            234
+            0
           </span>
         </div>
 
-        <div id="stat-card-hs" class="hidden rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+        <div id="stat-card-hs" class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             HS%
           </span>
           <span id="display-hs" class="mt-0.5 block font-mono text-xs font-bold text-slate-100">
-            26.4%
+            0.0%
           </span>
         </div>
       </div>
@@ -290,7 +284,7 @@
   <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
     <section
       id="customizer-drawer"
-      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[410px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[420px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
     >
       <!-- Drawer Header -->
       <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -307,9 +301,9 @@
             id="reset-session-btn"
             type="button"
             class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
-            title="Resetear estadísticas de hoy"
+            title="Resetear sesión a 0W - 0L y 0 RR hoy"
           >
-            Reset Hoy
+            Reset Sesión
           </button>
           <button
             id="hide-ui-btn"
@@ -336,7 +330,7 @@
           1. Estadísticas Manuales y Partidas
         </div>
 
-        <!-- Riot ID & Tag -->
+        <!-- Riot ID & Tag (Empty by default without # prefilled) -->
         <div class="grid grid-cols-3 gap-1.5">
           <div class="col-span-2">
             <label for="input-riot-name" class="block font-mono text-[9px] text-slate-400">
@@ -346,8 +340,8 @@
               id="input-riot-name"
               type="text"
               maxlength="24"
-              placeholder="Riot ID"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
+              placeholder="RiotID"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-600 outline-none focus:border-pink-300"
             />
           </div>
           <div>
@@ -358,97 +352,155 @@
               id="input-riot-tag"
               type="text"
               maxlength="10"
-              placeholder="Tag"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
+              placeholder="TAG"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-600 outline-none focus:border-pink-300"
             />
           </div>
         </div>
 
-        <!-- Rank Tier Button Grid + Division Buttons + Current RR -->
+        <!-- Rank Tier Button Grid + Division Buttons -->
         <div class="space-y-2 rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
           <div class="flex items-center justify-between gap-2">
             <div>
               <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                Rank Tier (Click to select)
+                Rango actual (clic para elegir)
               </span>
-              <span id="selected-rank-preview" class="font-mono text-xs font-extrabold text-pink-200">
-                Unranked
-              </span>
-            </div>
-            <div class="w-28">
-              <label for="input-rr" class="block font-mono text-[9px] text-slate-400">
-                RR actual (0-100)
-              </label>
-              <input
-                id="input-rr"
-                type="number"
-                min="0"
-                max="999"
-                placeholder="0"
-                class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2.5 py-1 font-mono text-xs font-bold text-white placeholder-slate-500 outline-none focus:border-pink-300"
-              />
+              <div class="mt-0.5 flex items-center gap-1.5">
+                <div id="selected-rank-icon" class="flex h-4 w-4 shrink-0 items-center justify-center"></div>
+                <span id="selected-rank-preview" class="font-mono text-xs font-extrabold text-pink-200">
+                  Unranked
+                </span>
+              </div>
             </div>
           </div>
 
-          <!-- Button Grid for English Rank Tiers (no native <select>) -->
+          <!-- Official Rank Tier Buttons Grid (No native <select>) -->
           <div id="rank-tier-grid" class="grid grid-cols-5 gap-1"></div>
 
-          <!-- Button Grid for Divisions (I, II, III) -->
-          <div id="rank-division-row" class="flex items-center justify-between gap-2 pt-0.5">
+          <!-- Division Buttons (I, II, III) -->
+          <div id="rank-division-row" class="hidden items-center justify-between gap-2 pt-0.5">
             <span class="font-mono text-[9px] uppercase tracking-wider text-slate-400">
-              Division
+              División
             </span>
             <div id="rank-division-grid" class="grid grid-cols-3 gap-1"></div>
           </div>
         </div>
 
-        <!-- Quick Win / Loss Buttons -->
-        <div class="grid grid-cols-2 gap-1.5 pt-0.5">
-          <button
-            id="quick-win-btn"
-            type="button"
-            class="rounded-xl border border-emerald-400/35 bg-emerald-500/15 px-3 py-2 font-mono text-xs font-extrabold text-emerald-300 transition hover:bg-emerald-500/25 active:scale-95"
-          >
-            + Victoria (+18 RR)
-          </button>
-          <button
-            id="quick-loss-btn"
-            type="button"
-            class="rounded-xl border border-rose-400/35 bg-rose-500/15 px-3 py-2 font-mono text-xs font-extrabold text-rose-300 transition hover:bg-rose-500/25 active:scale-95"
-          >
-            + Derrota (-16 RR)
-          </button>
+        <!-- Current RR Input & Today's Net RR -->
+        <div class="grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
+          <div>
+            <label for="input-rr" class="block font-mono text-[9px] text-slate-400">
+              RR actual (0-100)
+            </label>
+            <input
+              id="input-rr"
+              type="number"
+              min="0"
+              max="100"
+              class="mt-1 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1.5 font-mono text-xs font-bold text-white outline-none focus:border-pink-300"
+            />
+          </div>
+
+          <div>
+            <label for="input-rr-delta" class="block font-mono text-[9px] text-slate-400">
+              RR Hoy (+/-)
+            </label>
+            <input
+              id="input-rr-delta"
+              type="number"
+              min="-999"
+              max="999"
+              class="mt-1 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1.5 font-mono text-xs font-bold text-white outline-none focus:border-pink-300"
+            />
+          </div>
         </div>
 
-        <!-- Configurable Manual Win RR & Manual Loss RR -->
+        <!-- Record W / L Stepper Controls (+1 / -1 Victoria, +1 / -1 Derrota) -->
+        <div class="grid grid-cols-2 gap-2">
+          <div class="rounded-xl border border-emerald-400/25 bg-emerald-500/10 p-2">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-300">
+                Victorias (W)
+              </span>
+              <input
+                id="input-wins"
+                type="number"
+                min="0"
+                max="999"
+                class="w-14 rounded-md border border-emerald-400/30 bg-slate-950 px-1.5 py-0.5 text-center font-mono text-xs font-extrabold text-emerald-200 outline-none focus:border-emerald-300"
+              />
+            </div>
+            <div class="mt-1.5 grid grid-cols-2 gap-1">
+              <button
+                id="minus-win-btn"
+                type="button"
+                class="rounded-lg border border-white/10 bg-slate-950/90 px-2 py-1 font-mono text-[10px] font-bold text-slate-300 transition hover:border-emerald-400/40 hover:text-white active:scale-95"
+              >
+                -1 Victoria
+              </button>
+              <button
+                id="plus-win-btn"
+                type="button"
+                class="rounded-lg border border-emerald-400/40 bg-emerald-500/20 px-2 py-1 font-mono text-[10px] font-extrabold text-emerald-200 transition hover:bg-emerald-500/30 active:scale-95"
+              >
+                +1 Victoria
+              </button>
+            </div>
+          </div>
+
+          <div class="rounded-xl border border-rose-400/25 bg-rose-500/10 p-2">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[9px] font-bold uppercase tracking-wider text-rose-300">
+                Derrotas (L)
+              </span>
+              <input
+                id="input-losses"
+                type="number"
+                min="0"
+                max="999"
+                class="w-14 rounded-md border border-rose-400/30 bg-slate-950 px-1.5 py-0.5 text-center font-mono text-xs font-extrabold text-rose-200 outline-none focus:border-rose-300"
+              />
+            </div>
+            <div class="mt-1.5 grid grid-cols-2 gap-1">
+              <button
+                id="minus-loss-btn"
+                type="button"
+                class="rounded-lg border border-white/10 bg-slate-950/90 px-2 py-1 font-mono text-[10px] font-bold text-slate-300 transition hover:border-rose-400/40 hover:text-white active:scale-95"
+              >
+                -1 Derrota
+              </button>
+              <button
+                id="plus-loss-btn"
+                type="button"
+                class="rounded-lg border border-rose-400/40 bg-rose-500/20 px-2 py-1 font-mono text-[10px] font-extrabold text-rose-200 transition hover:bg-rose-500/30 active:scale-95"
+              >
+                +1 Derrota
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Win / Loss RR Adjustment Inputs & Apply Buttons -->
         <div class="grid grid-cols-2 gap-2 rounded-xl border border-white/10 bg-slate-900/80 p-2">
           <div>
             <label for="input-win-rr" class="block font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-300">
               +RR Victoria manual
             </label>
             <div class="mt-1 flex items-center gap-1">
-              <button
-                type="button"
-                data-win-rr-delta="-1"
-                title="Restar 1 al RR manual de victoria"
-                class="win-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-emerald-400/40"
-              >
-                -
-              </button>
               <input
                 id="input-win-rr"
                 type="number"
-                min="-200"
+                min="0"
                 max="200"
-                class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 text-center font-mono text-xs font-bold text-emerald-300 outline-none focus:border-emerald-400"
+                class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 text-center font-mono text-xs font-bold text-emerald-300 outline-none focus:border-emerald-400"
               />
               <button
+                id="apply-win-rr-btn"
                 type="button"
-                data-win-rr-delta="1"
-                title="Sumar 1 al RR manual de victoria"
-                class="win-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-emerald-400/40"
+                class="rounded-lg border border-emerald-400/40 bg-emerald-500/20 px-2 py-1 font-mono text-[10px] font-extrabold text-emerald-200 transition hover:bg-emerald-500/30 active:scale-95"
+                title="Sumar este RR al rango y al balance de hoy"
               >
-                +
+                Aplicar
               </button>
             </div>
           </div>
@@ -458,106 +510,26 @@
               -RR Derrota manual
             </label>
             <div class="mt-1 flex items-center gap-1">
-              <button
-                type="button"
-                data-loss-rr-delta="-1"
-                title="Restar 1 al RR manual de derrota"
-                class="loss-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-rose-400/40"
-              >
-                -
-              </button>
               <input
                 id="input-loss-rr"
                 type="number"
-                min="-200"
+                min="0"
                 max="200"
-                class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 text-center font-mono text-xs font-bold text-rose-300 outline-none focus:border-rose-400"
+                class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 text-center font-mono text-xs font-bold text-rose-300 outline-none focus:border-rose-400"
               />
               <button
+                id="apply-loss-rr-btn"
                 type="button"
-                data-loss-rr-delta="1"
-                title="Sumar 1 al RR manual de derrota"
-                class="loss-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-rose-400/40"
+                class="rounded-lg border border-rose-400/40 bg-rose-500/20 px-2 py-1 font-mono text-[10px] font-extrabold text-rose-200 transition hover:bg-rose-500/30 active:scale-95"
+                title="Restar este RR del rango y del balance de hoy"
               >
-                +
+                Aplicar
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Manual Wins, Losses & Today RR Delta -->
-        <div class="grid grid-cols-3 gap-1.5">
-          <div>
-            <label for="input-wins" class="block font-mono text-[9px] text-slate-400">
-              Victorias (W)
-            </label>
-            <input
-              id="input-wins"
-              type="number"
-              min="0"
-              max="999"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
-            />
-          </div>
-          <div>
-            <label for="input-losses" class="block font-mono text-[9px] text-slate-400">
-              Derrotas (L)
-            </label>
-            <input
-              id="input-losses"
-              type="number"
-              min="0"
-              max="999"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
-            />
-          </div>
-          <div>
-            <label for="input-rr-delta" class="block font-mono text-[9px] text-slate-400">
-              Hoy RR (+/-)
-            </label>
-            <input
-              id="input-rr-delta"
-              type="number"
-              min="-999"
-              max="999"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
-            />
-          </div>
-        </div>
-
-        <!-- Direct RR Adjustment Buttons -->
-        <div class="grid grid-cols-4 gap-1.5">
-          <button
-            type="button"
-            data-rr-step="-10"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-rose-200 hover:border-rose-400/40"
-          >
-            -10 RR
-          </button>
-          <button
-            type="button"
-            data-rr-step="-1"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-rose-200 hover:border-rose-400/40"
-          >
-            -1 RR
-          </button>
-          <button
-            type="button"
-            data-rr-step="1"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-emerald-200 hover:border-emerald-400/40"
-          >
-            +1 RR
-          </button>
-          <button
-            type="button"
-            data-rr-step="10"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-emerald-200 hover:border-emerald-400/40"
-          >
-            +10 RR
-          </button>
-        </div>
-
-        <!-- Optional Combat Stats Toggles & Inputs (OFF by default) -->
+        <!-- Optional Combat Stats Toggles & Conditional Inputs (Hidden by default) -->
         <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
           <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
             Estadísticas extra opcionales
@@ -590,8 +562,8 @@
             </label>
           </div>
 
-          <div class="mt-2 grid grid-cols-3 gap-1.5">
-            <div>
+          <div id="combat-inputs-grid" class="mt-2 hidden grid-cols-3 gap-1.5">
+            <div id="combat-input-wrap-kd">
               <label for="input-kd" class="block font-mono text-[9px] text-slate-400">K/D</label>
               <input
                 id="input-kd"
@@ -602,7 +574,7 @@
                 class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
               />
             </div>
-            <div>
+            <div id="combat-input-wrap-acs">
               <label for="input-acs" class="block font-mono text-[9px] text-slate-400">ACS</label>
               <input
                 id="input-acs"
@@ -612,7 +584,7 @@
                 class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
               />
             </div>
-            <div>
+            <div id="combat-input-wrap-hs">
               <label for="input-hs" class="block font-mono text-[9px] text-slate-400">HS %</label>
               <input
                 id="input-hs"
@@ -627,7 +599,7 @@
         </div>
       </div>
 
-      <!-- 2. POSITION & ACCENT COLOR -->
+      <!-- 2. POSITION & ACCENT COLOR (11 Presets + Custom Picker) -->
       <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
           2. Posición y Color
@@ -668,12 +640,23 @@
         </div>
 
         <div>
-          <span class="block font-mono text-[10px] text-slate-400">Paleta de acento (11 colores)</span>
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] text-slate-400">Paleta de acento (11 colores)</span>
+            <label class="flex cursor-pointer items-center gap-1.5 font-mono text-[10px] text-slate-300">
+              <span>Custom</span>
+              <input
+                id="input-custom-accent"
+                type="color"
+                value="#f9a8d4"
+                class="h-5 w-6 cursor-pointer rounded border border-white/20 bg-transparent p-0"
+              />
+            </label>
+          </div>
           <div id="accent-presets-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
         </div>
       </div>
 
-      <!-- 3. CONNECT API / ENDPOINT (Directly above Fondo de vista previa) -->
+      <!-- 3. CONNECT API / ENDPOINT (Placed right above Preview Backdrop) -->
       <div class="mt-3.5 space-y-2 border-t border-white/10 pt-3.5">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
@@ -688,13 +671,13 @@
         </div>
 
         <p class="text-[10px] leading-relaxed text-slate-400">
-          Introduce una URL de endpoint o API en JSON o texto plano. Si ocurre un error o bloqueo CORS, tus controles manuales siguen activos.
+          URL directa en JSON o texto plano. Si el servidor bloquea CORS desde el navegador/OBS, tus controles manuales siguen activos.
         </p>
 
         <input
           id="input-endpoint-url"
           type="url"
-          placeholder="https://tu-endpoint-o-api.com/valorant"
+          placeholder="https://tu-api-o-endpoint.com/stats"
           class="w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] text-cyan-200 placeholder-slate-600 outline-none focus:border-pink-300"
         />
 
@@ -729,7 +712,7 @@
             type="button"
             class="flex-1 rounded-xl border border-pink-300/40 bg-pink-300/15 px-3 py-1.5 font-mono text-[11px] font-bold text-pink-100 transition hover:bg-pink-300/25 active:scale-95"
           >
-            Sync
+            Sincronizar ahora
           </button>
           <button
             id="clear-endpoint-btn"
@@ -743,7 +726,7 @@
         <p id="endpoint-feedback" class="hidden rounded-lg border border-white/10 bg-slate-900/90 p-2 font-mono text-[10px] leading-relaxed text-slate-300"></p>
       </div>
 
-      <!-- 4. FONDO DE VISTA PREVIA (Last section) -->
+      <!-- 4. PREVIEW BACKDROP (Last section in control panel) -->
       <div class="mt-3.5 space-y-2 border-t border-white/10 pt-3.5">
         <span class="block font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
           4. Fondo de vista previa (OBS siempre transparente)
@@ -779,7 +762,7 @@
       id="toggle-drawer-btn"
       type="button"
       aria-expanded="false"
-      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/90 px-3.5 py-2 font-mono text-[11px] font-bold text-white shadow-lg backdrop-blur-md transition hover:border-pink-300/50"
+      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/90 px-3.5 py-2 font-mono text-xs font-semibold text-slate-100 opacity-75 shadow-lg backdrop-blur-md transition hover:border-pink-300/60 hover:opacity-100"
     >
       <span
         class="h-2 w-2 rounded-full"
@@ -789,10 +772,11 @@
     </button>
   </div>
 
+  <!-- ===================================================================== -->
+  <!-- APPLICATION LOGIC                                                     -->
+  <!-- ===================================================================== -->
   <script>
-    (function () {
-      'use strict';
-
+    (() => {
       const STORAGE_KEY = 'twitch_valorant_overlay_v4';
       const LEGACY_STORAGE_KEYS = [
         'twitch_valorant_overlay_v3',
@@ -801,23 +785,25 @@
       ];
       const DEFAULT_ENDPOINT_URL = '';
 
-      // English Valorant rank tiers and divisions for button-grid selection
+      // Official Valorant Competitive Tier Icons CDN (Episode 5+ Act tiers)
+      const RANK_ICON_BASE =
+        'https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04';
+
       const RANK_GROUPS = [
-        { id: 'Unranked', label: 'Unranked', value: 'Unranked', color: '#94a3b8', hasDivisions: false },
-        { id: 'Iron', label: 'Iron', value: 'Iron', color: '#71717a', hasDivisions: true },
-        { id: 'Bronze', label: 'Bronze', value: 'Bronze', color: '#b45309', hasDivisions: true },
-        { id: 'Silver', label: 'Silver', value: 'Silver', color: '#cbd5e1', hasDivisions: true },
-        { id: 'Gold', label: 'Gold', value: 'Gold', color: '#eab308', hasDivisions: true },
-        { id: 'Platinum', label: 'Platinum', value: 'Platinum', color: '#22d3ee', hasDivisions: true },
-        { id: 'Diamond', label: 'Diamond', value: 'Diamond', color: '#e879f9', hasDivisions: true },
-        { id: 'Ascendant', label: 'Ascendant', value: 'Ascendant', color: '#10b981', hasDivisions: true },
-        { id: 'Immortal', label: 'Immortal', value: 'Immortal', color: '#f43f5e', hasDivisions: true },
-        { id: 'Radiant', label: 'Radiant', value: 'Radiant', color: '#fef08a', hasDivisions: false },
+        { id: 'Unranked', label: 'Unranked', value: 'Unranked', color: '#94a3b8', hasDivisions: false, tiers: { '': 0 } },
+        { id: 'Iron', label: 'Iron', value: 'Iron', color: '#71717a', hasDivisions: true, tiers: { I: 3, II: 4, III: 5 } },
+        { id: 'Bronze', label: 'Bronze', value: 'Bronze', color: '#b45309', hasDivisions: true, tiers: { I: 6, II: 7, III: 8 } },
+        { id: 'Silver', label: 'Silver', value: 'Silver', color: '#cbd5e1', hasDivisions: true, tiers: { I: 9, II: 10, III: 11 } },
+        { id: 'Gold', label: 'Gold', value: 'Gold', color: '#eab308', hasDivisions: true, tiers: { I: 12, II: 13, III: 14 } },
+        { id: 'Platinum', label: 'Platinum', value: 'Platinum', color: '#22d3ee', hasDivisions: true, tiers: { I: 15, II: 16, III: 17 } },
+        { id: 'Diamond', label: 'Diamond', value: 'Diamond', color: '#e879f9', hasDivisions: true, tiers: { I: 18, II: 19, III: 20 } },
+        { id: 'Ascendant', label: 'Ascendant', value: 'Ascendant', color: '#10b981', hasDivisions: true, tiers: { I: 21, II: 22, III: 23 } },
+        { id: 'Immortal', label: 'Immortal', value: 'Immortal', color: '#f43f5e', hasDivisions: true, tiers: { I: 24, II: 25, III: 26 } },
+        { id: 'Radiant', label: 'Radiant', value: 'Radiant', color: '#fef08a', hasDivisions: false, tiers: { '': 27 } },
       ];
 
       const RANK_DIVISIONS = ['I', 'II', 'III'];
 
-      // Normalize any incoming rank strings into English Valorant rank names
       const RANK_ALIASES = {
         'sin rango': 'Unranked',
         unranked: 'Unranked',
@@ -841,11 +827,23 @@
         radiant: 'Radiant',
       };
 
+      const ACCENT_PRESETS = [
+        { id: 'rosa-pastel', name: 'Rosa Pastel', color: '#f9a8d4', glow: 'rgba(249, 168, 212, 0.35)', soft: 'rgba(249, 168, 212, 0.14)' },
+        { id: 'spotify-verde', name: 'Spotify Verde', color: '#1db954', glow: 'rgba(29, 185, 84, 0.34)', soft: 'rgba(29, 185, 84, 0.14)' },
+        { id: 'twitch-violeta', name: 'Twitch Violeta', color: '#9146ff', glow: 'rgba(145, 70, 255, 0.36)', soft: 'rgba(145, 70, 255, 0.15)' },
+        { id: 'cian-neon', name: 'Cian Neón', color: '#22d3ee', glow: 'rgba(34, 211, 238, 0.34)', soft: 'rgba(34, 211, 238, 0.14)' },
+        { id: 'lavanda', name: 'Lavanda', color: '#c4b5fd', glow: 'rgba(196, 181, 253, 0.34)', soft: 'rgba(196, 181, 253, 0.14)' },
+        { id: 'menta-pastel', name: 'Menta Pastel', color: '#6ee7b7', glow: 'rgba(110, 231, 183, 0.34)', soft: 'rgba(110, 231, 183, 0.14)' },
+        { id: 'melocoton', name: 'Melocotón', color: '#fdba74', glow: 'rgba(253, 186, 116, 0.34)', soft: 'rgba(253, 186, 116, 0.14)' },
+        { id: 'lila', name: 'Lila', color: '#e879f9', glow: 'rgba(232, 121, 249, 0.34)', soft: 'rgba(232, 121, 249, 0.14)' },
+        { id: 'coral', name: 'Coral', color: '#fb7185', glow: 'rgba(251, 113, 133, 0.34)', soft: 'rgba(251, 113, 133, 0.14)' },
+        { id: 'azul-cielo', name: 'Azul Cielo', color: '#7dd3fc', glow: 'rgba(125, 211, 252, 0.34)', soft: 'rgba(125, 211, 252, 0.14)' },
+        { id: 'dorado', name: 'Dorado', color: '#fbbf24', glow: 'rgba(251, 191, 36, 0.34)', soft: 'rgba(251, 191, 36, 0.14)' },
+      ];
+
       function parseRankString(raw) {
         const cleaned = String(raw || '').trim();
-        if (!cleaned) {
-          return { group: RANK_GROUPS[0], division: '', full: 'Unranked' };
-        }
+        if (!cleaned) return { group: RANK_GROUPS[0], division: '', full: 'Unranked' };
         const parts = cleaned.split(/\s+/);
         const firstToken = (parts[0] || '').toLowerCase();
         const twoToken = parts.length > 1 ? `${parts[0]} ${parts[1]}`.toLowerCase() : '';
@@ -865,86 +863,16 @@
         return { group: RANK_GROUPS[0], division: '', full: 'Unranked' };
       }
 
-      // 11 Accent Presets (Rosa Pastel #f9a8d4 default first)
-      const ACCENT_PRESETS = [
-        {
-          id: 'rosa-pastel',
-          name: 'Rosa Pastel',
-          color: '#f9a8d4',
-          glow: 'rgba(249, 168, 212, 0.35)',
-          soft: 'rgba(249, 168, 212, 0.14)',
-        },
-        {
-          id: 'spotify-verde',
-          name: 'Spotify Verde',
-          color: '#1db954',
-          glow: 'rgba(29, 185, 84, 0.34)',
-          soft: 'rgba(29, 185, 84, 0.14)',
-        },
-        {
-          id: 'twitch-violeta',
-          name: 'Twitch Violeta',
-          color: '#9146ff',
-          glow: 'rgba(145, 70, 255, 0.36)',
-          soft: 'rgba(145, 70, 255, 0.15)',
-        },
-        {
-          id: 'cian-neon',
-          name: 'Cian Neón',
-          color: '#22d3ee',
-          glow: 'rgba(34, 211, 238, 0.34)',
-          soft: 'rgba(34, 211, 238, 0.14)',
-        },
-        {
-          id: 'lavanda',
-          name: 'Lavanda',
-          color: '#c4b5fd',
-          glow: 'rgba(196, 181, 253, 0.34)',
-          soft: 'rgba(196, 181, 253, 0.14)',
-        },
-        {
-          id: 'menta-pastel',
-          name: 'Menta Pastel',
-          color: '#6ee7b7',
-          glow: 'rgba(110, 231, 183, 0.34)',
-          soft: 'rgba(110, 231, 183, 0.14)',
-        },
-        {
-          id: 'melocoton',
-          name: 'Melocotón',
-          color: '#fdba74',
-          glow: 'rgba(253, 186, 116, 0.34)',
-          soft: 'rgba(253, 186, 116, 0.14)',
-        },
-        {
-          id: 'lila',
-          name: 'Lila',
-          color: '#e879f9',
-          glow: 'rgba(232, 121, 249, 0.34)',
-          soft: 'rgba(232, 121, 249, 0.14)',
-        },
-        {
-          id: 'coral',
-          name: 'Coral',
-          color: '#fb7185',
-          glow: 'rgba(251, 113, 133, 0.34)',
-          soft: 'rgba(251, 113, 133, 0.14)',
-        },
-        {
-          id: 'azul-cielo',
-          name: 'Azul Cielo',
-          color: '#7dd3fc',
-          glow: 'rgba(125, 211, 252, 0.34)',
-          soft: 'rgba(125, 211, 252, 0.14)',
-        },
-        {
-          id: 'dorado',
-          name: 'Dorado',
-          color: '#fbbf24',
-          glow: 'rgba(251, 191, 36, 0.34)',
-          soft: 'rgba(251, 191, 36, 0.14)',
-        },
-      ];
+      function hexToRgba(hex, alpha) {
+        const clean = String(hex || '').replace('#', '').trim();
+        if (!/^[0-9a-fA-F]{6}$/.test(clean)) {
+          return `rgba(249, 168, 212, ${alpha})`;
+        }
+        const r = parseInt(clean.slice(0, 2), 16);
+        const g = parseInt(clean.slice(2, 4), 16);
+        const b = parseInt(clean.slice(4, 6), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
 
       function toSafeNumber(val, fallback, min, max) {
         const n = Number(val);
@@ -962,7 +890,7 @@
           rr: 0,
           rrDelta: 0,
           winRrAmount: 18,
-          lossRrAmount: -16,
+          lossRrAmount: 16,
           wins: 0,
           losses: 0,
           showKD: false,
@@ -985,27 +913,37 @@
       function loadState() {
         const defaults = createDefaultState();
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
+          let raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            for (const legacyKey of LEGACY_STORAGE_KEYS) {
+              const legacyRaw = localStorage.getItem(legacyKey);
+              if (legacyRaw) {
+                raw = legacyRaw;
+                break;
+              }
+            }
+          }
           if (!raw) return defaults;
           const p = JSON.parse(raw);
           if (!p || typeof p !== 'object') return defaults;
 
           const validPositions = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
-          const preset =
-            ACCENT_PRESETS.find((item) => item.color.toLowerCase() === String(p.accent || '').toLowerCase()) ||
-            ACCENT_PRESETS[0];
+          const rawAccent = typeof p.accent === 'string' && /^#[0-9a-fA-F]{6}$/.test(p.accent.trim())
+            ? p.accent.trim()
+            : ACCENT_PRESETS[0].color;
+          const matchedPreset = ACCENT_PRESETS.find((item) => item.color.toLowerCase() === rawAccent.toLowerCase());
 
           const rawRank = typeof p.rankTier === 'string' && p.rankTier.trim() ? p.rankTier.trim() : defaults.rankTier;
           const normalizedRank = parseRankString(rawRank).full;
 
           return {
-            riotName: typeof p.riotName === 'string' ? p.riotName : defaults.riotName,
-            riotTag: typeof p.riotTag === 'string' ? p.riotTag.replace(/^#/, '') : defaults.riotTag,
+            riotName: typeof p.riotName === 'string' ? p.riotName.trim() : defaults.riotName,
+            riotTag: typeof p.riotTag === 'string' ? p.riotTag.replace(/^#+/, '').trim() : defaults.riotTag,
             rankTier: normalizedRank,
             rr: Math.round(toSafeNumber(p.rr, defaults.rr, 0, 999)),
             rrDelta: Math.round(toSafeNumber(p.rrDelta, defaults.rrDelta, -999, 999)),
-            winRrAmount: Math.round(toSafeNumber(p.winRrAmount, defaults.winRrAmount, -200, 200)),
-            lossRrAmount: Math.round(toSafeNumber(p.lossRrAmount, defaults.lossRrAmount, -200, 200)),
+            winRrAmount: Math.abs(Math.round(toSafeNumber(p.winRrAmount, defaults.winRrAmount, -200, 200))),
+            lossRrAmount: Math.abs(Math.round(toSafeNumber(p.lossRrAmount, defaults.lossRrAmount, -200, 200))),
             wins: Math.round(toSafeNumber(p.wins, defaults.wins, 0, 999)),
             losses: Math.round(toSafeNumber(p.losses, defaults.losses, 0, 999)),
             showKD: typeof p.showKD === 'boolean' ? p.showKD : defaults.showKD,
@@ -1016,9 +954,9 @@
             hs: Number(toSafeNumber(p.hs, defaults.hs, 0, 100).toFixed(1)),
             position: validPositions.includes(p.position) ? p.position : defaults.position,
             backdrop: ['transparent', 'dark', 'light'].includes(p.backdrop) ? p.backdrop : 'transparent',
-            accent: preset.color,
-            accentGlow: typeof p.accentGlow === 'string' && p.accentGlow ? p.accentGlow : preset.glow,
-            accentSoft: typeof p.accentSoft === 'string' && p.accentSoft ? p.accentSoft : preset.soft,
+            accent: matchedPreset ? matchedPreset.color : rawAccent,
+            accentGlow: matchedPreset ? matchedPreset.glow : hexToRgba(rawAccent, 0.35),
+            accentSoft: matchedPreset ? matchedPreset.soft : hexToRgba(rawAccent, 0.14),
             endpointUrl: typeof p.endpointUrl === 'string' ? p.endpointUrl.trim() : defaults.endpointUrl,
             endpointEnabled: Boolean(p.endpointEnabled),
             pollSeconds: Math.round(toSafeNumber(p.pollSeconds, defaults.pollSeconds, 5, 3600)),
@@ -1048,6 +986,7 @@
       const displayRiotNameEl = document.getElementById('display-riot-name');
       const displayRiotTagEl = document.getElementById('display-riot-tag');
       const displayRrDeltaEl = document.getElementById('display-rr-delta');
+      const displayRankIconEl = document.getElementById('display-rank-icon');
       const displayRankTierEl = document.getElementById('display-rank-tier');
       const displayRrEl = document.getElementById('display-rr');
       const displayRrProgressLabelEl = document.getElementById('display-rr-progress-label');
@@ -1065,21 +1004,31 @@
 
       const inputRiotNameEl = document.getElementById('input-riot-name');
       const inputRiotTagEl = document.getElementById('input-riot-tag');
+      const selectedRankIconEl = document.getElementById('selected-rank-icon');
       const selectedRankPreviewEl = document.getElementById('selected-rank-preview');
       const rankTierGridEl = document.getElementById('rank-tier-grid');
       const rankDivisionRowEl = document.getElementById('rank-division-row');
       const rankDivisionGridEl = document.getElementById('rank-division-grid');
       const inputRrEl = document.getElementById('input-rr');
-      const inputWinRrEl = document.getElementById('input-win-rr');
-      const inputLossRrEl = document.getElementById('input-loss-rr');
-      const quickWinBtnEl = document.getElementById('quick-win-btn');
-      const quickLossBtnEl = document.getElementById('quick-loss-btn');
+      const inputRrDeltaEl = document.getElementById('input-rr-delta');
       const inputWinsEl = document.getElementById('input-wins');
       const inputLossesEl = document.getElementById('input-losses');
-      const inputRrDeltaEl = document.getElementById('input-rr-delta');
+      const minusWinBtnEl = document.getElementById('minus-win-btn');
+      const plusWinBtnEl = document.getElementById('plus-win-btn');
+      const minusLossBtnEl = document.getElementById('minus-loss-btn');
+      const plusLossBtnEl = document.getElementById('plus-loss-btn');
+      const inputWinRrEl = document.getElementById('input-win-rr');
+      const applyWinRrBtnEl = document.getElementById('apply-win-rr-btn');
+      const inputLossRrEl = document.getElementById('input-loss-rr');
+      const applyLossRrBtnEl = document.getElementById('apply-loss-rr-btn');
+
       const toggleShowKdEl = document.getElementById('toggle-show-kd');
       const toggleShowAcsEl = document.getElementById('toggle-show-acs');
       const toggleShowHsEl = document.getElementById('toggle-show-hs');
+      const combatInputsGridEl = document.getElementById('combat-inputs-grid');
+      const combatInputWrapKdEl = document.getElementById('combat-input-wrap-kd');
+      const combatInputWrapAcsEl = document.getElementById('combat-input-wrap-acs');
+      const combatInputWrapHsEl = document.getElementById('combat-input-wrap-hs');
       const inputKdEl = document.getElementById('input-kd');
       const inputAcsEl = document.getElementById('input-acs');
       const inputHsEl = document.getElementById('input-hs');
@@ -1093,6 +1042,7 @@
       const endpointFeedbackEl = document.getElementById('endpoint-feedback');
 
       const accentPresetsGridEl = document.getElementById('accent-presets-grid');
+      const inputCustomAccentEl = document.getElementById('input-custom-accent');
       const customizerRootEl = document.getElementById('customizer-root');
       const drawerEl = document.getElementById('customizer-drawer');
       const toggleDrawerBtnEl = document.getElementById('toggle-drawer-btn');
@@ -1109,8 +1059,31 @@
       }
 
       // =========================================================================
-      // OVERLAY RENDERING & RANK BUTTON GRID
+      // OFFICIAL VALORANT RANK ICON RENDERING & FALLBACK
       // =========================================================================
+      function getRankIconHtml(group, division, sizeClass, fallbackSizeClass) {
+        const targetGroup = group || RANK_GROUPS[0];
+        const divKey = targetGroup.hasDivisions ? (division || 'I') : '';
+        const tierId =
+          targetGroup.tiers && typeof targetGroup.tiers[divKey] === 'number'
+            ? targetGroup.tiers[divKey]
+            : 0;
+        const iconUrl = `${RANK_ICON_BASE}/${tierId}/largeicon.png`;
+        const altText = targetGroup.hasDivisions ? `${targetGroup.value} ${divKey}` : targetGroup.value;
+
+        return `<img
+          src="${iconUrl}"
+          alt="${escapeHtml(altText)}"
+          loading="eager"
+          decoding="async"
+          class="${sizeClass} object-contain drop-shadow-[0_1px_4px_rgba(0,0,0,0.65)]"
+          onerror="this.style.display='none'; if (this.nextElementSibling) this.nextElementSibling.style.display='inline-flex';"
+        /><span
+          style="display:none; color:${targetGroup.color};"
+          class="${fallbackSizeClass} shrink-0 items-center justify-center"
+        ><svg viewBox="0 0 24 24" fill="currentColor" class="h-full w-full"><path d="M12 2 4 6.5v11L12 22l8-4.5v-11L12 2zm0 3.2 5.2 2.9v7.8L12 18.8l-5.2-2.9V8.1L12 5.2z"/></svg></span>`;
+      }
+
       function triggerCardPulse() {
         widgetEl.classList.remove('val-pulse');
         void widgetEl.offsetWidth;
@@ -1122,12 +1095,35 @@
       }
 
       function renderOverlay(shouldPulse) {
-        const rawName = (state.riotName || '').trim();
-        const rawTag = (state.riotTag || '').trim().replace(/^#/, '');
+        const cleanName = (state.riotName || '').trim();
+        const cleanTag = (state.riotTag || '').replace(/^#+/, '').trim();
 
-        displayRiotNameEl.textContent = rawName || 'Riot ID';
-        displayRiotTagEl.textContent = rawTag ? `#${rawTag}` : '#Tag';
-        displayRankTierEl.textContent = parseRankString(state.rankTier).full;
+        if (cleanName) {
+          displayRiotNameEl.textContent = cleanName;
+          displayRiotNameEl.className = 'truncate text-sm font-extrabold tracking-tight text-white';
+        } else {
+          displayRiotNameEl.textContent = 'RiotID';
+          displayRiotNameEl.className = 'truncate text-sm font-extrabold tracking-tight text-slate-400';
+        }
+
+        if (cleanTag) {
+          displayRiotTagEl.textContent = `#${cleanTag}`;
+          displayRiotTagEl.className = 'shrink-0 font-mono text-xs font-semibold text-slate-300';
+        } else {
+          displayRiotTagEl.textContent = '#TAG';
+          displayRiotTagEl.className = 'shrink-0 font-mono text-xs font-semibold text-slate-500';
+        }
+
+        const parsedRank = parseRankString(state.rankTier);
+        displayRankTierEl.textContent = parsedRank.full;
+        if (displayRankIconEl) {
+          displayRankIconEl.innerHTML = getRankIconHtml(
+            parsedRank.group,
+            parsedRank.division,
+            'h-6 w-6',
+            'h-5 w-5'
+          );
+        }
 
         const rrValue = Math.round(toSafeNumber(state.rr, 0, 0, 999));
         displayRrEl.textContent = String(rrValue);
@@ -1159,6 +1155,7 @@
 
         const visibleExtraStats = [state.showKD, state.showACS, state.showHS].filter(Boolean).length;
         combatStatsRowEl.classList.toggle('hidden', visibleExtraStats === 0);
+        combatStatsRowEl.classList.toggle('grid', visibleExtraStats > 0);
         combatStatsRowEl.classList.toggle('grid-cols-1', visibleExtraStats === 1);
         combatStatsRowEl.classList.toggle('grid-cols-2', visibleExtraStats === 2);
         combatStatsRowEl.classList.toggle('grid-cols-3', visibleExtraStats === 3);
@@ -1167,14 +1164,15 @@
         statCardAcsEl.classList.toggle('hidden', !state.showACS);
         statCardHsEl.classList.toggle('hidden', !state.showHS);
 
+        combatInputsGridEl.classList.toggle('hidden', visibleExtraStats === 0);
+        combatInputsGridEl.classList.toggle('grid', visibleExtraStats > 0);
+        combatInputWrapKdEl.classList.toggle('hidden', !state.showKD);
+        combatInputWrapAcsEl.classList.toggle('hidden', !state.showACS);
+        combatInputWrapHsEl.classList.toggle('hidden', !state.showHS);
+
         displayKdEl.textContent = Number(toSafeNumber(state.kd, 0, 0, 20)).toFixed(2);
         displayAcsEl.textContent = String(Math.round(toSafeNumber(state.acs, 0, 0, 999)));
         displayHsEl.textContent = `${Number(toSafeNumber(state.hs, 0, 0, 100)).toFixed(1)}%`;
-
-        const winDelta = Math.round(toSafeNumber(state.winRrAmount, 18, -200, 200));
-        const lossDelta = Math.round(toSafeNumber(state.lossRrAmount, -16, -200, 200));
-        quickWinBtnEl.textContent = `+ Victoria (${winDelta >= 0 ? '+' : ''}${winDelta} RR)`;
-        quickLossBtnEl.textContent = `+ Derrota (${lossDelta >= 0 ? '+' : ''}${lossDelta} RR)`;
 
         if (state.endpointEnabled && state.endpointUrl) {
           endpointStatusBadgeEl.textContent = `AUTO • ${state.pollSeconds}S`;
@@ -1203,9 +1201,13 @@
         if (selectedRankPreviewEl) {
           selectedRankPreviewEl.textContent = parsed.full;
         }
+        if (selectedRankIconEl) {
+          selectedRankIconEl.innerHTML = getRankIconHtml(parsed.group, parsed.division, 'h-4 w-4', 'h-3.5 w-3.5');
+        }
 
         rankTierGridEl.innerHTML = RANK_GROUPS.map((g) => {
           const isSelected = g.id === parsed.group.id;
+          const previewDiv = g.hasDivisions ? (isSelected ? parsed.division || 'I' : 'I') : '';
           return `
             <button
               type="button"
@@ -1217,10 +1219,7 @@
                   : 'border-white/10 bg-slate-950 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
               }"
             >
-              <span
-                class="h-2 w-2 rounded-full"
-                style="background-color: ${g.color}; box-shadow: 0 0 6px ${g.color}80;"
-              ></span>
+              ${getRankIconHtml(g, previewDiv, 'h-5 w-5 shrink-0', 'h-4 w-4')}
               <span class="w-full truncate text-center">${escapeHtml(g.value)}</span>
             </button>
           `;
@@ -1229,7 +1228,7 @@
         rankTierGridEl.querySelectorAll('.rank-tier-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
             const groupId = btn.getAttribute('data-rank-group');
-            const targetGroup = RANK_GROUPS.find((g) => g.id === groupId) || RANK_GROUPS[6];
+            const targetGroup = RANK_GROUPS.find((g) => g.id === groupId) || RANK_GROUPS[0];
             if (!targetGroup.hasDivisions) {
               state.rankTier = targetGroup.value;
             } else {
@@ -1244,6 +1243,7 @@
 
         if (rankDivisionRowEl) {
           rankDivisionRowEl.classList.toggle('hidden', !parsed.group.hasDivisions);
+          rankDivisionRowEl.classList.toggle('flex', parsed.group.hasDivisions);
         }
 
         rankDivisionGridEl.innerHTML = RANK_DIVISIONS.map((div) => {
@@ -1281,11 +1281,12 @@
         inputRiotTagEl.value = state.riotTag;
         renderRankPicker();
         inputRrEl.value = String(state.rr);
-        inputWinRrEl.value = String(state.winRrAmount);
-        inputLossRrEl.value = String(state.lossRrAmount);
+        inputRrDeltaEl.value = String(state.rrDelta);
         inputWinsEl.value = String(state.wins);
         inputLossesEl.value = String(state.losses);
-        inputRrDeltaEl.value = String(state.rrDelta);
+        inputWinRrEl.value = String(state.winRrAmount);
+        inputLossRrEl.value = String(state.lossRrAmount);
+
         toggleShowKdEl.checked = Boolean(state.showKD);
         toggleShowAcsEl.checked = Boolean(state.showACS);
         toggleShowHsEl.checked = Boolean(state.showHS);
@@ -1293,46 +1294,10 @@
         inputAcsEl.value = String(state.acs);
         inputHsEl.value = String(state.hs);
 
+        inputCustomAccentEl.value = state.accent;
         inputEndpointUrlEl.value = state.endpointUrl;
         inputPollSecondsEl.value = String(state.pollSeconds);
         toggleEndpointEnabledEl.checked = Boolean(state.endpointEnabled);
-      }
-
-      // =========================================================================
-      // MANUAL MATCH & RR CONTROLS
-      // =========================================================================
-      function applyQuickMatch(isWin) {
-        const rrChange = isWin ? Number(state.winRrAmount || 0) : Number(state.lossRrAmount || 0);
-        if (isWin) {
-          state.wins = Math.round(toSafeNumber(state.wins + 1, 0, 0, 999));
-        } else {
-          state.losses = Math.round(toSafeNumber(state.losses + 1, 0, 0, 999));
-        }
-        state.rrDelta = Math.round(toSafeNumber(state.rrDelta + rrChange, 0, -999, 999));
-        state.rr = Math.round(toSafeNumber(state.rr + rrChange, 0, 0, 999));
-        saveState();
-        syncInputsFromState();
-        renderOverlay(true);
-      }
-
-      function adjustManualMatchConfig(isWin, delta) {
-        if (isWin) {
-          state.winRrAmount = Math.round(toSafeNumber(state.winRrAmount + delta, 18, -200, 200));
-        } else {
-          state.lossRrAmount = Math.round(toSafeNumber(state.lossRrAmount + delta, -16, -200, 200));
-        }
-        saveState();
-        syncInputsFromState();
-        renderOverlay(false);
-      }
-
-      function applyRrStep(delta) {
-        const step = Math.round(toSafeNumber(delta, 0, -200, 200));
-        state.rr = Math.round(toSafeNumber(state.rr + step, 0, 0, 999));
-        state.rrDelta = Math.round(toSafeNumber(state.rrDelta + step, 0, -999, 999));
-        saveState();
-        syncInputsFromState();
-        renderOverlay(true);
       }
 
       // =========================================================================
@@ -1359,21 +1324,15 @@
         const rankMatch = clean.match(
           /\b(?:Iron|Bronze|Silver|Gold|Platinum|Diamond|Ascendant|Immortal)\s+(?:I{1,3}|1|2|3)|\bRadiant\b/i
         );
-        if (rankMatch) {
-          out.rank = rankMatch[0].trim();
-        }
+        if (rankMatch) out.rank = rankMatch[0].trim();
 
         const rrMatch = clean.match(/([+-]?\d{1,3})\s*RR\b/i);
-        if (rrMatch) {
-          out.rr = Number(rrMatch[1]);
-        }
+        if (rrMatch) out.rr = Number(rrMatch[1]);
 
         const deltaMatch =
           clean.match(/\(([+-]\d{1,3})\s*RR\)/i) ||
           clean.match(/([+-]\d{1,3})\s*(?:today|hoy|mmr)/i);
-        if (deltaMatch) {
-          out.rrDelta = Number(deltaMatch[1]);
-        }
+        if (deltaMatch) out.rrDelta = Number(deltaMatch[1]);
 
         const wlMatch = clean.match(/\b(\d{1,3})\s*[WVF]\s*[-/]\s*(\d{1,3})\s*[LD]\b/i);
         if (wlMatch) {
@@ -1384,14 +1343,26 @@
         return Object.keys(out).length ? out : null;
       }
 
+      function sanitizeEndpointUrl(raw) {
+        let trimmed = String(raw || '').trim();
+        const macroMatch = trimmed.match(/^\$\(customapi\.(.+)\)$/i);
+        if (macroMatch && macroMatch[1]) {
+          trimmed = macroMatch[1].trim();
+        }
+        return trimmed;
+      }
+
       async function syncFromEndpoint(manualTrigger) {
-        const cleanedUrl = String(inputEndpointUrlEl.value || state.endpointUrl || '').trim();
+        const cleanedUrl = sanitizeEndpointUrl(inputEndpointUrlEl.value || state.endpointUrl);
         state.endpointUrl = cleanedUrl;
+        if (inputEndpointUrlEl.value !== cleanedUrl) {
+          inputEndpointUrlEl.value = cleanedUrl;
+        }
         saveState();
 
         if (!cleanedUrl) {
           if (manualTrigger) {
-            setEndpointFeedback('Introduce una URL de endpoint o API para sincronizar.', true);
+            setEndpointFeedback('Introduce una URL directa válida para sincronizar.', true);
           }
           renderOverlay(false);
           return;
@@ -1544,15 +1515,24 @@
         });
       }
 
-      function applyAccent(preset) {
-        const chosen = preset || ACCENT_PRESETS[0];
-        state.accent = chosen.color;
-        state.accentGlow = chosen.glow;
-        state.accentSoft = chosen.soft;
+      function applyAccent(presetOrHex) {
+        if (typeof presetOrHex === 'string') {
+          const hex = presetOrHex.trim();
+          const matched = ACCENT_PRESETS.find((p) => p.color.toLowerCase() === hex.toLowerCase());
+          state.accent = matched ? matched.color : hex;
+          state.accentGlow = matched ? matched.glow : hexToRgba(hex, 0.35);
+          state.accentSoft = matched ? matched.soft : hexToRgba(hex, 0.14);
+        } else {
+          const chosen = presetOrHex || ACCENT_PRESETS[0];
+          state.accent = chosen.color;
+          state.accentGlow = chosen.glow;
+          state.accentSoft = chosen.soft;
+        }
 
         document.documentElement.style.setProperty('--accent', state.accent);
         document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
         document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+        inputCustomAccentEl.value = state.accent;
 
         saveState();
         renderAccentGrid();
@@ -1562,6 +1542,7 @@
         const shouldOpen = typeof force === 'boolean' ? force : drawerEl.classList.contains('hidden');
         drawerEl.classList.toggle('hidden', !shouldOpen);
         toggleDrawerBtnEl.setAttribute('aria-expanded', String(shouldOpen));
+        toggleDrawerBtnEl.classList.toggle('opacity-100', shouldOpen);
       }
 
       function bindEvents() {
@@ -1572,52 +1553,25 @@
         });
 
         inputRiotTagEl.addEventListener('input', (e) => {
-          const cleanedTag = String(e.target.value || '').replace(/^#/, '');
-          if (e.target.value !== cleanedTag) {
-            e.target.value = cleanedTag;
+          const stripped = e.target.value.replace(/^#+/, '');
+          if (e.target.value !== stripped) {
+            e.target.value = stripped;
           }
-          state.riotTag = cleanedTag;
+          state.riotTag = stripped;
           saveState();
           renderOverlay(false);
         });
 
         inputRrEl.addEventListener('input', (e) => {
-          state.rr = Math.round(toSafeNumber(e.target.value, 0, 0, 999));
+          state.rr = Math.round(toSafeNumber(e.target.value, 0, 0, 100));
           saveState();
           renderOverlay(false);
         });
 
-        inputWinRrEl.addEventListener('input', (e) => {
-          state.winRrAmount = Math.round(toSafeNumber(e.target.value, 18, -200, 200));
+        inputRrDeltaEl.addEventListener('input', (e) => {
+          state.rrDelta = Math.round(toSafeNumber(e.target.value, 0, -999, 999));
           saveState();
           renderOverlay(false);
-        });
-
-        inputLossRrEl.addEventListener('input', (e) => {
-          state.lossRrAmount = Math.round(toSafeNumber(e.target.value, -16, -200, 200));
-          saveState();
-          renderOverlay(false);
-        });
-
-        document.querySelectorAll('.win-rr-step').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            adjustManualMatchConfig(true, Number(btn.getAttribute('data-win-rr-delta') || 0));
-          });
-        });
-
-        document.querySelectorAll('.loss-rr-step').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            adjustManualMatchConfig(false, Number(btn.getAttribute('data-loss-rr-delta') || 0));
-          });
-        });
-
-        quickWinBtnEl.addEventListener('click', () => applyQuickMatch(true));
-        quickLossBtnEl.addEventListener('click', () => applyQuickMatch(false));
-
-        document.querySelectorAll('.rr-step-btn').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            applyRrStep(Number(btn.getAttribute('data-rr-step') || 0));
-          });
         });
 
         inputWinsEl.addEventListener('input', (e) => {
@@ -1632,10 +1586,62 @@
           renderOverlay(false);
         });
 
-        inputRrDeltaEl.addEventListener('input', (e) => {
-          state.rrDelta = Math.round(toSafeNumber(e.target.value, 0, -999, 999));
+        plusWinBtnEl.addEventListener('click', () => {
+          state.wins = Math.round(toSafeNumber(state.wins + 1, 0, 0, 999));
           saveState();
-          renderOverlay(false);
+          syncInputsFromState();
+          renderOverlay(true);
+        });
+
+        minusWinBtnEl.addEventListener('click', () => {
+          state.wins = Math.round(toSafeNumber(state.wins - 1, 0, 0, 999));
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
+        });
+
+        plusLossBtnEl.addEventListener('click', () => {
+          state.losses = Math.round(toSafeNumber(state.losses + 1, 0, 0, 999));
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
+        });
+
+        minusLossBtnEl.addEventListener('click', () => {
+          state.losses = Math.round(toSafeNumber(state.losses - 1, 0, 0, 999));
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
+        });
+
+        inputWinRrEl.addEventListener('input', (e) => {
+          state.winRrAmount = Math.abs(Math.round(toSafeNumber(e.target.value, 18, 0, 200)));
+          saveState();
+        });
+
+        inputLossRrEl.addEventListener('input', (e) => {
+          state.lossRrAmount = Math.abs(Math.round(toSafeNumber(e.target.value, 16, 0, 200)));
+          saveState();
+        });
+
+        applyWinRrBtnEl.addEventListener('click', () => {
+          const gain = Math.abs(Math.round(toSafeNumber(inputWinRrEl.value, state.winRrAmount, 0, 200)));
+          state.winRrAmount = gain;
+          state.rr = Math.round(toSafeNumber(state.rr + gain, 0, 0, 999));
+          state.rrDelta = Math.round(toSafeNumber(state.rrDelta + gain, 0, -999, 999));
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
+        });
+
+        applyLossRrBtnEl.addEventListener('click', () => {
+          const loss = Math.abs(Math.round(toSafeNumber(inputLossRrEl.value, state.lossRrAmount, 0, 200)));
+          state.lossRrAmount = loss;
+          state.rr = Math.round(toSafeNumber(state.rr - loss, 0, 0, 999));
+          state.rrDelta = Math.round(toSafeNumber(state.rrDelta - loss, 0, -999, 999));
+          saveState();
+          syncInputsFromState();
+          renderOverlay(true);
         });
 
         toggleShowKdEl.addEventListener('change', (e) => {
@@ -1672,6 +1678,10 @@
           state.hs = Number(toSafeNumber(e.target.value, 0, 0, 100).toFixed(1));
           saveState();
           renderOverlay(false);
+        });
+
+        inputCustomAccentEl.addEventListener('input', (e) => {
+          applyAccent(e.target.value);
         });
 
         inputEndpointUrlEl.addEventListener('input', (e) => {
