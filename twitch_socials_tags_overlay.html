@@ -207,21 +207,21 @@
       <div class="mt-3.5 space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            1. Redes Sociales
-          </span>
-          <span class="font-mono text-[10px] text-slate-400">
-            Añadir red social
-          </span>
-        </div>
-
-        <!-- Clear working "Añadir red social" form -->
-        <div class="rounded-xl border border-pink-300/25 bg-slate-900/90 p-2.5">
-          <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center">
-            <select
-              id="new-platform-select"
-              aria-label="Seleccionar plataforma para añadir"
-              class="w-full rounded-lg border border-white/15 bg-slate-950 px-2.5 py-1.5 font-mono text-[11px] font-bold text-pink-200 outline-none focus:border-pink-300 sm:w-[138px] sm:shrink-0"
-            ></select>
+        <!-- Clear button-grid "Añadir red social" form (no native <select> popups in OBS Interact) -->
+        <div class="space-y-2 rounded-xl border border-pink-300/25 bg-slate-900/90 p-2.5">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] text-slate-400">
+              1. Elige la red:
+            </span>
+            <span
+              id="selected-new-platform-label"
+              class="font-mono text-[10px] font-bold text-pink-200"
+            >
+              Instagram
+            </span>
+          </div>
+          <div id="new-platform-grid" class="grid grid-cols-3 gap-1"></div>
+          <div class="flex items-center gap-1.5 pt-0.5">
             <input
               id="new-handle-input"
               type="text"
@@ -494,9 +494,9 @@
     (function () {
       'use strict';
 
-      const STORAGE_KEY = 'twitch_redes_overlay_v4';
+      const STORAGE_KEY = 'twitch_redes_overlay_v5';
 
-      // All supported platforms (used in both "Añadir red social" and every item selector)
+      // All supported platforms (used in both "Añadir red social" button grid and item quick-switchers)
       const PLATFORMS = [
         {
           id: 'twitch',
@@ -727,9 +727,12 @@
       const redesListEl = document.getElementById('redes-list');
       const itemEditorListEl = document.getElementById('item-editor-list');
 
-      const newPlatformSelectEl = document.getElementById('new-platform-select');
+      const newPlatformGridEl = document.getElementById('new-platform-grid');
+      const selectedNewPlatformLabelEl = document.getElementById('selected-new-platform-label');
       const newHandleInputEl = document.getElementById('new-handle-input');
       const addSocialSubmitBtn = document.getElementById('add-social-submit-btn');
+
+      let selectedNewPlatformId = 'instagram';
 
       const presetChipsGridEl = document.getElementById('preset-chips-grid');
       const customSymbolInput = document.getElementById('custom-symbol-input');
@@ -766,18 +769,51 @@
         return PLATFORMS.find((p) => p.id === id) || PLATFORMS[PLATFORMS.length - 1];
       }
 
-      function populateAddPlatformSelect() {
-        if (!newPlatformSelectEl) return;
-        const previousVal = newPlatformSelectEl.value || 'instagram';
-        newPlatformSelectEl.innerHTML = PLATFORMS.map(
-          (p) => `<option value="${p.id}">${escapeHtml(p.name)}</option>`
-        ).join('');
-        newPlatformSelectEl.value = PLATFORMS.some((p) => p.id === previousVal) ? previousVal : 'instagram';
+      function getShortPlatformLabel(platformObj) {
+        if (!platformObj) return 'Web';
+        if (platformObj.id === 'x') return 'X';
+        if (platformObj.id === 'web') return 'Web';
+        return platformObj.name;
+      }
+
+      function renderNewPlatformGrid() {
+        if (!newPlatformGridEl) return;
+        const activeObj = getPlatform(selectedNewPlatformId);
+        selectedNewPlatformId = activeObj.id;
+
+        if (selectedNewPlatformLabelEl) {
+          selectedNewPlatformLabelEl.textContent = activeObj.name;
+        }
+
+        newPlatformGridEl.innerHTML = PLATFORMS.map((p) => {
+          const isSelected = p.id === selectedNewPlatformId;
+          return `
+            <button
+              type="button"
+              data-new-platform="${p.id}"
+              title="${escapeHtml(p.name)}"
+              class="new-platform-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
+                isSelected
+                  ? 'border-pink-300/70 bg-pink-300/20 font-bold text-white shadow-sm'
+                  : 'border-white/10 bg-slate-950 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
+              }"
+            >
+              <span class="flex shrink-0 items-center justify-center" style="color: ${isSelected ? 'var(--accent)' : 'currentColor'};">${p.svg}</span>
+              <span class="truncate">${escapeHtml(getShortPlatformLabel(p))}</span>
+            </button>
+          `;
+        }).join('');
+
+        newPlatformGridEl.querySelectorAll('.new-platform-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            selectedNewPlatformId = btn.getAttribute('data-new-platform') || 'instagram';
+            renderNewPlatformGrid();
+          });
+        });
       }
 
       function addNewSocialItem() {
-        const selectedPlatformId = newPlatformSelectEl ? newPlatformSelectEl.value : 'instagram';
-        const platformObj = getPlatform(selectedPlatformId);
+        const platformObj = getPlatform(selectedNewPlatformId);
         const rawHandle = newHandleInputEl ? newHandleInputEl.value.trim() : '';
         const finalHandle = rawHandle || `@tu_${platformObj.id}`;
 
@@ -793,6 +829,17 @@
           newHandleInputEl.focus();
         }
 
+        saveState();
+        renderItemEditor();
+        renderOverlay();
+      }
+
+      function cycleItemPlatform(id) {
+        const item = state.items.find((i) => i.id === id);
+        if (!item) return;
+        const currentIdx = PLATFORMS.findIndex((p) => p.id === item.platform);
+        const nextIdx = currentIdx >= 0 ? (currentIdx + 1) % PLATFORMS.length : 0;
+        item.platform = PLATFORMS[nextIdx].id;
         saveState();
         renderItemEditor();
         renderOverlay();
@@ -1037,9 +1084,6 @@
         itemEditorListEl.innerHTML = state.items
           .map((item, idx) => {
             const platform = getPlatform(item.platform);
-            const selectHtml = PLATFORMS.map(
-              (p) => `<option value="${p.id}" ${p.id === platform.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
-            ).join('');
 
             return `
               <div
@@ -1053,16 +1097,15 @@
                     title="Activar / desactivar"
                     class="soc-enabled-cb h-3.5 w-3.5 shrink-0 cursor-pointer accent-pink-300"
                   />
-                  <span
-                    class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/5"
-                    style="color: var(--accent);"
-                  >${platform.svg}</span>
-                  <select
-                    aria-label="Plataforma"
-                    class="soc-platform-select w-[108px] shrink-0 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 font-mono text-[10px] font-bold text-pink-200 outline-none focus:border-pink-300"
+                  <button
+                    type="button"
+                    title="Cambiar red social (${escapeHtml(platform.name)})"
+                    class="soc-cycle-btn flex h-7 shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-slate-950 px-2 font-mono text-[10px] font-bold text-pink-200 transition hover:border-pink-300/50 hover:bg-slate-800"
                   >
-                    ${selectHtml}
-                  </select>
+                    <span class="flex items-center justify-center" style="color: var(--accent);">${platform.svg}</span>
+                    <span>${escapeHtml(getShortPlatformLabel(platform))}</span>
+                    <span class="text-[9px] text-slate-400">↻</span>
+                  </button>
                   <input
                     type="text"
                     value="${escapeHtml(item.handle)}"
@@ -1106,11 +1149,8 @@
             renderOverlay();
           });
 
-          row.querySelector('.soc-platform-select').addEventListener('change', (e) => {
-            item.platform = e.target.value;
-            saveState();
-            renderItemEditor();
-            renderOverlay();
+          row.querySelector('.soc-cycle-btn').addEventListener('click', () => {
+            cycleItemPlatform(id);
           });
 
           row.querySelector('.soc-handle-input').addEventListener('input', (e) => {
@@ -1332,7 +1372,7 @@
         document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
         document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
 
-        populateAddPlatformSelect();
+        renderNewPlatformGrid();
         renderPresetChips();
         renderAccentGrid();
         applyPosition(state.position);
