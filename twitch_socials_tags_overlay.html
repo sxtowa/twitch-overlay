@@ -34,7 +34,7 @@
       box-sizing: border-box;
     }
 
-    /* Strictly transparent background by default for 1920x1080 OBS Browser Source */
+    /* Transparent root for 1920x1080 OBS Browser Source */
     html,
     body {
       margin: 0;
@@ -47,7 +47,7 @@
       user-select: none;
     }
 
-    /* Optional preview backdrops inside customizer (never affects OBS transparency) */
+    /* Optional preview backdrops inside customizer (OBS stays transparent) */
     body.preview-dark {
       background-color: #07090f;
       background-image:
@@ -64,20 +64,19 @@
     }
 
     /* Dark cyber-minimalist glassmorphism card */
-    .socials-glass {
+    .redes-glass {
       position: relative;
-      background: linear-gradient(150deg, rgba(11, 14, 24, 0.88), rgba(17, 22, 36, 0.78));
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(14, 17, 25, 0.78);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.11);
       box-shadow:
         0 20px 48px -12px rgba(0, 0, 0, 0.72),
-        0 0 32px -10px var(--accent-glow),
+        0 0 30px -10px var(--accent-glow),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
-      transition: box-shadow 0.4s ease, border-color 0.4s ease;
+      transition: box-shadow 0.35s ease, border-color 0.35s ease;
     }
 
-    /* Corner placement utilities for 1920x1080 OBS browser source */
     .pos-bottom-left {
       bottom: 24px;
       left: 24px;
@@ -106,33 +105,11 @@
       left: auto;
     }
 
-    /* Subtle scanline sheen */
-    .glass-sheen {
-      background: linear-gradient(
-        115deg,
-        transparent 25%,
-        rgba(255, 255, 255, 0.03) 48%,
-        transparent 72%
-      );
-      background-size: 220% 100%;
-      animation: sheenSweep 9s linear infinite;
-    }
-
-    @keyframes sheenSweep {
-      0% {
-        background-position: 200% 0;
-      }
-      100% {
-        background-position: -200% 0;
-      }
-    }
-
-    /* Custom scrollbar for customizer drawer */
     .custom-scroll::-webkit-scrollbar {
       width: 5px;
     }
     .custom-scroll::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.45);
       border-radius: 999px;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
@@ -143,37 +120,44 @@
 </head>
 <body>
   <!-- ===================================================================== -->
-  <!-- REDES OVERLAY MODULE (Transparent 1920x1080 OBS Overlay)             -->
+  <!-- MAIN REDES OVERLAY CONTAINER                                          -->
   <!-- ===================================================================== -->
-  <aside
-    id="socials-widget"
-    class="socials-glass glass-sheen pos-bottom-left fixed z-10 w-[440px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
-    aria-label="Twitch Redes Overlay"
-  >
-    <!-- Top Accent Bar -->
-    <div
-      class="h-[2.5px] w-full"
-      style="background: linear-gradient(90deg, var(--accent), rgba(255,255,255,0.28) 70%, transparent);"
-    ></div>
+  <div id="overlay-stage" class="relative h-full w-full max-w-[1920px]">
+    <aside
+      id="redes-widget"
+      class="redes-glass pos-bottom-left fixed z-10 w-[448px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
+      aria-label="Redes Overlay"
+    >
+      <!-- Top Accent Strip -->
+      <div
+        class="h-[2.5px] w-full"
+        style="background: linear-gradient(90deg, var(--accent), var(--accent-soft) 75%, transparent);"
+      ></div>
 
-    <div class="p-4">
-      <!-- Compact Header (No counter badge) -->
-      <div class="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
-        <div class="flex items-center gap-2">
-          <span
-            class="h-2 w-2 rounded-full"
-            style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
-          ></span>
-          <span class="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-300">
-            REDES
-          </span>
+      <div class="p-4">
+        <!-- Header strictly titled "Redes" with optional header symbols -->
+        <div class="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
+          <div class="flex min-w-0 items-center gap-2">
+            <span
+              class="h-2 w-2 shrink-0 rounded-full"
+              style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
+            ></span>
+            <span class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-200">
+              Redes
+            </span>
+            <span
+              id="header-symbols-display"
+              class="hidden truncate font-mono text-xs font-semibold tracking-wide"
+              style="color: var(--accent);"
+            ></span>
+          </div>
         </div>
-      </div>
 
-      <!-- Dynamic Social Items Container -->
-      <div id="socials-list" class="grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
-    </div>
-  </aside>
+        <!-- Active Social Items -->
+        <div id="redes-list" class="grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
+      </div>
+    </aside>
+  </div>
 
   <!-- ===================================================================== -->
   <!-- COLLAPSIBLE CUSTOMIZER DRAWER (Bottom-Right)                          -->
@@ -181,7 +165,7 @@
   <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
     <section
       id="customizer-drawer"
-      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[390px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[410px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
     >
       <!-- Drawer Header -->
       <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
@@ -195,12 +179,20 @@
         </div>
         <div class="flex items-center gap-1.5">
           <button
+            id="reset-defaults-btn"
+            type="button"
+            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
+            title="Restablecer por defecto"
+          >
+            Reset
+          </button>
+          <button
             id="hide-ui-btn"
             type="button"
             class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
-            title="Ocultar interfaz de configuración (Atajo: H)"
+            title="Ocultar interfaz (Atajo: H)"
           >
-            Hide UI
+            Ocultar UI
           </button>
           <button
             id="close-drawer-btn"
@@ -213,28 +205,161 @@
         </div>
       </div>
 
-      <!-- 1. Manage Social Items -->
+      <!-- 1. SOCIAL ITEMS -->
       <div class="mt-3.5 space-y-2.5">
         <div class="flex items-center justify-between">
           <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            1. Redes
+            1. Redes Sociales
           </span>
           <button
-            id="add-tag-btn"
+            id="add-item-btn"
             type="button"
             class="rounded-lg border border-pink-300/40 bg-pink-300/15 px-2.5 py-1 font-mono text-[10px] font-bold text-pink-200 transition hover:bg-pink-300/25 active:scale-95"
           >
             + Añadir Red
           </button>
         </div>
-
-        <div id="tag-editor-list" class="space-y-2"></div>
+        <div id="item-editor-list" class="space-y-2"></div>
       </div>
 
-      <!-- 2. Corner Placement & Layout Mode -->
+      <!-- 2. MULTI-SYMBOL INDEPENDENT CUSTOMIZATION -->
+      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+            2. Símbolos (Encabezado y Nombre)
+          </span>
+        </div>
+
+        <!-- Target Switcher: Encabezado vs Al lado del nombre -->
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">
+            Destino para añadir / combinar símbolos
+          </span>
+          <div class="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+            <button
+              type="button"
+              data-symbol-target="header"
+              class="target-tab-btn rounded-lg bg-pink-300/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-pink-200 transition"
+            >
+              Encabezado
+            </button>
+            <button
+              type="button"
+              data-symbol-target="handle"
+              class="target-tab-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 transition hover:bg-white/5"
+            >
+              Al lado del nombre
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick-Add Preset Chips -->
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">
+            Añadir rápido al destino seleccionado
+          </span>
+          <div id="preset-chips-grid" class="mt-1.5 flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <!-- Custom Symbol Input + Add Button -->
+        <div>
+          <label for="custom-symbol-input" class="block font-mono text-[10px] text-slate-400">
+            Símbolo o combinación personalizada
+          </label>
+          <div class="mt-1 flex items-center gap-1.5">
+            <input
+              id="custom-symbol-input"
+              type="text"
+              maxlength="24"
+              placeholder="Escribe o pega símbolos (ej. Ი𐑼, ɞ, ♡, ✦)..."
+              class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
+            />
+            <button
+              id="add-custom-symbol-btn"
+              type="button"
+              class="shrink-0 rounded-lg border border-pink-300/40 bg-pink-300/20 px-3 py-1.5 font-mono text-[10px] font-bold text-pink-100 transition hover:bg-pink-300/30 active:scale-95"
+            >
+              Añadir
+            </button>
+          </div>
+        </div>
+
+        <!-- A) Encabezado Symbol List Box -->
+        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <label class="inline-flex cursor-pointer items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
+              <input
+                id="header-symbols-enabled"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+              <span>Encabezado</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <span
+                id="header-combined-preview"
+                class="max-w-[130px] truncate font-mono text-[11px] font-semibold"
+                style="color: var(--accent);"
+              ></span>
+              <button
+                id="clear-header-symbols-btn"
+                type="button"
+                class="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
+              >
+                Limpiar
+              </button>
+            </div>
+          </div>
+          <div id="header-symbols-list" class="mt-2 flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <!-- B) Al lado del nombre Symbol List Box -->
+        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <label class="inline-flex cursor-pointer items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
+              <input
+                id="handle-symbols-enabled"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+              <span>Al lado del nombre</span>
+            </label>
+            <div class="flex items-center gap-2">
+              <span
+                id="handle-combined-preview"
+                class="max-w-[120px] truncate font-mono text-[11px] font-semibold"
+                style="color: var(--accent);"
+              ></span>
+              <button
+                id="clear-handle-symbols-btn"
+                type="button"
+                class="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
+              >
+                Limpiar
+              </button>
+            </div>
+          </div>
+
+          <!-- Handle symbol placement: after or around -->
+          <div class="mt-2 flex items-center justify-between gap-2">
+            <span class="font-mono text-[10px] text-slate-400">Ubicación junto al usuario</span>
+            <select
+              id="handle-symbol-position"
+              class="rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-[10px] font-semibold text-slate-200 outline-none focus:border-pink-300"
+            >
+              <option value="after">A la derecha (@usuario ♡✦)</option>
+              <option value="around">Rodeando (♡ @usuario ✦)</option>
+            </select>
+          </div>
+
+          <div id="handle-symbols-list" class="mt-2 flex flex-wrap gap-1.5"></div>
+        </div>
+      </div>
+
+      <!-- 3. POSITION, LAYOUT, ACCENT & PREVIEW BACKDROP -->
       <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-          2. Posición y Diseño
+          3. Posición, Estilo y Color
         </div>
 
         <div>
@@ -245,67 +370,60 @@
               data-pos="pos-bottom-left"
               class="pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white"
             >
-              ↙ Bottom Left
+              ↙ Abajo Izquierda
             </button>
             <button
               type="button"
               data-pos="pos-bottom-right"
               class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
             >
-              ↘ Bottom Right
+              ↘ Abajo Derecha
             </button>
             <button
               type="button"
               data-pos="pos-top-left"
               class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
             >
-              ↖ Top Left
+              ↖ Arriba Izquierda
             </button>
             <button
               type="button"
               data-pos="pos-top-right"
               class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
             >
-              ↗ Top Right
+              ↗ Arriba Derecha
             </button>
           </div>
         </div>
 
         <div>
-          <span class="block font-mono text-[10px] text-slate-400">Estilo de distribución</span>
+          <span class="block font-mono text-[10px] text-slate-400">Estilo</span>
           <div class="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
             <button
               type="button"
-              data-layout="grid"
+              data-layout="card"
               class="layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200"
             >
-              Cuadrícula (2 Col)
+              Tarjeta (Card)
             </button>
             <button
               type="button"
-              data-layout="compact-row"
+              data-layout="compact"
               class="layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
             >
-              Horizontal Compacto
+              Compacto Horizontal
             </button>
           </div>
         </div>
-      </div>
-
-      <!-- 3. Accent Color & Preview Backdrop -->
-      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
-        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-          3. Color de Acento y Vista Previa
-        </div>
 
         <div>
-          <span class="block font-mono text-[10px] text-slate-400">Color de acento</span>
+          <span class="block font-mono text-[10px] text-slate-400">Paleta de acento (11 colores)</span>
           <div id="accent-presets-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
         </div>
 
         <div>
           <span class="block font-mono text-[10px] text-slate-400">
-            Fondo de vista previa (OBS siempre es transparente)
+            Fondo de vista previa (OBS siempre transparente)
           </span>
           <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
             <button
@@ -334,12 +452,12 @@
       </div>
     </section>
 
-    <!-- Discreet Floating Toggle Pill -->
+    <!-- Bottom-Right Toggle Button -->
     <button
       id="toggle-drawer-btn"
       type="button"
       title="Configurar Redes Overlay (Atajo: C)"
-      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-60 shadow-lg backdrop-blur-md transition hover:border-pink-300/50 hover:text-pink-200 hover:opacity-100 focus:opacity-100"
+      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-65 shadow-lg backdrop-blur-md transition hover:border-pink-300/50 hover:text-pink-200 hover:opacity-100 focus:opacity-100"
       aria-expanded="false"
       aria-controls="customizer-drawer"
     >
@@ -355,130 +473,121 @@
     (function () {
       'use strict';
 
-      // =========================================================================
-      // PLATFORM SVG ICONS & PRESETS
-      // =========================================================================
-      const PLATFORM_OPTIONS = [
+      const STORAGE_KEY = 'twitch_redes_overlay_v3';
+
+      // Platform SVG Icons (never plain platform text names on overlay items)
+      const PLATFORMS = [
         {
           id: 'twitch',
-          label: 'TWITCH',
+          name: 'Twitch',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>`,
         },
         {
           id: 'x',
-          label: 'X / TW',
+          name: 'X',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
         },
         {
           id: 'tiktok',
-          label: 'TIKTOK',
+          name: 'TikTok',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>`,
         },
         {
           id: 'discord',
-          label: 'DISCORD',
+          name: 'Discord',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`,
         },
         {
           id: 'instagram',
-          label: 'IG',
+          name: 'Instagram',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>`,
         },
         {
           id: 'youtube',
-          label: 'YT',
+          name: 'YouTube',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
         },
         {
           id: 'kick',
-          label: 'KICK',
+          name: 'Kick',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h6.5v5.2L14.8 3H22l-6.6 7.4L22.4 21h-7.3l-5.6-6.2V21H3Z"/></svg>`,
         },
         {
           id: 'github',
-          label: 'GITHUB',
+          name: 'GitHub',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/></svg>`,
         },
         {
-          id: 'link',
-          label: 'WEB',
+          id: 'web',
+          name: 'Web',
           svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5a14.5 14.5 0 0 1 0 19"/><path d="M12 2.5a14.5 14.5 0 0 0 0 19"/></svg>`,
         },
       ];
 
-      function detectPlatform(item) {
-        if (item && item.platform) {
-          const explicit = PLATFORM_OPTIONS.find((p) => p.id === item.platform);
-          if (explicit) return explicit;
-        }
-        const raw = `${(item && item.label) || ''} ${(item && item.handle) || ''}`.toLowerCase();
-        if (raw.includes('twitch')) return PLATFORM_OPTIONS[0];
-        if (raw.includes('tiktok')) return PLATFORM_OPTIONS[2];
-        if (raw.includes('discord') || raw.includes('discord.gg')) return PLATFORM_OPTIONS[3];
-        if (raw.includes('insta') || raw.includes('ig')) return PLATFORM_OPTIONS[4];
-        if (raw.includes('youtu') || raw.includes('yt')) return PLATFORM_OPTIONS[5];
-        if (raw.includes('kick')) return PLATFORM_OPTIONS[6];
-        if (raw.includes('github')) return PLATFORM_OPTIONS[7];
-        if (raw.includes('twitter') || raw.includes('x /') || raw === 'x') return PLATFORM_OPTIONS[1];
-        return PLATFORM_OPTIONS[8];
-      }
-
+      // 11 Accent Color Presets (Rosa Pastel #f9a8d4 default first)
       const ACCENT_PRESETS = [
         {
-          id: 'pastel-pink',
+          id: 'rosa-pastel',
           name: 'Rosa Pastel',
           color: '#f9a8d4',
           glow: 'rgba(249, 168, 212, 0.34)',
           soft: 'rgba(249, 168, 212, 0.14)',
         },
         {
-          id: 'pastel-lilac',
-          name: 'Lila Pastel',
+          id: 'spotify',
+          name: 'Spotify',
+          color: '#1db954',
+          glow: 'rgba(29, 185, 84, 0.34)',
+          soft: 'rgba(29, 185, 84, 0.14)',
+        },
+        {
+          id: 'twitch',
+          name: 'Twitch',
+          color: '#9146ff',
+          glow: 'rgba(145, 70, 255, 0.36)',
+          soft: 'rgba(145, 70, 255, 0.15)',
+        },
+        {
+          id: 'cyan',
+          name: 'Cyan',
+          color: '#06b6d4',
+          glow: 'rgba(6, 182, 212, 0.34)',
+          soft: 'rgba(6, 182, 212, 0.14)',
+        },
+        {
+          id: 'lavanda',
+          name: 'Lavanda',
           color: '#c4b5fd',
           glow: 'rgba(196, 181, 253, 0.34)',
           soft: 'rgba(196, 181, 253, 0.14)',
         },
         {
-          id: 'pastel-mint',
-          name: 'Menta Pastel',
+          id: 'menta',
+          name: 'Menta',
           color: '#6ee7b7',
           glow: 'rgba(110, 231, 183, 0.34)',
           soft: 'rgba(110, 231, 183, 0.14)',
         },
         {
-          id: 'pastel-peach',
-          name: 'Melocotón Pastel',
+          id: 'melocoton',
+          name: 'Melocotón',
           color: '#fdba74',
           glow: 'rgba(253, 186, 116, 0.34)',
           soft: 'rgba(253, 186, 116, 0.14)',
         },
         {
-          id: 'pastel-sky',
-          name: 'Azul Cielo Pastel',
-          color: '#93c5fd',
-          glow: 'rgba(147, 197, 253, 0.34)',
-          soft: 'rgba(147, 197, 253, 0.14)',
+          id: 'cielo',
+          name: 'Cielo',
+          color: '#7dd3fc',
+          glow: 'rgba(125, 211, 252, 0.34)',
+          soft: 'rgba(125, 211, 252, 0.14)',
         },
         {
-          id: 'neon-lavender',
-          name: 'Lavanda Neón',
-          color: '#a855f7',
-          glow: 'rgba(168, 85, 247, 0.36)',
-          soft: 'rgba(168, 85, 247, 0.15)',
-        },
-        {
-          id: 'electric-cyan',
-          name: 'Cian Eléctrico',
-          color: '#22d3ee',
-          glow: 'rgba(34, 211, 238, 0.34)',
-          soft: 'rgba(34, 211, 238, 0.14)',
-        },
-        {
-          id: 'emerald-green',
-          name: 'Verde Esmeralda',
-          color: '#10b981',
-          glow: 'rgba(16, 185, 129, 0.34)',
-          soft: 'rgba(16, 185, 129, 0.14)',
+          id: 'neon-lima',
+          name: 'Neón Lima',
+          color: '#a3e635',
+          glow: 'rgba(163, 230, 53, 0.34)',
+          soft: 'rgba(163, 230, 53, 0.14)',
         },
         {
           id: 'coral',
@@ -488,94 +597,140 @@
           soft: 'rgba(251, 113, 133, 0.14)',
         },
         {
-          id: 'golden',
+          id: 'dorado',
           name: 'Dorado',
           color: '#fbbf24',
           glow: 'rgba(251, 191, 36, 0.34)',
           soft: 'rgba(251, 191, 36, 0.14)',
         },
-        {
-          id: 'arctic-white',
-          name: 'Blanco Ártico',
-          color: '#e2e8f0',
-          glow: 'rgba(226, 232, 240, 0.30)',
-          soft: 'rgba(226, 232, 240, 0.12)',
-        },
       ];
 
-      const DEFAULT_TAGS = [
-        { id: 'tag-twitch', platform: 'twitch', label: 'TWITCH', handle: '@tu_canal', enabled: true },
-        { id: 'tag-x', platform: 'x', label: 'X / TW', handle: '@tu_handle', enabled: true },
-        { id: 'tag-tiktok', platform: 'tiktok', label: 'TIKTOK', handle: '@tu_tiktok', enabled: true },
-        { id: 'tag-discord', platform: 'discord', label: 'DISCORD', handle: 'discord.gg/tu-clan', enabled: true },
-        { id: 'tag-instagram', platform: 'instagram', label: 'IG', handle: '@tu_ig', enabled: false },
-        { id: 'tag-youtube', platform: 'youtube', label: 'YT', handle: '@tu_youtube', enabled: false },
-      ];
+      const SYMBOL_PRESETS = ['Ი𐑼', 'ɞ', '♡', '✦', '✧', '⋆', '˚', '୨ৎ', '✿', '☾', '⚡', '♥'];
 
-      const STORAGE = {
-        TAGS: 'tw_socials_tags_v1',
-        POSITION: 'tw_socials_position_v1',
-        LAYOUT: 'tw_socials_layout_v1',
-        ACCENT: 'tw_socials_accent_v1',
-        ACCENT_GLOW: 'tw_socials_accent_glow_v1',
-        ACCENT_SOFT: 'tw_socials_accent_soft_v1',
-      };
+      function createDefaultState() {
+        return {
+          items: [
+            { id: 'soc-1', platform: 'twitch', handle: '@tu_canal', enabled: true },
+            { id: 'soc-2', platform: 'x', handle: '@tu_handle', enabled: true },
+            { id: 'soc-3', platform: 'tiktok', handle: '@tu_tiktok', enabled: true },
+            { id: 'soc-4', platform: 'discord', handle: 'discord.gg/tu-sala', enabled: true },
+          ],
+          headerSymbolsEnabled: true,
+          headerSymbols: ['♡', '✦'],
+          handleSymbolsEnabled: true,
+          handleSymbols: ['Ი𐑼', 'ɞ'],
+          handleSymbolPosition: 'after', // 'after' | 'around'
+          activeSymbolTarget: 'header', // 'header' | 'handle'
+          position: 'pos-bottom-left', // 'pos-bottom-left' | 'pos-bottom-right' | 'pos-top-left' | 'pos-top-right'
+          layout: 'card', // 'card' | 'compact'
+          backdrop: 'transparent', // 'transparent' | 'dark' | 'light'
+          accent: ACCENT_PRESETS[0].color,
+          accentGlow: ACCENT_PRESETS[0].glow,
+          accentSoft: ACCENT_PRESETS[0].soft,
+        };
+      }
 
-      function loadTags() {
+      function sanitizeStringArray(arr, fallback) {
+        if (!Array.isArray(arr)) return fallback.slice();
+        return arr
+          .map((s) => String(s || '').trim())
+          .filter((s) => s.length > 0);
+      }
+
+      function loadState() {
+        const defaults = createDefaultState();
         try {
-          const raw = localStorage.getItem(STORAGE.TAGS);
-          if (!raw) return DEFAULT_TAGS.map((t) => ({ ...t }));
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return defaults;
           const parsed = JSON.parse(raw);
-          if (!Array.isArray(parsed) || parsed.length === 0) {
-            return DEFAULT_TAGS.map((t) => ({ ...t }));
-          }
-          return parsed.map((item, idx) => {
-            const detected = detectPlatform(item);
-            return {
-              id: String(item.id || `tag-${idx}-${Date.now()}`),
-              platform: detected.id,
-              label: String(item.label || detected.label),
-              handle: String(item.handle || ''),
-              enabled: item.enabled !== false,
-            };
-          });
+          if (!parsed || typeof parsed !== 'object') return defaults;
+
+          const items =
+            Array.isArray(parsed.items) && parsed.items.length > 0
+              ? parsed.items.map((item, index) => ({
+                  id: String(item.id || `soc-${index}-${Date.now()}`),
+                  platform: PLATFORMS.some((p) => p.id === item.platform) ? item.platform : 'web',
+                  handle: String(item.handle || ''),
+                  enabled: item.enabled !== false,
+                }))
+              : defaults.items;
+
+          const validPositions = ['pos-bottom-left', 'pos-bottom-right', 'pos-top-left', 'pos-top-right'];
+          const position = validPositions.includes(parsed.position) ? parsed.position : defaults.position;
+          const layout = parsed.layout === 'compact' ? 'compact' : 'card';
+          const backdrop = ['transparent', 'dark', 'light'].includes(parsed.backdrop)
+            ? parsed.backdrop
+            : 'transparent';
+          const handleSymbolPosition = parsed.handleSymbolPosition === 'around' ? 'around' : 'after';
+          const activeSymbolTarget = parsed.activeSymbolTarget === 'handle' ? 'handle' : 'header';
+
+          const preset =
+            ACCENT_PRESETS.find(
+              (p) => p.color.toLowerCase() === String(parsed.accent || '').toLowerCase()
+            ) || ACCENT_PRESETS[0];
+
+          return {
+            items,
+            headerSymbolsEnabled: parsed.headerSymbolsEnabled !== false,
+            headerSymbols: sanitizeStringArray(parsed.headerSymbols, defaults.headerSymbols),
+            handleSymbolsEnabled: parsed.handleSymbolsEnabled !== false,
+            handleSymbols: sanitizeStringArray(parsed.handleSymbols, defaults.handleSymbols),
+            handleSymbolPosition,
+            activeSymbolTarget,
+            position,
+            layout,
+            backdrop,
+            accent: preset.color,
+            accentGlow: typeof parsed.accentGlow === 'string' && parsed.accentGlow ? parsed.accentGlow : preset.glow,
+            accentSoft: typeof parsed.accentSoft === 'string' && parsed.accentSoft ? parsed.accentSoft : preset.soft,
+          };
         } catch (err) {
-          console.error('Error loading redes from localStorage:', err);
-          return DEFAULT_TAGS.map((t) => ({ ...t }));
+          console.error('Error loading overlay state:', err);
+          return defaults;
         }
       }
 
-      const state = {
-        tags: loadTags(),
-        position: localStorage.getItem(STORAGE.POSITION) || 'pos-bottom-left',
-        layout: localStorage.getItem(STORAGE.LAYOUT) || 'grid',
-      };
+      let state = loadState();
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (err) {
+          console.error('Error saving overlay state:', err);
+        }
+      }
 
       // =========================================================================
-      // DOM ELEMENTS
+      // DOM REFERENCES
       // =========================================================================
-      const widgetEl = document.getElementById('socials-widget');
-      const socialsListEl = document.getElementById('socials-list');
-      const tagEditorListEl = document.getElementById('tag-editor-list');
-      const addTagBtn = document.getElementById('add-tag-btn');
+      const widgetEl = document.getElementById('redes-widget');
+      const headerSymbolsDisplayEl = document.getElementById('header-symbols-display');
+      const redesListEl = document.getElementById('redes-list');
+      const itemEditorListEl = document.getElementById('item-editor-list');
+      const addItemBtn = document.getElementById('add-item-btn');
+
+      const presetChipsGridEl = document.getElementById('preset-chips-grid');
+      const customSymbolInput = document.getElementById('custom-symbol-input');
+      const addCustomSymbolBtn = document.getElementById('add-custom-symbol-btn');
+
+      const headerSymbolsEnabledCb = document.getElementById('header-symbols-enabled');
+      const headerCombinedPreviewEl = document.getElementById('header-combined-preview');
+      const clearHeaderSymbolsBtn = document.getElementById('clear-header-symbols-btn');
+      const headerSymbolsListEl = document.getElementById('header-symbols-list');
+
+      const handleSymbolsEnabledCb = document.getElementById('handle-symbols-enabled');
+      const handleCombinedPreviewEl = document.getElementById('handle-combined-preview');
+      const clearHandleSymbolsBtn = document.getElementById('clear-handle-symbols-btn');
+      const handleSymbolPositionSelect = document.getElementById('handle-symbol-position');
+      const handleSymbolsListEl = document.getElementById('handle-symbols-list');
+
       const accentPresetsGridEl = document.getElementById('accent-presets-grid');
-
       const customizerRootEl = document.getElementById('customizer-root');
       const drawerEl = document.getElementById('customizer-drawer');
       const toggleDrawerBtn = document.getElementById('toggle-drawer-btn');
       const closeDrawerBtn = document.getElementById('close-drawer-btn');
       const hideUiBtn = document.getElementById('hide-ui-btn');
-
-      // =========================================================================
-      // RENDERING REDES OVERLAY & EDITOR
-      // =========================================================================
-      function saveTags() {
-        try {
-          localStorage.setItem(STORAGE.TAGS, JSON.stringify(state.tags));
-        } catch (err) {
-          console.error('Error saving redes to localStorage:', err);
-        }
-      }
+      const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
 
       function escapeHtml(text) {
         return String(text || '')
@@ -585,21 +740,198 @@
           .replace(/"/g, '&quot;');
       }
 
-      function renderOverlayTags() {
-        const visibleTags = state.tags.filter((t) => t.enabled);
+      function getPlatform(id) {
+        return PLATFORMS.find((p) => p.id === id) || PLATFORMS[PLATFORMS.length - 1];
+      }
 
-        if (state.layout === 'compact-row') {
-          widgetEl.classList.remove('w-[440px]');
-          widgetEl.classList.add('w-auto', 'max-w-[calc(100vw-48px)]');
-          socialsListEl.className = 'flex flex-wrap items-center gap-2';
+      // =========================================================================
+      // SYMBOL LIST HELPERS (MULTI-SYMBOL & INDEPENDENT TARGETS)
+      // =========================================================================
+      function getTargetArray(target) {
+        return target === 'handle' ? state.handleSymbols : state.headerSymbols;
+      }
+
+      function addSymbolToTarget(target, rawSymbol) {
+        const cleaned = String(rawSymbol || '').trim();
+        if (!cleaned) return;
+        const list = getTargetArray(target);
+        list.push(cleaned);
+        if (target === 'handle') {
+          state.handleSymbolsEnabled = true;
         } else {
-          widgetEl.classList.remove('w-auto');
-          widgetEl.classList.add('w-[440px]', 'max-w-[calc(100vw-48px)]');
-          socialsListEl.className = 'grid grid-cols-1 gap-2 sm:grid-cols-2';
+          state.headerSymbolsEnabled = true;
+        }
+        saveState();
+        syncSymbolControls();
+        renderOverlay();
+      }
+
+      function moveSymbol(target, index, delta) {
+        const list = getTargetArray(target);
+        const nextIdx = index + delta;
+        if (nextIdx < 0 || nextIdx >= list.length) return;
+        const [moved] = list.splice(index, 1);
+        list.splice(nextIdx, 0, moved);
+        saveState();
+        syncSymbolControls();
+        renderOverlay();
+      }
+
+      function removeSymbol(target, index) {
+        const list = getTargetArray(target);
+        if (index < 0 || index >= list.length) return;
+        list.splice(index, 1);
+        saveState();
+        syncSymbolControls();
+        renderOverlay();
+      }
+
+      function clearSymbols(target) {
+        if (target === 'handle') {
+          state.handleSymbols = [];
+        } else {
+          state.headerSymbols = [];
+        }
+        saveState();
+        syncSymbolControls();
+        renderOverlay();
+      }
+
+      function renderSymbolChipList(containerEl, target, symbols) {
+        if (!containerEl) return;
+        if (!symbols.length) {
+          containerEl.innerHTML = `<span class="font-mono text-[10px] text-slate-500">Sin símbolos añadidos</span>`;
+          return;
         }
 
-        if (visibleTags.length === 0) {
-          socialsListEl.innerHTML = `
+        containerEl.innerHTML = symbols
+          .map((sym, idx) => {
+            return `
+              <span class="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-0.5 font-mono text-[11px] font-semibold text-white">
+                <span>${escapeHtml(sym)}</span>
+                <button
+                  type="button"
+                  data-sym-action="left"
+                  data-sym-target="${target}"
+                  data-sym-idx="${idx}"
+                  title="Mover izquierda"
+                  ${idx === 0 ? 'disabled' : ''}
+                  class="px-0.5 text-[10px] text-slate-400 hover:text-white disabled:opacity-25"
+                >‹</button>
+                <button
+                  type="button"
+                  data-sym-action="right"
+                  data-sym-target="${target}"
+                  data-sym-idx="${idx}"
+                  title="Mover derecha"
+                  ${idx === symbols.length - 1 ? 'disabled' : ''}
+                  class="px-0.5 text-[10px] text-slate-400 hover:text-white disabled:opacity-25"
+                >›</button>
+                <button
+                  type="button"
+                  data-sym-action="remove"
+                  data-sym-target="${target}"
+                  data-sym-idx="${idx}"
+                  title="Quitar símbolo"
+                  class="px-0.5 text-[11px] font-bold text-slate-400 hover:text-rose-300"
+                >×</button>
+              </span>
+            `;
+          })
+          .join('');
+
+        containerEl.querySelectorAll('button[data-sym-action]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const action = btn.getAttribute('data-sym-action');
+            const tgt = btn.getAttribute('data-sym-target');
+            const idx = Number(btn.getAttribute('data-sym-idx'));
+            if (action === 'left') moveSymbol(tgt, idx, -1);
+            if (action === 'right') moveSymbol(tgt, idx, 1);
+            if (action === 'remove') removeSymbol(tgt, idx);
+          });
+        });
+      }
+
+      function renderPresetChips() {
+        if (!presetChipsGridEl) return;
+        presetChipsGridEl.innerHTML = SYMBOL_PRESETS.map((sym) => {
+          return `
+            <button
+              type="button"
+              data-preset-sym="${escapeHtml(sym)}"
+              title="Añadir ${escapeHtml(sym)}"
+              class="rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-xs font-semibold text-slate-200 transition hover:border-pink-300/50 hover:bg-pink-300/15 hover:text-white active:scale-95"
+            >
+              ${escapeHtml(sym)}
+            </button>
+          `;
+        }).join('');
+
+        presetChipsGridEl.querySelectorAll('button[data-preset-sym]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            addSymbolToTarget(state.activeSymbolTarget, btn.getAttribute('data-preset-sym'));
+          });
+        });
+      }
+
+      function applySymbolTargetTab(target) {
+        state.activeSymbolTarget = target === 'handle' ? 'handle' : 'header';
+        saveState();
+        document.querySelectorAll('.target-tab-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-symbol-target') === state.activeSymbolTarget;
+          btn.className = active
+            ? 'target-tab-btn rounded-lg bg-pink-300/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-pink-200 transition'
+            : 'target-tab-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 transition hover:bg-white/5';
+        });
+      }
+
+      function syncSymbolControls() {
+        applySymbolTargetTab(state.activeSymbolTarget);
+        headerSymbolsEnabledCb.checked = Boolean(state.headerSymbolsEnabled);
+        handleSymbolsEnabledCb.checked = Boolean(state.handleSymbolsEnabled);
+        handleSymbolPositionSelect.value = state.handleSymbolPosition;
+
+        const headerCombined = state.headerSymbols.join(' ');
+        const handleCombined = state.handleSymbols.join(' ');
+
+        headerCombinedPreviewEl.textContent = headerCombined || '—';
+        handleCombinedPreviewEl.textContent = handleCombined || '—';
+
+        renderSymbolChipList(headerSymbolsListEl, 'header', state.headerSymbols);
+        renderSymbolChipList(handleSymbolsListEl, 'handle', state.handleSymbols);
+      }
+
+      // =========================================================================
+      // OVERLAY & SOCIAL ITEMS RENDERING
+      // =========================================================================
+      function renderOverlay() {
+        // Header symbols
+        const headerCombined = state.headerSymbols.join(' ').trim();
+        if (state.headerSymbolsEnabled && headerCombined.length > 0) {
+          headerSymbolsDisplayEl.textContent = headerCombined;
+          headerSymbolsDisplayEl.classList.remove('hidden');
+        } else {
+          headerSymbolsDisplayEl.textContent = '';
+          headerSymbolsDisplayEl.classList.add('hidden');
+        }
+
+        // Layout mode
+        if (state.layout === 'compact') {
+          widgetEl.classList.remove('w-[448px]');
+          widgetEl.classList.add('w-auto', 'max-w-[calc(100vw-48px)]');
+          redesListEl.className = 'flex flex-wrap items-center gap-2';
+        } else {
+          widgetEl.classList.remove('w-auto');
+          widgetEl.classList.add('w-[448px]', 'max-w-[calc(100vw-48px)]');
+          redesListEl.className = 'grid grid-cols-1 gap-2 sm:grid-cols-2';
+        }
+
+        const activeItems = state.items.filter((item) => item.enabled);
+        const handleCombined = state.handleSymbols.join(' ').trim();
+        const showHandleSymbols = state.handleSymbolsEnabled && handleCombined.length > 0;
+
+        if (!activeItems.length) {
+          redesListEl.innerHTML = `
             <div class="col-span-full rounded-xl border border-dashed border-white/15 bg-slate-950/45 px-3.5 py-2.5 text-center font-mono text-[11px] text-slate-400">
               Activa o añade redes en <span class="text-pink-200">Redes Setup</span>
             </div>
@@ -607,146 +939,155 @@
           return;
         }
 
-        socialsListEl.innerHTML = visibleTags
+        redesListEl.innerHTML = activeItems
           .map((item) => {
-            const platform = detectPlatform(item);
-            const handle = escapeHtml(item.handle || '@handle');
-            const titleAttr = escapeHtml(platform.label);
-            if (state.layout === 'compact-row') {
+            const platform = getPlatform(item.platform);
+            const rawHandle = (item.handle || '@usuario').trim() || '@usuario';
+            const escapedHandle = escapeHtml(rawHandle);
+            const escapedSym = escapeHtml(handleCombined);
+
+            const handleContent = showHandleSymbols
+              ? state.handleSymbolPosition === 'around'
+                ? `<span style="color: var(--accent);">${escapedSym}</span> <span>${escapedHandle}</span> <span style="color: var(--accent);">${escapedSym}</span>`
+                : `<span>${escapedHandle}</span> <span style="color: var(--accent);">${escapedSym}</span>`
+              : `<span>${escapedHandle}</span>`;
+
+            if (state.layout === 'compact') {
               return `
-                <div class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-950/65 px-3 py-1.5" title="${titleAttr}">
+                <div class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-950/65 px-3 py-1.5">
                   <span class="flex h-5 w-5 shrink-0 items-center justify-center" style="color: var(--accent);">${platform.svg}</span>
-                  <span class="font-mono text-xs font-semibold text-slate-100">${handle}</span>
+                  <span class="font-mono text-xs font-semibold text-slate-100">${handleContent}</span>
                 </div>
               `;
             }
+
             return `
-              <div class="flex items-center gap-2.5 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2" title="${titleAttr}">
+              <div class="flex items-center gap-2.5 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2">
                 <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5" style="color: var(--accent);">${platform.svg}</span>
-                <span class="min-w-0 flex-1 truncate font-mono text-xs font-semibold text-slate-100">${handle}</span>
+                <span class="min-w-0 flex-1 truncate font-mono text-xs font-semibold text-slate-100">${handleContent}</span>
               </div>
             `;
           })
           .join('');
       }
 
-      function renderTagEditor() {
-        tagEditorListEl.innerHTML = state.tags
-          .map((item) => {
-            const currentPlatform = detectPlatform(item);
-            const optionsHtml = PLATFORM_OPTIONS.map(
-              (opt) =>
-                `<option value="${opt.id}" ${opt.id === currentPlatform.id ? 'selected' : ''}>${opt.label}</option>`
+      function moveSocialItem(index, delta) {
+        const nextIdx = index + delta;
+        if (nextIdx < 0 || nextIdx >= state.items.length) return;
+        const [moved] = state.items.splice(index, 1);
+        state.items.splice(nextIdx, 0, moved);
+        saveState();
+        renderItemEditor();
+        renderOverlay();
+      }
+
+      function renderItemEditor() {
+        itemEditorListEl.innerHTML = state.items
+          .map((item, idx) => {
+            const platform = getPlatform(item.platform);
+            const selectHtml = PLATFORMS.map(
+              (p) => `<option value="${p.id}" ${p.id === platform.id ? 'selected' : ''}>${escapeHtml(p.name)}</option>`
             ).join('');
 
             return `
               <div
-                data-tag-id="${escapeHtml(item.id)}"
+                data-soc-id="${escapeHtml(item.id)}"
                 class="rounded-xl border border-white/10 bg-slate-900/80 p-2 ${item.enabled ? '' : 'opacity-60'}"
               >
                 <div class="flex items-center gap-1.5">
                   <input
                     type="checkbox"
                     ${item.enabled ? 'checked' : ''}
-                    title="Mostrar / ocultar esta red"
-                    class="tag-toggle-cb h-3.5 w-3.5 shrink-0 cursor-pointer accent-pink-300"
+                    title="Activar / desactivar"
+                    class="soc-enabled-cb h-3.5 w-3.5 shrink-0 cursor-pointer accent-pink-300"
                   />
                   <span
                     class="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-white/5"
                     style="color: var(--accent);"
-                  >${currentPlatform.svg}</span>
+                  >${platform.svg}</span>
                   <select
                     aria-label="Plataforma"
-                    class="tag-platform-select w-[92px] shrink-0 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 font-mono text-[10px] font-bold uppercase text-pink-200 outline-none focus:border-pink-300"
+                    class="soc-platform-select w-[92px] shrink-0 rounded-lg border border-white/15 bg-slate-950 px-1.5 py-1 font-mono text-[10px] font-bold text-pink-200 outline-none focus:border-pink-300"
                   >
-                    ${optionsHtml}
+                    ${selectHtml}
                   </select>
                   <input
                     type="text"
                     value="${escapeHtml(item.handle)}"
-                    placeholder="@usuario o enlace"
-                    class="tag-handle-input min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
+                    placeholder="@usuario"
+                    class="soc-handle-input min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
                   />
-                  <button
-                    type="button"
-                    title="Eliminar red"
-                    class="tag-delete-btn shrink-0 rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-bold text-slate-400 transition hover:border-rose-400/40 hover:bg-rose-500/15 hover:text-rose-300"
-                  >
-                    ✕
-                  </button>
+                  <div class="flex shrink-0 items-center gap-0.5">
+                    <button
+                      type="button"
+                      title="Subir"
+                      ${idx === 0 ? 'disabled' : ''}
+                      class="soc-up-btn rounded border border-white/10 bg-white/5 px-1.5 py-1 font-mono text-[10px] text-slate-300 hover:bg-white/10 disabled:opacity-25"
+                    >↑</button>
+                    <button
+                      type="button"
+                      title="Bajar"
+                      ${idx === state.items.length - 1 ? 'disabled' : ''}
+                      class="soc-down-btn rounded border border-white/10 bg-white/5 px-1.5 py-1 font-mono text-[10px] text-slate-300 hover:bg-white/10 disabled:opacity-25"
+                    >↓</button>
+                    <button
+                      type="button"
+                      title="Eliminar"
+                      class="soc-delete-btn rounded border border-white/10 bg-white/5 px-1.5 py-1 font-mono text-[10px] font-bold text-slate-400 hover:border-rose-400/40 hover:bg-rose-500/15 hover:text-rose-300"
+                    >×</button>
+                  </div>
                 </div>
               </div>
             `;
           })
           .join('');
 
-        // Bind per-row listeners
-        tagEditorListEl.querySelectorAll('[data-tag-id]').forEach((row) => {
-          const id = row.getAttribute('data-tag-id');
-          const item = state.tags.find((t) => t.id === id);
+        itemEditorListEl.querySelectorAll('[data-soc-id]').forEach((row, idx) => {
+          const id = row.getAttribute('data-soc-id');
+          const item = state.items.find((i) => i.id === id);
           if (!item) return;
 
-          const cb = row.querySelector('.tag-toggle-cb');
-          const platformSelect = row.querySelector('.tag-platform-select');
-          const handleInput = row.querySelector('.tag-handle-input');
-          const deleteBtn = row.querySelector('.tag-delete-btn');
-
-          cb.addEventListener('change', () => {
-            item.enabled = cb.checked;
+          row.querySelector('.soc-enabled-cb').addEventListener('change', (e) => {
+            item.enabled = e.target.checked;
             row.classList.toggle('opacity-60', !item.enabled);
-            saveTags();
-            renderOverlayTags();
+            saveState();
+            renderOverlay();
           });
 
-          platformSelect.addEventListener('change', () => {
-            const chosen =
-              PLATFORM_OPTIONS.find((p) => p.id === platformSelect.value) || PLATFORM_OPTIONS[8];
-            item.platform = chosen.id;
-            item.label = chosen.label;
-            saveTags();
-            renderTagEditor();
-            renderOverlayTags();
+          row.querySelector('.soc-platform-select').addEventListener('change', (e) => {
+            item.platform = e.target.value;
+            saveState();
+            renderItemEditor();
+            renderOverlay();
           });
 
-          handleInput.addEventListener('input', () => {
-            item.handle = handleInput.value;
-            saveTags();
-            renderOverlayTags();
+          row.querySelector('.soc-handle-input').addEventListener('input', (e) => {
+            item.handle = e.target.value;
+            saveState();
+            renderOverlay();
           });
 
-          deleteBtn.addEventListener('click', () => {
-            state.tags = state.tags.filter((t) => t.id !== id);
-            saveTags();
-            renderTagEditor();
-            renderOverlayTags();
+          row.querySelector('.soc-up-btn').addEventListener('click', () => moveSocialItem(idx, -1));
+          row.querySelector('.soc-down-btn').addEventListener('click', () => moveSocialItem(idx, 1));
+          row.querySelector('.soc-delete-btn').addEventListener('click', () => {
+            state.items = state.items.filter((i) => i.id !== id);
+            saveState();
+            renderItemEditor();
+            renderOverlay();
           });
         });
       }
 
-      addTagBtn.addEventListener('click', () => {
-        const newItem = {
-          id: `tag-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          platform: 'link',
-          label: 'WEB',
-          handle: '@nuevo_usuario',
-          enabled: true,
-        };
-        state.tags.push(newItem);
-        saveTags();
-        renderTagEditor();
-        renderOverlayTags();
-      });
-
       // =========================================================================
-      // POSITION, LAYOUT, ACCENT & CUSTOMIZER CONTROLS
+      // POSITION, LAYOUT, BACKDROP & ACCENT PALETTE
       // =========================================================================
-      function applyPosition(posClass) {
+      function applyPosition(pos) {
         const valid = ['pos-bottom-left', 'pos-bottom-right', 'pos-top-left', 'pos-top-right'];
-        const chosen = valid.includes(posClass) ? posClass : 'pos-bottom-left';
+        const chosen = valid.includes(pos) ? pos : 'pos-bottom-left';
         state.position = chosen;
         widgetEl.classList.remove(...valid);
         widgetEl.classList.add(chosen);
-        localStorage.setItem(STORAGE.POSITION, chosen);
+        saveState();
 
         document.querySelectorAll('.pos-btn').forEach((btn) => {
           const active = btn.getAttribute('data-pos') === chosen;
@@ -756,55 +1097,48 @@
         });
       }
 
-      function applyLayout(layoutMode) {
-        const chosen = layoutMode === 'compact-row' ? 'compact-row' : 'grid';
-        state.layout = chosen;
-        localStorage.setItem(STORAGE.LAYOUT, chosen);
+      function applyLayout(layout) {
+        state.layout = layout === 'compact' ? 'compact' : 'card';
+        saveState();
 
         document.querySelectorAll('.layout-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-layout') === chosen;
+          const active = btn.getAttribute('data-layout') === state.layout;
           btn.className = active
             ? 'layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200'
             : 'layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
         });
 
-        renderOverlayTags();
+        renderOverlay();
       }
 
-      function applyAccent(color, glow, soft) {
-        const matched =
-          ACCENT_PRESETS.find((p) => p.color.toLowerCase() === String(color || '').toLowerCase()) ||
-          ACCENT_PRESETS[0];
+      function applyBackdrop(backdrop) {
+        const chosen = ['transparent', 'dark', 'light'].includes(backdrop) ? backdrop : 'transparent';
+        state.backdrop = chosen;
+        document.body.classList.remove('preview-dark', 'preview-light');
+        if (chosen === 'dark') document.body.classList.add('preview-dark');
+        if (chosen === 'light') document.body.classList.add('preview-light');
+        saveState();
 
-        const nextColor = matched.color;
-        const nextGlow = glow || matched.glow;
-        const nextSoft = soft || matched.soft;
-
-        document.documentElement.style.setProperty('--accent', nextColor);
-        document.documentElement.style.setProperty('--accent-glow', nextGlow);
-        document.documentElement.style.setProperty('--accent-soft', nextSoft);
-        localStorage.setItem(STORAGE.ACCENT, nextColor);
-        localStorage.setItem(STORAGE.ACCENT_GLOW, nextGlow);
-        localStorage.setItem(STORAGE.ACCENT_SOFT, nextSoft);
-
-        renderAccentPresets(nextColor);
-        renderTagEditor();
+        document.querySelectorAll('.backdrop-btn').forEach((btn) => {
+          const active = btn.getAttribute('data-backdrop') === chosen;
+          btn.className = active
+            ? 'backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200'
+            : 'backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
+        });
       }
 
-      function renderAccentPresets(activeColor) {
+      function renderAccentGrid() {
         if (!accentPresetsGridEl) return;
-        const current = String(activeColor || ACCENT_PRESETS[0].color).toLowerCase();
+        const current = String(state.accent || ACCENT_PRESETS[0].color).toLowerCase();
 
         accentPresetsGridEl.innerHTML = ACCENT_PRESETS.map((preset) => {
           const isActive = preset.color.toLowerCase() === current;
           return `
             <button
               type="button"
-              data-color="${preset.color}"
-              data-glow="${preset.glow}"
-              data-soft="${preset.soft}"
+              data-accent-id="${preset.id}"
               title="${escapeHtml(preset.name)} (${preset.color})"
-              class="color-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
+              class="accent-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
                 isActive
                   ? 'border-white/60 bg-slate-800/95 font-bold text-white shadow-sm'
                   : 'border-white/10 bg-slate-900 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
@@ -819,23 +1153,93 @@
           `;
         }).join('');
 
-        accentPresetsGridEl.querySelectorAll('.color-btn').forEach((btn) => {
+        accentPresetsGridEl.querySelectorAll('.accent-btn').forEach((btn) => {
           btn.addEventListener('click', () => {
-            applyAccent(
-              btn.getAttribute('data-color'),
-              btn.getAttribute('data-glow'),
-              btn.getAttribute('data-soft')
-            );
+            const preset = ACCENT_PRESETS.find((p) => p.id === btn.getAttribute('data-accent-id'));
+            if (preset) applyAccent(preset);
           });
         });
       }
 
+      function applyAccent(preset) {
+        const chosen = preset || ACCENT_PRESETS[0];
+        state.accent = chosen.color;
+        state.accentGlow = chosen.glow;
+        state.accentSoft = chosen.soft;
+
+        document.documentElement.style.setProperty('--accent', state.accent);
+        document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
+        document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+
+        saveState();
+        renderAccentGrid();
+        renderItemEditor();
+        renderOverlay();
+        syncSymbolControls();
+      }
+
+      // =========================================================================
+      // DRAWER, SHORTCUTS & EVENT LISTENERS
+      // =========================================================================
       function toggleDrawer(force) {
         const shouldOpen = typeof force === 'boolean' ? force : drawerEl.classList.contains('hidden');
         drawerEl.classList.toggle('hidden', !shouldOpen);
         toggleDrawerBtn.setAttribute('aria-expanded', String(shouldOpen));
         toggleDrawerBtn.classList.toggle('opacity-100', shouldOpen);
       }
+
+      addItemBtn.addEventListener('click', () => {
+        state.items.push({
+          id: `soc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          platform: 'web',
+          handle: '@nuevo_usuario',
+          enabled: true,
+        });
+        saveState();
+        renderItemEditor();
+        renderOverlay();
+      });
+
+      document.querySelectorAll('.target-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          applySymbolTargetTab(btn.getAttribute('data-symbol-target'));
+        });
+      });
+
+      addCustomSymbolBtn.addEventListener('click', () => {
+        addSymbolToTarget(state.activeSymbolTarget, customSymbolInput.value);
+        customSymbolInput.value = '';
+        customSymbolInput.focus();
+      });
+
+      customSymbolInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addSymbolToTarget(state.activeSymbolTarget, customSymbolInput.value);
+          customSymbolInput.value = '';
+        }
+      });
+
+      headerSymbolsEnabledCb.addEventListener('change', (e) => {
+        state.headerSymbolsEnabled = e.target.checked;
+        saveState();
+        renderOverlay();
+      });
+
+      handleSymbolsEnabledCb.addEventListener('change', (e) => {
+        state.handleSymbolsEnabled = e.target.checked;
+        saveState();
+        renderOverlay();
+      });
+
+      handleSymbolPositionSelect.addEventListener('change', (e) => {
+        state.handleSymbolPosition = e.target.value === 'around' ? 'around' : 'after';
+        saveState();
+        renderOverlay();
+      });
+
+      clearHeaderSymbolsBtn.addEventListener('click', () => clearSymbols('header'));
+      clearHandleSymbolsBtn.addEventListener('click', () => clearSymbols('handle'));
 
       document.querySelectorAll('.pos-btn').forEach((btn) => {
         btn.addEventListener('click', () => applyPosition(btn.getAttribute('data-pos')));
@@ -846,24 +1250,18 @@
       });
 
       document.querySelectorAll('.backdrop-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const mode = btn.getAttribute('data-backdrop');
-          document.body.classList.remove('preview-dark', 'preview-light');
-          if (mode === 'dark') document.body.classList.add('preview-dark');
-          if (mode === 'light') document.body.classList.add('preview-light');
-
-          document.querySelectorAll('.backdrop-btn').forEach((b) => {
-            const active = b.getAttribute('data-backdrop') === mode;
-            b.className = active
-              ? 'backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200'
-              : 'backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
-          });
-        });
+        btn.addEventListener('click', () => applyBackdrop(btn.getAttribute('data-backdrop')));
       });
 
       toggleDrawerBtn.addEventListener('click', () => toggleDrawer());
       closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
       hideUiBtn.addEventListener('click', () => customizerRootEl.classList.add('hidden'));
+
+      resetDefaultsBtn.addEventListener('click', () => {
+        state = createDefaultState();
+        saveState();
+        initUI();
+      });
 
       document.addEventListener('keydown', (e) => {
         const tag = (e.target && e.target.tagName) || '';
@@ -876,31 +1274,35 @@
         }
       });
 
-      // =========================================================================
-      // INITIALIZATION
-      // =========================================================================
-      function init() {
+      function initUI() {
+        const matchedPreset =
+          ACCENT_PRESETS.find((p) => p.color.toLowerCase() === String(state.accent || '').toLowerCase()) ||
+          ACCENT_PRESETS[0];
+
+        document.documentElement.style.setProperty('--accent', state.accent);
+        document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
+        document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+
+        renderPresetChips();
+        renderAccentGrid();
+        applyPosition(state.position);
+        applyLayout(state.layout);
+        applyBackdrop(state.backdrop);
+        syncSymbolControls();
+        renderItemEditor();
+        renderOverlay();
+        void matchedPreset;
+      }
+
+      try {
         const params = new URLSearchParams(window.location.search);
         if (params.get('clean') === '1') {
           customizerRootEl.classList.add('hidden');
         }
-
-        const savedAccent = localStorage.getItem(STORAGE.ACCENT);
-        const savedGlow = localStorage.getItem(STORAGE.ACCENT_GLOW);
-        const savedSoft = localStorage.getItem(STORAGE.ACCENT_SOFT);
-        if (savedAccent && savedGlow && savedSoft) {
-          applyAccent(savedAccent, savedGlow, savedSoft);
-        } else {
-          applyAccent(ACCENT_PRESETS[0].color, ACCENT_PRESETS[0].glow, ACCENT_PRESETS[0].soft);
-        }
-
-        applyPosition(state.position);
-        applyLayout(state.layout);
-        renderTagEditor();
-        renderOverlayTags();
+        initUI();
+      } catch (err) {
+        console.error('Error initializing Twitch Redes Overlay:', err);
       }
-
-      init();
     })();
   </script>
 </body>
