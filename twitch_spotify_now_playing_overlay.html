@@ -25,9 +25,9 @@
   </script>
   <style>
     :root {
-      --accent: #1db954;
-      --accent-glow: rgba(29, 185, 84, 0.32);
-      --accent-soft: rgba(29, 185, 84, 0.14);
+      --accent: #f9a8d4;
+      --accent-glow: rgba(249, 168, 212, 0.35);
+      --accent-soft: rgba(249, 168, 212, 0.14);
     }
 
     * {
@@ -522,44 +522,7 @@
         <!-- Accent Color Selector -->
         <div>
           <span class="block font-mono text-[10px] text-slate-400">Color de acento</span>
-          <div class="mt-1.5 grid grid-cols-4 gap-1.5">
-            <button
-              type="button"
-              data-color="#1db954"
-              data-glow="rgba(29, 185, 84, 0.32)"
-              class="color-btn flex items-center justify-center gap-1.5 rounded-lg border border-emerald-400/60 bg-slate-900 py-1.5 font-mono text-[10px] font-semibold text-white"
-            >
-              <span class="h-2.5 w-2.5 rounded-full bg-[#1db954]"></span>
-              Spotify
-            </button>
-            <button
-              type="button"
-              data-color="#9146ff"
-              data-glow="rgba(145, 70, 255, 0.34)"
-              class="color-btn flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-slate-900 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              <span class="h-2.5 w-2.5 rounded-full bg-[#9146ff]"></span>
-              Twitch
-            </button>
-            <button
-              type="button"
-              data-color="#00f0ff"
-              data-glow="rgba(0, 240, 255, 0.32)"
-              class="color-btn flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-slate-900 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              <span class="h-2.5 w-2.5 rounded-full bg-[#00f0ff]"></span>
-              Cyan
-            </button>
-            <button
-              type="button"
-              data-color="#f9a8d4"
-              data-glow="rgba(249, 168, 212, 0.35)"
-              class="color-btn flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-slate-900 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              <span class="h-2.5 w-2.5 rounded-full bg-[#f9a8d4]"></span>
-              Rosa Pastel
-            </button>
-          </div>
+          <div id="spotify-accent-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
         </div>
 
         <!-- Auto-Hide on Pause Toggle -->
@@ -817,7 +780,7 @@
       ];
 
       // =========================================================================
-      // STORAGE KEYS & STATE
+      // STORAGE KEYS, ACCENT PRESETS & STATE
       // =========================================================================
       const STORAGE = {
         CLIENT_ID: 'sp_overlay_client_id',
@@ -828,8 +791,89 @@
         POSITION: 'sp_overlay_position',
         ACCENT: 'sp_overlay_accent',
         ACCENT_GLOW: 'sp_overlay_accent_glow',
+        ACCENT_SOFT: 'sp_overlay_accent_soft',
         AUTO_HIDE: 'sp_overlay_auto_hide',
       };
+
+      const ACCENT_PRESETS = [
+        {
+          id: 'pastel-pink',
+          name: 'Rosa Pastel',
+          color: '#f9a8d4',
+          glow: 'rgba(249, 168, 212, 0.35)',
+          soft: 'rgba(249, 168, 212, 0.14)',
+        },
+        {
+          id: 'pastel-lilac',
+          name: 'Lila Pastel',
+          color: '#c4b5fd',
+          glow: 'rgba(196, 181, 253, 0.34)',
+          soft: 'rgba(196, 181, 253, 0.14)',
+        },
+        {
+          id: 'pastel-mint',
+          name: 'Menta Pastel',
+          color: '#6ee7b7',
+          glow: 'rgba(110, 231, 183, 0.34)',
+          soft: 'rgba(110, 231, 183, 0.14)',
+        },
+        {
+          id: 'pastel-peach',
+          name: 'Melocotón Pastel',
+          color: '#fdba74',
+          glow: 'rgba(253, 186, 116, 0.34)',
+          soft: 'rgba(253, 186, 116, 0.14)',
+        },
+        {
+          id: 'pastel-sky',
+          name: 'Azul Cielo Pastel',
+          color: '#93c5fd',
+          glow: 'rgba(147, 197, 253, 0.34)',
+          soft: 'rgba(147, 197, 253, 0.14)',
+        },
+        {
+          id: 'neon-lavender',
+          name: 'Lavanda Neón',
+          color: '#a855f7',
+          glow: 'rgba(168, 85, 247, 0.36)',
+          soft: 'rgba(168, 85, 247, 0.15)',
+        },
+        {
+          id: 'electric-cyan',
+          name: 'Cian Eléctrico',
+          color: '#22d3ee',
+          glow: 'rgba(34, 211, 238, 0.34)',
+          soft: 'rgba(34, 211, 238, 0.14)',
+        },
+        {
+          id: 'emerald-green',
+          name: 'Verde Esmeralda',
+          color: '#10b981',
+          glow: 'rgba(16, 185, 129, 0.34)',
+          soft: 'rgba(16, 185, 129, 0.14)',
+        },
+        {
+          id: 'coral',
+          name: 'Coral',
+          color: '#fb7185',
+          glow: 'rgba(251, 113, 133, 0.34)',
+          soft: 'rgba(251, 113, 133, 0.14)',
+        },
+        {
+          id: 'golden',
+          name: 'Dorado',
+          color: '#fbbf24',
+          glow: 'rgba(251, 191, 36, 0.34)',
+          soft: 'rgba(251, 191, 36, 0.14)',
+        },
+        {
+          id: 'arctic-white',
+          name: 'Blanco Ártico',
+          color: '#e2e8f0',
+          glow: 'rgba(226, 232, 240, 0.30)',
+          soft: 'rgba(226, 232, 240, 0.12)',
+        },
+      ];
 
       const state = {
         mode: 'demo', // 'demo' | 'live'
@@ -871,6 +915,7 @@
       const connectionBadge = document.getElementById('connection-badge');
       const authFeedbackEl = document.getElementById('auth-feedback');
       const autoHideToggle = document.getElementById('auto-hide-toggle');
+      const accentGridEl = document.getElementById('spotify-accent-grid');
 
       // =========================================================================
       // FORMATTING & UI RENDERING
@@ -883,7 +928,6 @@
       }
 
       function updateMarquee() {
-        // Measure whether the title overflows its container
         titleMarqueeEl.classList.remove('is-scrolling');
         trackTitleCloneEl.classList.add('hidden');
 
@@ -919,7 +963,6 @@
           albumCoverEl.src = resolvedCover;
         }
 
-        // Play / Pause visual states
         if (state.isPlaying) {
           widgetEl.classList.remove('is-paused', 'widget-hidden');
           widgetEl.classList.add('is-playing');
@@ -1143,7 +1186,6 @@
           }
 
           if (res.status === 204) {
-            // Nothing active in Spotify right now
             state.isPlaying = false;
             widgetEl.classList.remove('is-playing');
             widgetEl.classList.add('is-paused');
@@ -1192,61 +1234,102 @@
       }
 
       function disconnectSpotify() {
+        clearInterval(state.pollTimer);
+        state.mode = 'demo';
         localStorage.removeItem(STORAGE.ACCESS_TOKEN);
         localStorage.removeItem(STORAGE.REFRESH_TOKEN);
         localStorage.removeItem(STORAGE.EXPIRES_AT);
-        clearInterval(state.pollTimer);
 
-        state.mode = 'demo';
         connectionBadge.textContent = 'MODO DEMO';
         connectionBadge.className =
           'rounded-full border border-amber-400/30 bg-amber-500/15 px-2 py-0.5 font-mono text-[10px] font-bold text-amber-300';
         disconnectBtn.classList.add('hidden');
         connectBtn.textContent = 'Conectar con Spotify';
 
-        const demo = DEMO_TRACKS[state.demoIndex];
+        const track = DEMO_TRACKS[state.demoIndex];
         renderTrack({
-          title: demo.title,
-          artist: demo.artist,
-          cover: demo.cover,
-          progressMs: demo.progressMs,
-          durationMs: demo.durationMs,
+          title: track.title,
+          artist: track.artist,
+          cover: track.cover,
+          progressMs: track.progressMs,
+          durationMs: track.durationMs,
           isPlaying: true,
         });
       }
 
       // =========================================================================
-      // CUSTOMIZER CONTROLS & PERSISTENCE
+      // APPEARANCE, ACCENTS & CUSTOMIZER CONTROLS
       // =========================================================================
       function applyPosition(posClass) {
-        widgetEl.classList.remove(
-          'pos-bottom-left',
-          'pos-top-left',
-          'pos-top-right',
-          'pos-bottom-right'
-        );
-        widgetEl.classList.add(posClass);
-        localStorage.setItem(STORAGE.POSITION, posClass);
+        const valid = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
+        const chosen = valid.includes(posClass) ? posClass : 'pos-bottom-left';
+        widgetEl.classList.remove(...valid);
+        widgetEl.classList.add(chosen);
+        localStorage.setItem(STORAGE.POSITION, chosen);
 
         document.querySelectorAll('.pos-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-pos') === posClass;
-          btn.className = active
+          const isSelected = btn.getAttribute('data-pos') === chosen;
+          btn.className = isSelected
             ? 'pos-btn rounded-lg border border-emerald-400/50 bg-emerald-500/15 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-white'
             : 'pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25';
         });
       }
 
-      function applyAccent(color, glow) {
-        document.documentElement.style.setProperty('--accent', color);
-        document.documentElement.style.setProperty('--accent-glow', glow);
-        localStorage.setItem(STORAGE.ACCENT, color);
-        localStorage.setItem(STORAGE.ACCENT_GLOW, glow);
+      function applyAccent(color, glow, soft) {
+        const matched =
+          ACCENT_PRESETS.find((p) => p.color.toLowerCase() === String(color || '').toLowerCase()) ||
+          ACCENT_PRESETS[0];
 
-        document.querySelectorAll('.color-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-color') === color;
-          btn.className = active
-            ? 'color-btn flex items-center justify-center gap-1.5 rounded-lg border border-emerald-400/60 bg-slate-900 py-1.5 font-mono text-[10px] font-semibold text-white'
-            : 'color-btn flex items-center justify-center gap-1.5 rounded-lg border border-white/10 bg-slate-900 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25';
+        const nextColor = matched.color;
+        const nextGlow = glow || matched.glow;
+        const nextSoft = soft || matched.soft;
+
+        document.documentElement.style.setProperty('--accent', nextColor);
+        document.documentElement.style.setProperty('--accent-glow', nextGlow);
+        document.documentElement.style.setProperty('--accent-soft', nextSoft);
+        localStorage.setItem(STORAGE.ACCENT, nextColor);
+        localStorage.setItem(STORAGE.ACCENT_GLOW, nextGlow);
+        localStorage.setItem(STORAGE.ACCENT_SOFT, nextSoft);
+
+        renderAccentGrid(nextColor);
+      }
+
+      function renderAccentGrid(activeColor) {
+        if (!accentGridEl) return;
+        const current = String(activeColor || ACCENT_PRESETS[0].color).toLowerCase();
+
+        accentGridEl.innerHTML = ACCENT_PRESETS.map((preset) => {
+          const isActive = preset.color.toLowerCase() === current;
+          return `
+            <button
+              type="button"
+              data-color="${preset.color}"
+              data-glow="${preset.glow}"
+              data-soft="${preset.soft}"
+              title="${preset.name} (${preset.color})"
+              class="color-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
+                isActive
+                  ? 'border-white/60 bg-slate-800/95 font-bold text-white shadow-sm'
+                  : 'border-white/10 bg-slate-900 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
+              }"
+            >
+              <span
+                class="h-2.5 w-2.5 shrink-0 rounded-full"
+                style="background-color: ${preset.color}; box-shadow: 0 0 8px ${preset.glow};"
+              ></span>
+              <span class="truncate">${preset.name}</span>
+            </button>
+          `;
+        }).join('');
+
+        accentGridEl.querySelectorAll('.color-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            applyAccent(
+              btn.getAttribute('data-color'),
+              btn.getAttribute('data-glow'),
+              btn.getAttribute('data-soft')
+            );
+          });
         });
       }
 
@@ -1281,13 +1364,6 @@
       document.querySelectorAll('.pos-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           applyPosition(btn.getAttribute('data-pos'));
-        });
-      });
-
-      // Accent buttons
-      document.querySelectorAll('.color-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          applyAccent(btn.getAttribute('data-color'), btn.getAttribute('data-glow'));
         });
       });
 
@@ -1382,10 +1458,13 @@
 
         const savedAccent = localStorage.getItem(STORAGE.ACCENT);
         const savedGlow = localStorage.getItem(STORAGE.ACCENT_GLOW);
+        const savedSoft = localStorage.getItem(STORAGE.ACCENT_SOFT);
         if (savedAccent === '#ff3e8a') {
-          applyAccent('#f9a8d4', 'rgba(249, 168, 212, 0.35)');
+          applyAccent(ACCENT_PRESETS[0].color, ACCENT_PRESETS[0].glow, ACCENT_PRESETS[0].soft);
         } else if (savedAccent && savedGlow) {
-          applyAccent(savedAccent, savedGlow);
+          applyAccent(savedAccent, savedGlow, savedSoft);
+        } else {
+          applyAccent(ACCENT_PRESETS[0].color, ACCENT_PRESETS[0].glow, ACCENT_PRESETS[0].soft);
         }
 
         autoHideToggle.checked = state.autoHide;
