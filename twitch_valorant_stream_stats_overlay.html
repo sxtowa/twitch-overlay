@@ -12,6 +12,7 @@
     rel="stylesheet"
   />
   <script>
+    // Configure Tailwind font families for UI headings and monospace counters
     tailwind.config = {
       theme: {
         extend: {
@@ -34,7 +35,7 @@
       box-sizing: border-box;
     }
 
-    /* Strictly transparent background by default for 1920x1080 OBS Browser Source */
+    /* Transparent background by default for 1920x1080 OBS Browser Source */
     html,
     body {
       margin: 0;
@@ -63,7 +64,7 @@
       background-size: 32px 32px;
     }
 
-    /* Dark cyber-minimalist glassmorphism card */
+    /* Cyber-minimalist glassmorphism overlay card */
     .val-glass {
       position: relative;
       background: linear-gradient(145deg, rgba(12, 14, 22, 0.88), rgba(16, 20, 32, 0.8));
@@ -77,6 +78,7 @@
       transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.25s ease;
     }
 
+    /* Subtle pulse feedback when stats update */
     .val-pulse {
       transform: translateY(-2px) scale(1.01);
       border-color: var(--accent);
@@ -86,7 +88,7 @@
         inset 0 1px 0 0 rgba(255, 255, 255, 0.14);
     }
 
-    /* Corner positioning presets */
+    /* Corner positioning classes */
     .pos-bottom-left {
       bottom: 24px;
       left: 24px;
@@ -115,6 +117,7 @@
       left: auto;
     }
 
+    /* Custom scrollbar for control panel */
     .custom-scroll::-webkit-scrollbar {
       width: 5px;
     }
@@ -144,7 +147,7 @@
     ></div>
 
     <div class="p-4">
-      <!-- Header: Valorant Emblem + Riot ID & Tag + Hoy RR Delta -->
+      <!-- Header: Emblem + Riot ID & Tag + Hoy RR Delta -->
       <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5">
         <div class="flex min-w-0 items-center gap-2">
           <span
@@ -159,10 +162,10 @@
           <div class="min-w-0">
             <div class="flex items-baseline gap-1.5">
               <span id="display-riot-name" class="truncate text-sm font-extrabold tracking-tight text-white">
-                episodicx
+                Riot ID
               </span>
               <span id="display-riot-tag" class="shrink-0 font-mono text-xs font-semibold text-slate-400">
-                #012
+                #Tag
               </span>
             </div>
           </div>
@@ -175,9 +178,9 @@
           </span>
           <span
             id="display-rr-delta"
-            class="font-mono text-xs font-extrabold text-emerald-300"
+            class="font-mono text-xs font-extrabold text-slate-300"
           >
-            +42 RR
+            0 RR
           </span>
         </div>
       </div>
@@ -191,11 +194,11 @@
               style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
             ></span>
             <span id="display-rank-tier" class="text-sm font-extrabold tracking-tight text-white">
-              Diamond II
+              Unranked
             </span>
           </div>
           <div class="font-mono text-xs font-bold" style="color: var(--accent);">
-            <span id="display-rr">64</span>
+            <span id="display-rr">0</span>
             <span class="text-slate-400">RR</span>
           </div>
         </div>
@@ -204,14 +207,14 @@
         <div class="mt-2.5">
           <div class="mb-1 flex items-center justify-between font-mono text-[10px] text-slate-400">
             <span>PROGRESO DE RANGO</span>
-            <span id="display-rr-progress-label">64 / 100 RR</span>
+            <span id="display-rr-progress-label">0 / 100 RR</span>
           </div>
           <div class="h-2 w-full overflow-hidden rounded-full bg-white/10">
             <div
               id="display-rr-bar"
               class="h-full rounded-full transition-all duration-300 ease-out"
               style="
-                width: 64%;
+                width: 0%;
                 background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, white));
                 box-shadow: 0 0 12px var(--accent-glow);
               "
@@ -220,16 +223,16 @@
         </div>
       </div>
 
-      <!-- Record W-L & Winrate % Row -->
+      <!-- Record & Winrate del día Row -->
       <div class="mt-2.5 grid grid-cols-2 gap-2">
         <div class="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             RECORD
           </span>
           <div class="mt-0.5 flex items-baseline gap-1.5 font-mono text-xs font-bold">
-            <span id="display-wins" class="text-emerald-300">7W</span>
+            <span id="display-wins" class="text-emerald-300">0W</span>
             <span class="text-slate-500">-</span>
-            <span id="display-losses" class="text-rose-300">3L</span>
+            <span id="display-losses" class="text-rose-300">0L</span>
           </div>
         </div>
 
@@ -241,17 +244,17 @@
             id="display-winrate"
             class="mt-0.5 font-mono text-xs font-extrabold text-white"
           >
-            70.0%
+            0.0%
           </div>
         </div>
       </div>
 
-      <!-- Optional Combat Stats Row: K/D, ACS, HS% -->
+      <!-- Optional Combat Stats Row: K/D, ACS, HS% (Hidden by default) -->
       <div
         id="combat-stats-row"
-        class="mt-2 grid grid-cols-3 gap-2"
+        class="mt-2 hidden grid-cols-3 gap-2"
       >
-        <div class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+        <div id="stat-card-kd" class="hidden rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             K/D
           </span>
@@ -260,7 +263,7 @@
           </span>
         </div>
 
-        <div class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+        <div id="stat-card-acs" class="hidden rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             ACS
           </span>
@@ -269,7 +272,7 @@
           </span>
         </div>
 
-        <div class="rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
+        <div id="stat-card-hs" class="hidden rounded-xl border border-white/10 bg-slate-950/50 px-2.5 py-1.5 text-center">
           <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
             HS%
           </span>
@@ -343,7 +346,8 @@
               id="input-riot-name"
               type="text"
               maxlength="24"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+              placeholder="Riot ID"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
             />
           </div>
           <div>
@@ -354,33 +358,47 @@
               id="input-riot-tag"
               type="text"
               maxlength="10"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+              placeholder="Tag"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
             />
           </div>
         </div>
 
-        <!-- Rank Tier & Current RR -->
-        <div class="grid grid-cols-2 gap-1.5">
-          <div>
-            <label for="input-rank-tier" class="block font-mono text-[9px] text-slate-400">
-              Rango actual
-            </label>
-            <select
-              id="input-rank-tier"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
-            ></select>
+        <!-- Rank Tier Button Grid + Division Buttons + Current RR -->
+        <div class="space-y-2 rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
+          <div class="flex items-center justify-between gap-2">
+            <div>
+              <span class="block font-mono text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                Rank Tier (Click to select)
+              </span>
+              <span id="selected-rank-preview" class="font-mono text-xs font-extrabold text-pink-200">
+                Unranked
+              </span>
+            </div>
+            <div class="w-28">
+              <label for="input-rr" class="block font-mono text-[9px] text-slate-400">
+                RR actual (0-100)
+              </label>
+              <input
+                id="input-rr"
+                type="number"
+                min="0"
+                max="999"
+                placeholder="0"
+                class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-950 px-2.5 py-1 font-mono text-xs font-bold text-white placeholder-slate-500 outline-none focus:border-pink-300"
+              />
+            </div>
           </div>
-          <div>
-            <label for="input-rr" class="block font-mono text-[9px] text-slate-400">
-              RR actual (0 - 100)
-            </label>
-            <input
-              id="input-rr"
-              type="number"
-              min="0"
-              max="999"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
-            />
+
+          <!-- Button Grid for English Rank Tiers (no native <select>) -->
+          <div id="rank-tier-grid" class="grid grid-cols-5 gap-1"></div>
+
+          <!-- Button Grid for Divisions (I, II, III) -->
+          <div id="rank-division-row" class="flex items-center justify-between gap-2 pt-0.5">
+            <span class="font-mono text-[9px] uppercase tracking-wider text-slate-400">
+              Division
+            </span>
+            <div id="rank-division-grid" class="grid grid-cols-3 gap-1"></div>
           </div>
         </div>
 
@@ -402,17 +420,17 @@
           </button>
         </div>
 
-        <!-- Configurable RR for Manual Wins and Losses + Direct +/- Add/Subtract -->
+        <!-- Configurable Manual Win RR & Manual Loss RR -->
         <div class="grid grid-cols-2 gap-2 rounded-xl border border-white/10 bg-slate-900/80 p-2">
           <div>
             <label for="input-win-rr" class="block font-mono text-[9px] font-bold uppercase tracking-wider text-emerald-300">
-              RR Victoria Manual
+              +RR Victoria manual
             </label>
             <div class="mt-1 flex items-center gap-1">
               <button
                 type="button"
                 data-win-rr-delta="-1"
-                title="Quitar 1 RR a la victoria manual"
+                title="Restar 1 al RR manual de victoria"
                 class="win-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-emerald-400/40"
               >
                 -
@@ -427,41 +445,23 @@
               <button
                 type="button"
                 data-win-rr-delta="1"
-                title="Añadir 1 RR a la victoria manual"
+                title="Sumar 1 al RR manual de victoria"
                 class="win-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-emerald-400/40"
               >
                 +
-              </button>
-            </div>
-            <div class="mt-1.5 grid grid-cols-2 gap-1">
-              <button
-                type="button"
-                data-apply-win-rr="-5"
-                title="Restar 5 RR directamente (Victoria)"
-                class="apply-win-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
-              >
-                -5 RR
-              </button>
-              <button
-                type="button"
-                data-apply-win-rr="5"
-                title="Sumar 5 RR directamente (Victoria)"
-                class="apply-win-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-emerald-400/40 hover:text-emerald-200"
-              >
-                +5 RR
               </button>
             </div>
           </div>
 
           <div>
             <label for="input-loss-rr" class="block font-mono text-[9px] font-bold uppercase tracking-wider text-rose-300">
-              RR Derrota Manual
+              -RR Derrota manual
             </label>
             <div class="mt-1 flex items-center gap-1">
               <button
                 type="button"
                 data-loss-rr-delta="-1"
-                title="Restar 1 RR a la derrota manual"
+                title="Restar 1 al RR manual de derrota"
                 class="loss-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-rose-400/40"
               >
                 -
@@ -476,66 +476,16 @@
               <button
                 type="button"
                 data-loss-rr-delta="1"
-                title="Añadir 1 RR a la derrota manual"
+                title="Sumar 1 al RR manual de derrota"
                 class="loss-rr-step rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs font-bold text-slate-200 hover:border-rose-400/40"
               >
                 +
               </button>
             </div>
-            <div class="mt-1.5 grid grid-cols-2 gap-1">
-              <button
-                type="button"
-                data-apply-loss-rr="-5"
-                title="Restar 5 RR directamente (Derrota)"
-                class="apply-loss-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
-              >
-                -5 RR
-              </button>
-              <button
-                type="button"
-                data-apply-loss-rr="5"
-                title="Sumar 5 RR directamente (Derrota)"
-                class="apply-loss-rr rounded border border-white/10 bg-slate-950/90 px-1.5 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-emerald-400/40 hover:text-emerald-200"
-              >
-                +5 RR
-              </button>
-            </div>
           </div>
         </div>
 
-        <!-- Direct RR & Today RR Delta Step Controls -->
-        <div class="grid grid-cols-4 gap-1.5">
-          <button
-            type="button"
-            data-rr-step="-10"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
-          >
-            -10 RR
-          </button>
-          <button
-            type="button"
-            data-rr-step="-1"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
-          >
-            -1 RR
-          </button>
-          <button
-            type="button"
-            data-rr-step="1"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
-          >
-            +1 RR
-          </button>
-          <button
-            type="button"
-            data-rr-step="10"
-            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
-          >
-            +10 RR
-          </button>
-        </div>
-
-        <!-- Wins, Losses, Today Delta -->
+        <!-- Manual Wins, Losses & Today RR Delta -->
         <div class="grid grid-cols-3 gap-1.5">
           <div>
             <label for="input-wins" class="block font-mono text-[9px] text-slate-400">
@@ -563,7 +513,7 @@
           </div>
           <div>
             <label for="input-rr-delta" class="block font-mono text-[9px] text-slate-400">
-              RR de hoy (+/-)
+              Hoy RR (+/-)
             </label>
             <input
               id="input-rr-delta"
@@ -575,20 +525,72 @@
           </div>
         </div>
 
-        <!-- Optional Combat Stats Toggle & Inputs -->
-        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
-          <label class="flex cursor-pointer items-center justify-between">
-            <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
-              Mostrar K/D, ACS y HS%
-            </span>
-            <input
-              id="toggle-combat-stats"
-              type="checkbox"
-              class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
-            />
-          </label>
+        <!-- Direct RR Adjustment Buttons -->
+        <div class="grid grid-cols-4 gap-1.5">
+          <button
+            type="button"
+            data-rr-step="-10"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-rose-200 hover:border-rose-400/40"
+          >
+            -10 RR
+          </button>
+          <button
+            type="button"
+            data-rr-step="-1"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-rose-200 hover:border-rose-400/40"
+          >
+            -1 RR
+          </button>
+          <button
+            type="button"
+            data-rr-step="1"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-emerald-200 hover:border-emerald-400/40"
+          >
+            +1 RR
+          </button>
+          <button
+            type="button"
+            data-rr-step="10"
+            class="rr-step-btn rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-[10px] font-bold text-emerald-200 hover:border-emerald-400/40"
+          >
+            +10 RR
+          </button>
+        </div>
 
-          <div id="combat-inputs-grid" class="mt-2 grid grid-cols-3 gap-1.5">
+        <!-- Optional Combat Stats Toggles & Inputs (OFF by default) -->
+        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
+          <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
+            Estadísticas extra opcionales
+          </div>
+
+          <div class="mt-2 grid grid-cols-3 gap-1.5">
+            <label class="flex cursor-pointer items-center justify-between rounded-lg border border-white/10 bg-slate-950/80 px-2 py-1">
+              <span class="font-mono text-[9px] font-bold text-slate-300">K/D</span>
+              <input
+                id="toggle-show-kd"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+            </label>
+            <label class="flex cursor-pointer items-center justify-between rounded-lg border border-white/10 bg-slate-950/80 px-2 py-1">
+              <span class="font-mono text-[9px] font-bold text-slate-300">ACS</span>
+              <input
+                id="toggle-show-acs"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+            </label>
+            <label class="flex cursor-pointer items-center justify-between rounded-lg border border-white/10 bg-slate-950/80 px-2 py-1">
+              <span class="font-mono text-[9px] font-bold text-slate-300">HS%</span>
+              <input
+                id="toggle-show-hs"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+            </label>
+          </div>
+
+          <div class="mt-2 grid grid-cols-3 gap-1.5">
             <div>
               <label for="input-kd" class="block font-mono text-[9px] text-slate-400">K/D</label>
               <input
@@ -625,80 +627,10 @@
         </div>
       </div>
 
-      <!-- 2. OPTIONAL API / ENDPOINT POLLING -->
-      <div class="mt-3.5 space-y-2 border-t border-white/10 pt-3.5">
-        <div class="flex items-center justify-between">
-          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            2. Conectar API / Endpoint
-          </span>
-          <span
-            id="endpoint-status-badge"
-            class="rounded-full border border-white/15 bg-slate-900 px-2 py-0.5 font-mono text-[9px] font-bold text-slate-400"
-          >
-            MANUAL
-          </span>
-        </div>
-
-        <p class="text-[10px] leading-relaxed text-slate-400">
-          URL directa (sin <code class="text-slate-200">$(customapi...)</code>) en texto plano o JSON. Si el servidor bloquea CORS desde el navegador/OBS, el modo manual sigue activo sin interrupciones.
-        </p>
-
-        <input
-          id="input-endpoint-url"
-          type="url"
-          placeholder="https://tu-api-o-endpoint.com/stats"
-          class="w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] text-cyan-200 placeholder-slate-600 outline-none focus:border-pink-300"
-        />
-
-        <div class="grid grid-cols-2 gap-1.5">
-          <div>
-            <label for="input-poll-seconds" class="block font-mono text-[9px] text-slate-400">
-              Intervalo (segundos)
-            </label>
-            <input
-              id="input-poll-seconds"
-              type="number"
-              min="5"
-              max="3600"
-              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
-            />
-          </div>
-          <div class="flex flex-col justify-end">
-            <label class="flex h-[30px] cursor-pointer items-center justify-between rounded-lg border border-white/15 bg-slate-900 px-2.5">
-              <span class="font-mono text-[10px] font-semibold text-slate-200">Auto-sync</span>
-              <input
-                id="toggle-endpoint-enabled"
-                type="checkbox"
-                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
-              />
-            </label>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-1.5">
-          <button
-            id="sync-endpoint-btn"
-            type="button"
-            class="flex-1 rounded-xl border border-pink-300/40 bg-pink-300/15 px-3 py-1.5 font-mono text-[11px] font-bold text-pink-100 transition hover:bg-pink-300/25 active:scale-95"
-          >
-            Sincronizar ahora
-          </button>
-          <button
-            id="clear-endpoint-btn"
-            type="button"
-            class="rounded-xl border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
-          >
-            Limpiar
-          </button>
-        </div>
-
-        <p id="endpoint-feedback" class="hidden rounded-lg border border-white/10 bg-slate-900/90 p-2 font-mono text-[10px] leading-relaxed text-slate-300"></p>
-      </div>
-
-      <!-- 3. POSITION, ACCENT & PREVIEW BACKDROP -->
+      <!-- 2. POSITION & ACCENT COLOR -->
       <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
         <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-          3. Posición, Color y Vista Previa
+          2. Posición y Color
         </div>
 
         <div>
@@ -739,34 +671,105 @@
           <span class="block font-mono text-[10px] text-slate-400">Paleta de acento (11 colores)</span>
           <div id="accent-presets-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
         </div>
+      </div>
 
-        <div>
-          <span class="block font-mono text-[10px] text-slate-400">
-            Fondo de vista previa (OBS siempre transparente)
+      <!-- 3. CONNECT API / ENDPOINT (Directly above Fondo de vista previa) -->
+      <div class="mt-3.5 space-y-2 border-t border-white/10 pt-3.5">
+        <div class="flex items-center justify-between">
+          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+            3. Conectar API / Endpoint
           </span>
-          <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
-            <button
-              type="button"
-              data-backdrop="transparent"
-              class="backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200"
-            >
-              Transparente
-            </button>
-            <button
-              type="button"
-              data-backdrop="dark"
-              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
-            >
-              Oscuro
-            </button>
-            <button
-              type="button"
-              data-backdrop="light"
-              class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
-            >
-              Claro
-            </button>
+          <span
+            id="endpoint-status-badge"
+            class="rounded-full border border-white/15 bg-slate-900 px-2 py-0.5 font-mono text-[9px] font-bold text-slate-400"
+          >
+            MANUAL
+          </span>
+        </div>
+
+        <p class="text-[10px] leading-relaxed text-slate-400">
+          Introduce una URL de endpoint o API en JSON o texto plano. Si ocurre un error o bloqueo CORS, tus controles manuales siguen activos.
+        </p>
+
+        <input
+          id="input-endpoint-url"
+          type="url"
+          placeholder="https://tu-endpoint-o-api.com/valorant"
+          class="w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] text-cyan-200 placeholder-slate-600 outline-none focus:border-pink-300"
+        />
+
+        <div class="grid grid-cols-2 gap-1.5">
+          <div>
+            <label for="input-poll-seconds" class="block font-mono text-[9px] text-slate-400">
+              Intervalo (segundos)
+            </label>
+            <input
+              id="input-poll-seconds"
+              type="number"
+              min="5"
+              max="3600"
+              class="mt-0.5 w-full rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white outline-none focus:border-pink-300"
+            />
           </div>
+          <div class="flex flex-col justify-end">
+            <label class="flex h-[30px] cursor-pointer items-center justify-between rounded-lg border border-white/15 bg-slate-900 px-2.5">
+              <span class="font-mono text-[10px] font-semibold text-slate-200">Auto-sync</span>
+              <input
+                id="toggle-endpoint-enabled"
+                type="checkbox"
+                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
+              />
+            </label>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button
+            id="sync-endpoint-btn"
+            type="button"
+            class="flex-1 rounded-xl border border-pink-300/40 bg-pink-300/15 px-3 py-1.5 font-mono text-[11px] font-bold text-pink-100 transition hover:bg-pink-300/25 active:scale-95"
+          >
+            Sync
+          </button>
+          <button
+            id="clear-endpoint-btn"
+            type="button"
+            class="rounded-xl border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25 hover:text-white"
+          >
+            Limpiar
+          </button>
+        </div>
+
+        <p id="endpoint-feedback" class="hidden rounded-lg border border-white/10 bg-slate-900/90 p-2 font-mono text-[10px] leading-relaxed text-slate-300"></p>
+      </div>
+
+      <!-- 4. FONDO DE VISTA PREVIA (Last section) -->
+      <div class="mt-3.5 space-y-2 border-t border-white/10 pt-3.5">
+        <span class="block font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
+          4. Fondo de vista previa (OBS siempre transparente)
+        </span>
+        <div class="grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+          <button
+            type="button"
+            data-backdrop="transparent"
+            class="backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200"
+          >
+            Transparente
+          </button>
+          <button
+            type="button"
+            data-backdrop="dark"
+            class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+          >
+            Oscuro
+          </button>
+          <button
+            type="button"
+            data-backdrop="light"
+            class="backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
+          >
+            Claro
+          </button>
         </div>
       </div>
     </section>
@@ -775,14 +778,12 @@
     <button
       id="toggle-drawer-btn"
       type="button"
-      title="Configurar Valorant Overlay (Atajo: C)"
-      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-65 shadow-lg backdrop-blur-md transition hover:border-pink-300/50 hover:text-pink-200 hover:opacity-100 focus:opacity-100"
       aria-expanded="false"
-      aria-controls="customizer-drawer"
+      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/90 px-3.5 py-2 font-mono text-[11px] font-bold text-white shadow-lg backdrop-blur-md transition hover:border-pink-300/50"
     >
       <span
         class="h-2 w-2 rounded-full"
-        style="background-color: var(--accent);"
+        style="background-color: var(--accent); box-shadow: 0 0 8px var(--accent-glow);"
       ></span>
       <span>Valorant Setup</span>
     </button>
@@ -793,19 +794,76 @@
       'use strict';
 
       const STORAGE_KEY = 'twitch_valorant_overlay_v4';
+      const LEGACY_STORAGE_KEYS = [
+        'twitch_valorant_overlay_v3',
+        'twitch_valorant_overlay_v2',
+        'twitch_valorant_overlay_v1',
+      ];
       const DEFAULT_ENDPOINT_URL = '';
 
-      const RANK_TIERS = [
-        'Iron I', 'Iron II', 'Iron III',
-        'Bronze I', 'Bronze II', 'Bronze III',
-        'Silver I', 'Silver II', 'Silver III',
-        'Gold I', 'Gold II', 'Gold III',
-        'Platinum I', 'Platinum II', 'Platinum III',
-        'Diamond I', 'Diamond II', 'Diamond III',
-        'Ascendant I', 'Ascendant II', 'Ascendant III',
-        'Immortal I', 'Immortal II', 'Immortal III',
-        'Radiant',
+      // English Valorant rank tiers and divisions for button-grid selection
+      const RANK_GROUPS = [
+        { id: 'Unranked', label: 'Unranked', value: 'Unranked', color: '#94a3b8', hasDivisions: false },
+        { id: 'Iron', label: 'Iron', value: 'Iron', color: '#71717a', hasDivisions: true },
+        { id: 'Bronze', label: 'Bronze', value: 'Bronze', color: '#b45309', hasDivisions: true },
+        { id: 'Silver', label: 'Silver', value: 'Silver', color: '#cbd5e1', hasDivisions: true },
+        { id: 'Gold', label: 'Gold', value: 'Gold', color: '#eab308', hasDivisions: true },
+        { id: 'Platinum', label: 'Platinum', value: 'Platinum', color: '#22d3ee', hasDivisions: true },
+        { id: 'Diamond', label: 'Diamond', value: 'Diamond', color: '#e879f9', hasDivisions: true },
+        { id: 'Ascendant', label: 'Ascendant', value: 'Ascendant', color: '#10b981', hasDivisions: true },
+        { id: 'Immortal', label: 'Immortal', value: 'Immortal', color: '#f43f5e', hasDivisions: true },
+        { id: 'Radiant', label: 'Radiant', value: 'Radiant', color: '#fef08a', hasDivisions: false },
       ];
+
+      const RANK_DIVISIONS = ['I', 'II', 'III'];
+
+      // Normalize any incoming rank strings into English Valorant rank names
+      const RANK_ALIASES = {
+        'sin rango': 'Unranked',
+        unranked: 'Unranked',
+        hierro: 'Iron',
+        iron: 'Iron',
+        bronce: 'Bronze',
+        bronze: 'Bronze',
+        plata: 'Silver',
+        silver: 'Silver',
+        oro: 'Gold',
+        gold: 'Gold',
+        platino: 'Platinum',
+        platinum: 'Platinum',
+        diamante: 'Diamond',
+        diamond: 'Diamond',
+        ascendente: 'Ascendant',
+        ascendant: 'Ascendant',
+        inmortal: 'Immortal',
+        immortal: 'Immortal',
+        radiante: 'Radiant',
+        radiant: 'Radiant',
+      };
+
+      function parseRankString(raw) {
+        const cleaned = String(raw || '').trim();
+        if (!cleaned) {
+          return { group: RANK_GROUPS[0], division: '', full: 'Unranked' };
+        }
+        const parts = cleaned.split(/\s+/);
+        const firstToken = (parts[0] || '').toLowerCase();
+        const twoToken = parts.length > 1 ? `${parts[0]} ${parts[1]}`.toLowerCase() : '';
+        const canonicalValue = RANK_ALIASES[twoToken] || RANK_ALIASES[firstToken];
+
+        if (canonicalValue) {
+          const group = RANK_GROUPS.find((g) => g.value === canonicalValue) || RANK_GROUPS[0];
+          if (!group.hasDivisions) {
+            return { group, division: '', full: group.value };
+          }
+          const divIndex = RANK_ALIASES[twoToken] ? 2 : 1;
+          const rawDiv = (parts[divIndex] || 'I').toUpperCase();
+          const normDiv = rawDiv === '1' ? 'I' : rawDiv === '2' ? 'II' : rawDiv === '3' ? 'III' : rawDiv;
+          const div = RANK_DIVISIONS.includes(normDiv) ? normDiv : 'I';
+          return { group, division: div, full: `${group.value} ${div}` };
+        }
+        return { group: RANK_GROUPS[0], division: '', full: 'Unranked' };
+      }
 
       // 11 Accent Presets (Rosa Pastel #f9a8d4 default first)
       const ACCENT_PRESETS = [
@@ -898,19 +956,21 @@
 
       function createDefaultState() {
         return {
-          riotName: 'episodicx',
-          riotTag: '#012',
-          rankTier: 'Diamond II',
-          rr: 64,
-          rrDelta: 42,
+          riotName: '',
+          riotTag: '',
+          rankTier: 'Unranked',
+          rr: 0,
+          rrDelta: 0,
           winRrAmount: 18,
           lossRrAmount: -16,
-          wins: 7,
-          losses: 3,
-          showCombatStats: true,
-          kd: 1.28,
-          acs: 234,
-          hs: 26.4,
+          wins: 0,
+          losses: 0,
+          showKD: false,
+          showACS: false,
+          showHS: false,
+          kd: 0,
+          acs: 0,
+          hs: 0,
           position: 'pos-bottom-left',
           backdrop: 'transparent',
           accent: ACCENT_PRESETS[0].color,
@@ -936,19 +996,21 @@
             ACCENT_PRESETS[0];
 
           const rawRank = typeof p.rankTier === 'string' && p.rankTier.trim() ? p.rankTier.trim() : defaults.rankTier;
-          const rankExists = RANK_TIERS.some((r) => r.toLowerCase() === rawRank.toLowerCase());
+          const normalizedRank = parseRankString(rawRank).full;
 
           return {
-            riotName: typeof p.riotName === 'string' && p.riotName.trim() ? p.riotName.trim() : defaults.riotName,
-            riotTag: typeof p.riotTag === 'string' && p.riotTag.trim() ? p.riotTag.trim() : defaults.riotTag,
-            rankTier: rankExists ? rawRank : defaults.rankTier,
+            riotName: typeof p.riotName === 'string' ? p.riotName : defaults.riotName,
+            riotTag: typeof p.riotTag === 'string' ? p.riotTag.replace(/^#/, '') : defaults.riotTag,
+            rankTier: normalizedRank,
             rr: Math.round(toSafeNumber(p.rr, defaults.rr, 0, 999)),
             rrDelta: Math.round(toSafeNumber(p.rrDelta, defaults.rrDelta, -999, 999)),
             winRrAmount: Math.round(toSafeNumber(p.winRrAmount, defaults.winRrAmount, -200, 200)),
             lossRrAmount: Math.round(toSafeNumber(p.lossRrAmount, defaults.lossRrAmount, -200, 200)),
             wins: Math.round(toSafeNumber(p.wins, defaults.wins, 0, 999)),
             losses: Math.round(toSafeNumber(p.losses, defaults.losses, 0, 999)),
-            showCombatStats: p.showCombatStats !== false,
+            showKD: typeof p.showKD === 'boolean' ? p.showKD : defaults.showKD,
+            showACS: typeof p.showACS === 'boolean' ? p.showACS : defaults.showACS,
+            showHS: typeof p.showHS === 'boolean' ? p.showHS : defaults.showHS,
             kd: Number(toSafeNumber(p.kd, defaults.kd, 0, 20).toFixed(2)),
             acs: Math.round(toSafeNumber(p.acs, defaults.acs, 0, 999)),
             hs: Number(toSafeNumber(p.hs, defaults.hs, 0, 100).toFixed(1)),
@@ -957,10 +1019,7 @@
             accent: preset.color,
             accentGlow: typeof p.accentGlow === 'string' && p.accentGlow ? p.accentGlow : preset.glow,
             accentSoft: typeof p.accentSoft === 'string' && p.accentSoft ? p.accentSoft : preset.soft,
-            endpointUrl:
-              typeof p.endpointUrl === 'string'
-                ? p.endpointUrl.trim()
-                : defaults.endpointUrl,
+            endpointUrl: typeof p.endpointUrl === 'string' ? p.endpointUrl.trim() : defaults.endpointUrl,
             endpointEnabled: Boolean(p.endpointEnabled),
             pollSeconds: Math.round(toSafeNumber(p.pollSeconds, defaults.pollSeconds, 5, 3600)),
           };
@@ -997,13 +1056,19 @@
       const displayLossesEl = document.getElementById('display-losses');
       const displayWinrateEl = document.getElementById('display-winrate');
       const combatStatsRowEl = document.getElementById('combat-stats-row');
+      const statCardKdEl = document.getElementById('stat-card-kd');
+      const statCardAcsEl = document.getElementById('stat-card-acs');
+      const statCardHsEl = document.getElementById('stat-card-hs');
       const displayKdEl = document.getElementById('display-kd');
       const displayAcsEl = document.getElementById('display-acs');
       const displayHsEl = document.getElementById('display-hs');
 
       const inputRiotNameEl = document.getElementById('input-riot-name');
       const inputRiotTagEl = document.getElementById('input-riot-tag');
-      const inputRankTierEl = document.getElementById('input-rank-tier');
+      const selectedRankPreviewEl = document.getElementById('selected-rank-preview');
+      const rankTierGridEl = document.getElementById('rank-tier-grid');
+      const rankDivisionRowEl = document.getElementById('rank-division-row');
+      const rankDivisionGridEl = document.getElementById('rank-division-grid');
       const inputRrEl = document.getElementById('input-rr');
       const inputWinRrEl = document.getElementById('input-win-rr');
       const inputLossRrEl = document.getElementById('input-loss-rr');
@@ -1012,8 +1077,9 @@
       const inputWinsEl = document.getElementById('input-wins');
       const inputLossesEl = document.getElementById('input-losses');
       const inputRrDeltaEl = document.getElementById('input-rr-delta');
-      const toggleCombatStatsEl = document.getElementById('toggle-combat-stats');
-      const combatInputsGridEl = document.getElementById('combat-inputs-grid');
+      const toggleShowKdEl = document.getElementById('toggle-show-kd');
+      const toggleShowAcsEl = document.getElementById('toggle-show-acs');
+      const toggleShowHsEl = document.getElementById('toggle-show-hs');
       const inputKdEl = document.getElementById('input-kd');
       const inputAcsEl = document.getElementById('input-acs');
       const inputHsEl = document.getElementById('input-hs');
@@ -1043,7 +1109,7 @@
       }
 
       // =========================================================================
-      // OVERLAY RENDERING & INPUT SYNC
+      // OVERLAY RENDERING & RANK BUTTON GRID
       // =========================================================================
       function triggerCardPulse() {
         widgetEl.classList.remove('val-pulse');
@@ -1052,97 +1118,177 @@
         clearTimeout(pulseTimeoutId);
         pulseTimeoutId = setTimeout(() => {
           widgetEl.classList.remove('val-pulse');
-        }, 550);
+        }, 420);
       }
 
-      function renderOverlay(animate = false) {
-        const cleanName = (state.riotName || 'episodicx').trim() || 'episodicx';
-        const rawTag = (state.riotTag || '#012').trim();
-        const cleanTag = rawTag ? (rawTag.startsWith('#') ? rawTag : `#${rawTag}`) : '#012';
+      function renderOverlay(shouldPulse) {
+        const rawName = (state.riotName || '').trim();
+        const rawTag = (state.riotTag || '').trim().replace(/^#/, '');
 
-        displayRiotNameEl.textContent = cleanName;
-        displayRiotTagEl.textContent = cleanTag;
-        displayRankTierEl.textContent = state.rankTier || 'Diamond II';
-        displayRrEl.textContent = String(state.rr);
+        displayRiotNameEl.textContent = rawName || 'Riot ID';
+        displayRiotTagEl.textContent = rawTag ? `#${rawTag}` : '#Tag';
+        displayRankTierEl.textContent = parseRankString(state.rankTier).full;
 
-        const delta = Number(state.rrDelta || 0);
-        if (delta > 0) {
-          displayRrDeltaEl.textContent = `+${delta} RR`;
+        const rrValue = Math.round(toSafeNumber(state.rr, 0, 0, 999));
+        displayRrEl.textContent = String(rrValue);
+
+        const barPct = Math.max(0, Math.min(100, rrValue));
+        displayRrProgressLabelEl.textContent = `${barPct} / 100 RR`;
+        displayRrBarEl.style.width = `${barPct}%`;
+
+        const deltaValue = Math.round(toSafeNumber(state.rrDelta, 0, -999, 999));
+        if (deltaValue > 0) {
+          displayRrDeltaEl.textContent = `+${deltaValue} RR`;
           displayRrDeltaEl.className = 'font-mono text-xs font-extrabold text-emerald-300';
-        } else if (delta < 0) {
-          displayRrDeltaEl.textContent = `${delta} RR`;
+        } else if (deltaValue < 0) {
+          displayRrDeltaEl.textContent = `${deltaValue} RR`;
           displayRrDeltaEl.className = 'font-mono text-xs font-extrabold text-rose-300';
         } else {
           displayRrDeltaEl.textContent = '0 RR';
           displayRrDeltaEl.className = 'font-mono text-xs font-extrabold text-slate-300';
         }
 
-        const progressRr =
-          state.rr >= 100 && state.rr % 100 === 0
-            ? 100
-            : Math.max(0, Math.min(100, state.rr % 100));
-        displayRrProgressLabelEl.textContent = `${progressRr} / 100 RR`;
-        displayRrBarEl.style.width = `${progressRr}%`;
+        const wins = Math.round(toSafeNumber(state.wins, 0, 0, 999));
+        const losses = Math.round(toSafeNumber(state.losses, 0, 0, 999));
+        displayWinsEl.textContent = `${wins}W`;
+        displayLossesEl.textContent = `${losses}L`;
 
-        displayWinsEl.textContent = `${state.wins}W`;
-        displayLossesEl.textContent = `${state.losses}L`;
+        const totalGames = wins + losses;
+        const winratePct = totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : '0.0';
+        displayWinrateEl.textContent = `${winratePct}%`;
 
-        const totalGames = state.wins + state.losses;
-        const winrate = totalGames > 0 ? ((state.wins / totalGames) * 100).toFixed(1) : '0.0';
-        displayWinrateEl.textContent = `${winrate}%`;
+        const visibleExtraStats = [state.showKD, state.showACS, state.showHS].filter(Boolean).length;
+        combatStatsRowEl.classList.toggle('hidden', visibleExtraStats === 0);
+        combatStatsRowEl.classList.toggle('grid-cols-1', visibleExtraStats === 1);
+        combatStatsRowEl.classList.toggle('grid-cols-2', visibleExtraStats === 2);
+        combatStatsRowEl.classList.toggle('grid-cols-3', visibleExtraStats === 3);
 
-        combatStatsRowEl.classList.toggle('hidden', !state.showCombatStats);
-        combatInputsGridEl.classList.toggle('opacity-50', !state.showCombatStats);
-        displayKdEl.textContent = Number(state.kd).toFixed(2);
-        displayAcsEl.textContent = String(Math.round(state.acs));
-        displayHsEl.textContent = `${Number(state.hs).toFixed(1)}%`;
+        statCardKdEl.classList.toggle('hidden', !state.showKD);
+        statCardAcsEl.classList.toggle('hidden', !state.showACS);
+        statCardHsEl.classList.toggle('hidden', !state.showHS);
 
-        const winSigned = state.winRrAmount >= 0 ? `+${state.winRrAmount}` : `${state.winRrAmount}`;
-        const lossSigned = state.lossRrAmount >= 0 ? `+${state.lossRrAmount}` : `${state.lossRrAmount}`;
-        quickWinBtnEl.textContent = `+ Victoria (${winSigned} RR)`;
-        quickLossBtnEl.textContent = `+ Derrota (${lossSigned} RR)`;
+        displayKdEl.textContent = Number(toSafeNumber(state.kd, 0, 0, 20)).toFixed(2);
+        displayAcsEl.textContent = String(Math.round(toSafeNumber(state.acs, 0, 0, 999)));
+        displayHsEl.textContent = `${Number(toSafeNumber(state.hs, 0, 0, 100)).toFixed(1)}%`;
+
+        const winDelta = Math.round(toSafeNumber(state.winRrAmount, 18, -200, 200));
+        const lossDelta = Math.round(toSafeNumber(state.lossRrAmount, -16, -200, 200));
+        quickWinBtnEl.textContent = `+ Victoria (${winDelta >= 0 ? '+' : ''}${winDelta} RR)`;
+        quickLossBtnEl.textContent = `+ Derrota (${lossDelta >= 0 ? '+' : ''}${lossDelta} RR)`;
 
         if (state.endpointEnabled && state.endpointUrl) {
           endpointStatusBadgeEl.textContent = `AUTO • ${state.pollSeconds}S`;
           endpointStatusBadgeEl.className =
-            'rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 font-mono text-[9px] font-bold text-emerald-300';
+            'rounded-full border border-pink-300/40 bg-pink-300/15 px-2 py-0.5 font-mono text-[9px] font-bold text-pink-200';
         } else if (state.endpointUrl) {
-          endpointStatusBadgeEl.textContent = 'LISTO';
+          endpointStatusBadgeEl.textContent = 'LISTO (MANUAL)';
           endpointStatusBadgeEl.className =
-            'rounded-full border border-pink-300/35 bg-pink-300/15 px-2 py-0.5 font-mono text-[9px] font-bold text-pink-200';
+            'rounded-full border border-cyan-400/35 bg-cyan-500/15 px-2 py-0.5 font-mono text-[9px] font-bold text-cyan-200';
         } else {
           endpointStatusBadgeEl.textContent = 'MANUAL';
           endpointStatusBadgeEl.className =
             'rounded-full border border-white/15 bg-slate-900 px-2 py-0.5 font-mono text-[9px] font-bold text-slate-400';
         }
 
-        if (animate) {
+        if (shouldPulse) {
           triggerCardPulse();
         }
       }
 
-      function populateRankSelect() {
-        const options = RANK_TIERS.slice();
-        if (!options.includes(state.rankTier)) {
-          options.unshift(state.rankTier);
+      function renderRankPicker() {
+        if (!rankTierGridEl || !rankDivisionGridEl) return;
+        const parsed = parseRankString(state.rankTier);
+        state.rankTier = parsed.full;
+
+        if (selectedRankPreviewEl) {
+          selectedRankPreviewEl.textContent = parsed.full;
         }
-        inputRankTierEl.innerHTML = options
-          .map((tier) => `<option value="${escapeHtml(tier)}">${escapeHtml(tier)}</option>`)
-          .join('');
-        inputRankTierEl.value = state.rankTier;
+
+        rankTierGridEl.innerHTML = RANK_GROUPS.map((g) => {
+          const isSelected = g.id === parsed.group.id;
+          return `
+            <button
+              type="button"
+              data-rank-group="${g.id}"
+              title="${escapeHtml(g.value)}"
+              class="rank-tier-btn flex flex-col items-center justify-center gap-0.5 rounded-lg border px-1 py-1.5 font-mono text-[9px] transition ${
+                isSelected
+                  ? 'border-pink-300/75 bg-pink-300/20 font-extrabold text-white shadow-sm'
+                  : 'border-white/10 bg-slate-950 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
+              }"
+            >
+              <span
+                class="h-2 w-2 rounded-full"
+                style="background-color: ${g.color}; box-shadow: 0 0 6px ${g.color}80;"
+              ></span>
+              <span class="w-full truncate text-center">${escapeHtml(g.value)}</span>
+            </button>
+          `;
+        }).join('');
+
+        rankTierGridEl.querySelectorAll('.rank-tier-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const groupId = btn.getAttribute('data-rank-group');
+            const targetGroup = RANK_GROUPS.find((g) => g.id === groupId) || RANK_GROUPS[6];
+            if (!targetGroup.hasDivisions) {
+              state.rankTier = targetGroup.value;
+            } else {
+              const currentDiv = parsed.division || 'I';
+              state.rankTier = `${targetGroup.value} ${currentDiv}`;
+            }
+            saveState();
+            renderRankPicker();
+            renderOverlay(true);
+          });
+        });
+
+        if (rankDivisionRowEl) {
+          rankDivisionRowEl.classList.toggle('hidden', !parsed.group.hasDivisions);
+        }
+
+        rankDivisionGridEl.innerHTML = RANK_DIVISIONS.map((div) => {
+          const isSelected = parsed.group.hasDivisions && parsed.division === div;
+          return `
+            <button
+              type="button"
+              data-rank-div="${div}"
+              ${!parsed.group.hasDivisions ? 'disabled' : ''}
+              class="rank-div-btn min-w-[38px] rounded-lg border px-2.5 py-1 font-mono text-[10px] transition ${
+                isSelected
+                  ? 'border-pink-300/75 bg-pink-300/20 font-extrabold text-white'
+                  : 'border-white/10 bg-slate-950 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
+              }"
+            >
+              ${div}
+            </button>
+          `;
+        }).join('');
+
+        rankDivisionGridEl.querySelectorAll('.rank-div-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const div = btn.getAttribute('data-rank-div') || 'I';
+            if (!parsed.group.hasDivisions) return;
+            state.rankTier = `${parsed.group.value} ${div}`;
+            saveState();
+            renderRankPicker();
+            renderOverlay(true);
+          });
+        });
       }
 
       function syncInputsFromState() {
         inputRiotNameEl.value = state.riotName;
         inputRiotTagEl.value = state.riotTag;
-        populateRankSelect();
+        renderRankPicker();
         inputRrEl.value = String(state.rr);
         inputWinRrEl.value = String(state.winRrAmount);
         inputLossRrEl.value = String(state.lossRrAmount);
         inputWinsEl.value = String(state.wins);
         inputLossesEl.value = String(state.losses);
         inputRrDeltaEl.value = String(state.rrDelta);
-        toggleCombatStatsEl.checked = Boolean(state.showCombatStats);
+        toggleShowKdEl.checked = Boolean(state.showKD);
+        toggleShowAcsEl.checked = Boolean(state.showACS);
+        toggleShowHsEl.checked = Boolean(state.showHS);
         inputKdEl.value = String(state.kd);
         inputAcsEl.value = String(state.acs);
         inputHsEl.value = String(state.hs);
@@ -1180,20 +1326,6 @@
         renderOverlay(false);
       }
 
-      function applyDirectManualRr(isWin, rrAmount) {
-        const delta = Math.round(toSafeNumber(rrAmount, 0, -200, 200));
-        if (isWin) {
-          state.winRrAmount = Math.round(toSafeNumber(state.winRrAmount + delta, 18, -200, 200));
-        } else {
-          state.lossRrAmount = Math.round(toSafeNumber(state.lossRrAmount + delta, -16, -200, 200));
-        }
-        state.rr = Math.round(toSafeNumber(state.rr + delta, 0, 0, 999));
-        state.rrDelta = Math.round(toSafeNumber(state.rrDelta + delta, 0, -999, 999));
-        saveState();
-        syncInputsFromState();
-        renderOverlay(true);
-      }
-
       function applyRrStep(delta) {
         const step = Math.round(toSafeNumber(delta, 0, -200, 200));
         state.rr = Math.round(toSafeNumber(state.rr + step, 0, 0, 999));
@@ -1204,7 +1336,7 @@
       }
 
       // =========================================================================
-      // ENDPOINT / API POLLING (JSON & PLAIN TEXT WITH RESILIENT PARSING)
+      // ENDPOINT / API POLLING
       // =========================================================================
       function setEndpointFeedback(msg, isError) {
         if (!msg) {
@@ -1252,26 +1384,14 @@
         return Object.keys(out).length ? out : null;
       }
 
-      function sanitizeEndpointUrl(raw) {
-        let trimmed = String(raw || '').trim();
-        const macroMatch = trimmed.match(/^\$\(customapi\.(.+)\)$/i);
-        if (macroMatch && macroMatch[1]) {
-          trimmed = macroMatch[1].trim();
-        }
-        return trimmed;
-      }
-
       async function syncFromEndpoint(manualTrigger) {
-        const cleanedUrl = sanitizeEndpointUrl(inputEndpointUrlEl.value || state.endpointUrl);
+        const cleanedUrl = String(inputEndpointUrlEl.value || state.endpointUrl || '').trim();
         state.endpointUrl = cleanedUrl;
-        if (inputEndpointUrlEl.value !== cleanedUrl) {
-          inputEndpointUrlEl.value = cleanedUrl;
-        }
         saveState();
 
         if (!cleanedUrl) {
           if (manualTrigger) {
-            setEndpointFeedback('Introduce una URL directa válida para sincronizar.', true);
+            setEndpointFeedback('Introduce una URL de endpoint o API para sincronizar.', true);
           }
           renderOverlay(false);
           return;
@@ -1299,7 +1419,7 @@
 
           const nextRank = parsedData.rankTier || parsedData.rank || parsedData.current_rank;
           if (typeof nextRank === 'string' && nextRank.trim()) {
-            state.rankTier = nextRank.trim();
+            state.rankTier = parseRankString(nextRank).full;
           }
 
           const nextRr = parsedData.rr ?? parsedData.elo ?? parsedData.ranking_in_tier;
@@ -1442,7 +1562,6 @@
         const shouldOpen = typeof force === 'boolean' ? force : drawerEl.classList.contains('hidden');
         drawerEl.classList.toggle('hidden', !shouldOpen);
         toggleDrawerBtnEl.setAttribute('aria-expanded', String(shouldOpen));
-        toggleDrawerBtnEl.classList.toggle('opacity-100', shouldOpen);
       }
 
       function bindEvents() {
@@ -1453,15 +1572,13 @@
         });
 
         inputRiotTagEl.addEventListener('input', (e) => {
-          state.riotTag = e.target.value;
+          const cleanedTag = String(e.target.value || '').replace(/^#/, '');
+          if (e.target.value !== cleanedTag) {
+            e.target.value = cleanedTag;
+          }
+          state.riotTag = cleanedTag;
           saveState();
           renderOverlay(false);
-        });
-
-        inputRankTierEl.addEventListener('change', (e) => {
-          state.rankTier = e.target.value;
-          saveState();
-          renderOverlay(true);
         });
 
         inputRrEl.addEventListener('input', (e) => {
@@ -1494,18 +1611,6 @@
           });
         });
 
-        document.querySelectorAll('.apply-win-rr').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            applyDirectManualRr(true, Number(btn.getAttribute('data-apply-win-rr') || 0));
-          });
-        });
-
-        document.querySelectorAll('.apply-loss-rr').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            applyDirectManualRr(false, Number(btn.getAttribute('data-apply-loss-rr') || 0));
-          });
-        });
-
         quickWinBtnEl.addEventListener('click', () => applyQuickMatch(true));
         quickLossBtnEl.addEventListener('click', () => applyQuickMatch(false));
 
@@ -1533,8 +1638,20 @@
           renderOverlay(false);
         });
 
-        toggleCombatStatsEl.addEventListener('change', (e) => {
-          state.showCombatStats = e.target.checked;
+        toggleShowKdEl.addEventListener('change', (e) => {
+          state.showKD = e.target.checked;
+          saveState();
+          renderOverlay(false);
+        });
+
+        toggleShowAcsEl.addEventListener('change', (e) => {
+          state.showACS = e.target.checked;
+          saveState();
+          renderOverlay(false);
+        });
+
+        toggleShowHsEl.addEventListener('change', (e) => {
+          state.showHS = e.target.checked;
           saveState();
           renderOverlay(false);
         });
