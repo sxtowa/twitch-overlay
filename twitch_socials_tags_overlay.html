@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Twitch Redes Overlay</title>
+  <title>Twitch Socials &amp; Tags Overlay — Cyber-Kawaii Pixel Edition</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=Press+Start+2P&family=Silkscreen:wght@400;700&family=Space+Grotesk:wght@600;700&display=swap"
     rel="stylesheet"
   />
   <script>
@@ -18,6 +18,9 @@
           fontFamily: {
             sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
+            pixel: ['"Silkscreen"', 'monospace'],
+            arcade: ['"Press Start 2P"', 'monospace'],
+            handle: ['"Space Grotesk"', '"Plus Jakarta Sans"', 'sans-serif'],
           },
         },
       },
@@ -25,16 +28,23 @@
   </script>
   <style>
     :root {
-      --accent: #f9a8d4;
-      --accent-glow: rgba(249, 168, 212, 0.35);
-      --accent-soft: rgba(249, 168, 212, 0.14);
+      --pink: #f9a8d4;
+      --pink-bright: #fbcfe8;
+      --pink-glow: rgba(249, 168, 212, 0.5);
+      --pink-soft: rgba(249, 168, 212, 0.16);
+      --lavender: #9d8df1;
+      --lavender-deep: #7c6ae6;
+      --lavender-glow: rgba(157, 141, 241, 0.45);
+      --lavender-soft: rgba(157, 141, 241, 0.14);
+      --void-bg: rgba(12, 11, 20, 0.9);
+      --void-panel: rgba(16, 15, 28, 0.94);
     }
 
     * {
       box-sizing: border-box;
     }
 
-    /* Strictly transparent by default for 1920x1080 OBS Browser Source */
+    /* Strictly transparent canvas for OBS Browser Source (1920x1080) */
     html,
     body {
       margin: 0;
@@ -43,16 +53,16 @@
       height: 100%;
       overflow: hidden;
       background: transparent;
-      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-family: 'JetBrains Mono', monospace;
       user-select: none;
     }
 
-    /* Optional preview backdrops inside customizer (OBS stays transparent) */
+    /* Optional preview backdrops in setup panel */
     body.preview-dark {
-      background-color: #07090f;
+      background-color: #0b0a10;
       background-image:
-        radial-gradient(circle at 20% 85%, var(--accent-soft), transparent 48%),
-        radial-gradient(circle at 82% 18%, rgba(145, 70, 255, 0.08), transparent 45%);
+        radial-gradient(circle at 22% 82%, rgba(249, 168, 212, 0.12), transparent 45%),
+        radial-gradient(circle at 78% 18%, rgba(157, 141, 241, 0.14), transparent 45%);
     }
 
     body.preview-light {
@@ -63,113 +73,217 @@
       background-size: 32px 32px;
     }
 
-    /* Dark cyber-minimalist glassmorphism card */
-    .redes-glass {
-      position: relative;
-      background: rgba(14, 17, 25, 0.78);
+    /* Y2K Cyber-Kawaii Void-Black Glass Container */
+    .kawaii-cyber-card {
+      background: linear-gradient(155deg, rgba(14, 13, 24, 0.92), rgba(10, 9, 17, 0.88));
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.11);
+      border: 1.5px solid var(--lavender);
       box-shadow:
-        0 20px 48px -12px rgba(0, 0, 0, 0.72),
-        0 0 30px -10px var(--accent-glow),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.09);
-      transition: box-shadow 0.35s ease, border-color 0.35s ease;
+        0 18px 42px -10px rgba(0, 0, 0, 0.85),
+        0 0 24px -4px var(--lavender-glow),
+        0 0 14px -6px var(--pink-glow),
+        inset 0 0 18px var(--lavender-soft);
+      transition:
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
     }
 
+    /* Pixel neon text glow matching reference image */
+    .pixel-glow-pink {
+      color: var(--pink);
+      text-shadow:
+        0 0 8px var(--pink-glow),
+        0 0 18px var(--lavender-glow);
+    }
+
+    .pixel-glow-lavender {
+      color: var(--lavender);
+      text-shadow:
+        0 0 8px var(--lavender-glow),
+        0 0 16px var(--lavender-glow);
+    }
+
+    /* Pixel neon text glow matching reference image */
+    .pixel-glow-pink {
+      color: var(--pink);
+      text-shadow:
+        0 0 8px rgba(249, 168, 212, 0.75),
+        0 0 18px rgba(157, 141, 241, 0.55);
+    }
+
+    .pixel-glow-lavender {
+      color: #c4b5fd;
+      text-shadow:
+        0 0 8px rgba(157, 141, 241, 0.7),
+        0 0 16px rgba(124, 106, 230, 0.45);
+    }
+
+    /* Segmented cyber divider line */
+    .cyber-segmented-line {
+      height: 2px;
+      background-image: repeating-linear-gradient(
+        to right,
+        var(--pink) 0px,
+        var(--pink) 10px,
+        transparent 10px,
+        transparent 14px,
+        var(--lavender) 14px,
+        var(--lavender) 24px,
+        transparent 24px,
+        transparent 28px
+      );
+      opacity: 0.75;
+    }
+
+    /* Corner positioning presets */
     .pos-bottom-left {
-      bottom: 24px;
-      left: 24px;
+      bottom: 26px;
+      left: 26px;
       top: auto;
       right: auto;
     }
 
     .pos-top-left {
-      top: 24px;
-      left: 24px;
+      top: 26px;
+      left: 26px;
       bottom: auto;
       right: auto;
     }
 
     .pos-top-right {
-      top: 24px;
-      right: 24px;
+      top: 26px;
+      right: 26px;
       bottom: auto;
       left: auto;
     }
 
     .pos-bottom-right {
-      bottom: 24px;
-      right: 24px;
+      bottom: 26px;
+      right: 26px;
       top: auto;
       left: auto;
     }
 
+    /* Floating Sparkle & Heart Animations */
+    @keyframes floatSparkle {
+      0%,
+      100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: translateY(-3px) scale(1.12);
+        opacity: 1;
+      }
+    }
+
+    .sparkle-float-1 {
+      animation: floatSparkle 2.8s ease-in-out infinite;
+    }
+
+    .sparkle-float-2 {
+      animation: floatSparkle 3.4s ease-in-out 0.6s infinite;
+    }
+
+    /* Slide-in transition for cycling mode */
+    @keyframes pixelTagEnter {
+      0% {
+        opacity: 0;
+        transform: translateY(8px) scale(0.97);
+        filter: blur(2px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .tag-animate-enter {
+      animation: pixelTagEnter 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Individual social pill styling */
+    .social-pill {
+      background: linear-gradient(135deg, rgba(24, 21, 40, 0.88), rgba(15, 14, 27, 0.92));
+      border: 1px solid var(--lavender-glow);
+      box-shadow: inset 0 1px 0 var(--pink-soft);
+      transition: all 0.25s ease;
+    }
+
+    .social-pill-highlight {
+      border-color: var(--pink);
+      box-shadow:
+        0 0 14px -4px var(--pink-glow),
+        inset 0 1px 0 var(--pink-soft);
+    }
+
+    /* Custom scrollbar for setup panel */
     .custom-scroll::-webkit-scrollbar {
       width: 5px;
     }
     .custom-scroll::-webkit-scrollbar-track {
-      background: rgba(15, 23, 42, 0.45);
+      background: rgba(12, 11, 20, 0.5);
       border-radius: 999px;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background: rgba(148, 163, 184, 0.35);
+      background: var(--lavender);
       border-radius: 999px;
     }
   </style>
 </head>
 <body>
   <!-- ===================================================================== -->
-  <!-- MAIN REDES OVERLAY CARD (ONLY "Redes" HEADER + ACTIVE SOCIAL ITEMS)   -->
+  <!-- MAIN TWITCH SOCIALS & TAGS OVERLAY WIDGET (CYBER-KAWAII PIXEL THEME)  -->
   <!-- ===================================================================== -->
   <aside
-    id="redes-widget"
-    class="redes-glass pos-bottom-left fixed z-10 w-[448px] max-w-[calc(100vw-48px)] overflow-hidden rounded-2xl text-white"
-    aria-label="Redes Overlay"
+    id="socials-widget"
+    class="kawaii-cyber-card pos-bottom-left fixed z-20 w-[370px] max-w-[calc(100vw-48px)] rounded-2xl p-3.5 text-white"
+    aria-label="Twitch Socials & Tags Overlay"
   >
-    <!-- Top Accent Strip -->
-    <div
-      class="h-[2.5px] w-full"
-      style="background: linear-gradient(90deg, var(--accent), var(--accent-soft) 75%, transparent);"
-    ></div>
+    <!-- Floating Cyber-Kawaii Corner Sparkles -->
+    <svg
+      class="sparkle-float-1 pointer-events-none absolute -left-2.5 -top-2.5 h-5 w-5"
+      style="color: var(--lavender); filter: drop-shadow(0 0 6px var(--lavender-glow));"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      aria-hidden="true"
+    >
+      <path d="M12 2C12.4 7.6 16.4 11.6 22 12C16.4 12.4 12.4 16.4 12 22C11.6 16.4 7.6 12.4 2 12C7.6 11.6 11.6 7.6 12 2Z" />
+    </svg>
 
-    <div class="p-4">
-      <!-- Header strictly titled "Redes" (no active item counter badge) -->
-      <div class="mb-3 flex items-center justify-between border-b border-white/10 pb-2">
-        <div class="flex min-w-0 items-center gap-2">
-          <span
-            class="h-2 w-2 shrink-0 rounded-full"
-            style="background-color: var(--accent); box-shadow: 0 0 10px var(--accent-glow);"
-          ></span>
-          <span class="shrink-0 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-slate-200">
-            Redes
-          </span>
-          <span
-            id="header-symbols-display"
-            class="hidden truncate font-mono text-xs font-semibold tracking-wide"
-            style="color: var(--accent);"
-          ></span>
-        </div>
-      </div>
+    <svg
+      class="sparkle-float-2 pointer-events-none absolute -bottom-2 -right-2 h-4 w-4"
+      style="color: var(--pink); filter: drop-shadow(0 0 6px var(--pink-glow));"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M12 3L14.2 9.8L21 12L14.2 14.2L12 21L9.8 14.2L3 12L9.8 9.8L12 3Z" />
+    </svg>
 
-      <!-- Active Social Items (Platform SVG icons + handle + optional handle symbols) -->
-      <div id="redes-list" class="grid grid-cols-1 gap-2 sm:grid-cols-2"></div>
-    </div>
+    <!-- Dynamic Social Tags Container (supports 'cycle' single-card or 'stack' multi-row) -->
+    <div id="socials-container" class="space-y-2"></div>
   </aside>
 
   <!-- ===================================================================== -->
-  <!-- COLLAPSIBLE CUSTOMIZER DRAWER (Bottom-Right)                          -->
+  <!-- DISCREET COLLAPSIBLE CUSTOMIZER PANEL (SHORTCUTS: [C] & [H])          -->
   <!-- ===================================================================== -->
   <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
     <section
       id="customizer-drawer"
-      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[416px] max-w-[92vw] overflow-y-auto rounded-2xl border border-white/15 bg-slate-950/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[405px] max-w-[92vw] overflow-y-auto rounded-2xl border border-[#9d8df1]/45 bg-[#0e0d18]/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
     >
       <!-- Drawer Header -->
-      <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+      <div class="flex items-center justify-between border-b border-[#9d8df1]/25 pb-2.5">
         <div>
-          <h2 class="text-xs font-bold uppercase tracking-wider text-white">
-            Redes Setup
+          <h2 class="font-pixel text-xs font-bold uppercase tracking-wider text-[#f9a8d4]">
+            Socials Overlay Setup
           </h2>
           <p class="font-mono text-[10px] text-slate-400">
             Atajos: [C] Panel • [H] Ocultar UI • ?clean=1
@@ -177,25 +291,17 @@
         </div>
         <div class="flex items-center gap-1.5">
           <button
-            id="reset-defaults-btn"
-            type="button"
-            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
-            title="Restablecer por defecto"
-          >
-            Reset
-          </button>
-          <button
             id="hide-ui-btn"
             type="button"
-            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/10 hover:text-white"
-            title="Ocultar interfaz (Atajo: H)"
+            class="rounded-lg border border-[#9d8df1]/30 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-[#9d8df1]/20 hover:text-white"
+            title="Ocultar interfaz de configuración para OBS (Atajo: H)"
           >
-            Ocultar UI
+            Hide UI
           </button>
           <button
             id="close-drawer-btn"
             type="button"
-            class="rounded-lg border border-white/10 bg-white/5 px-2 py-1 font-mono text-xs text-slate-300 hover:bg-white/10 hover:text-white"
+            class="rounded-lg border border-[#9d8df1]/30 bg-white/5 px-2 py-1 font-mono text-xs text-slate-300 hover:bg-[#9d8df1]/20 hover:text-white"
             title="Cerrar panel"
           >
             ✕
@@ -203,254 +309,396 @@
         </div>
       </div>
 
-      <!-- 1. SOCIAL ITEMS & "AÑADIR RED SOCIAL" FORM -->
-      <div class="mt-3.5 space-y-2.5">
-        <div class="flex items-center justify-between">
-          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-        <!-- Clear button-grid "Añadir red social" form (no native <select> popups in OBS Interact) -->
-        <div class="space-y-2 rounded-xl border border-pink-300/25 bg-slate-900/90 p-2.5">
+      <!-- SECTION 1: DISPLAY MODE & HEADER TEXT -->
+      <div class="mt-3.5 space-y-3">
+        <div class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+          1. Modo de Visualización y Encabezado
+        </div>
+
+        <!-- Display Mode Buttons (No native select for OBS Interact compatibility) -->
+        <div class="grid grid-cols-2 gap-1.5">
+          <button
+            type="button"
+            data-mode="cycle"
+            class="mode-btn rounded-xl border border-[#f9a8d4]/60 bg-[#f9a8d4]/15 px-3 py-2 font-mono text-[11px] font-bold text-white"
+          >
+            ↻ Rotación (1 a 1)
+          </button>
+          <button
+            type="button"
+            data-mode="stack"
+            class="mode-btn rounded-xl border border-white/10 bg-[#141324] px-3 py-2 font-mono text-[11px] font-semibold text-slate-300 hover:border-[#9d8df1]/40"
+          >
+            ☰ Lista Apilada
+          </button>
+        </div>
+
+        <!-- Custom Header Badge & Subtag -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="input-pill-badge" class="block font-mono text-[10px] text-slate-400">
+              Etiqueta Pastilla
+            </label>
+            <input
+              id="input-pill-badge"
+              type="text"
+              maxlength="14"
+              value="SOCIALS"
+              class="mt-1 w-full rounded-lg border border-[#9d8df1]/30 bg-[#090811] px-2.5 py-1.5 font-mono text-xs text-[#f9a8d4] outline-none focus:border-[#f9a8d4]"
+            />
+          </div>
+          <div>
+            <label for="input-subtag" class="block font-mono text-[10px] text-slate-400">
+              Texto Superior Derecho
+            </label>
+            <input
+              id="input-subtag"
+              type="text"
+              maxlength="18"
+              value="> FOLLOW <"
+              class="mt-1 w-full rounded-lg border border-[#9d8df1]/30 bg-[#090811] px-2.5 py-1.5 font-mono text-xs text-[#c4b5fd] outline-none focus:border-[#f9a8d4]"
+            />
+          </div>
+        </div>
+
+        <!-- Cycle Duration Slider + Step Controls (Increments of 5s: 5s to 60s) -->
+        <div class="rounded-xl border border-white/10 bg-[#141324] p-2.5">
           <div class="flex items-center justify-between">
-            <span class="font-mono text-[10px] text-slate-400">
-              1. Elige la red:
+            <span class="font-mono text-[10px] text-slate-300">
+              Velocidad de rotación (cada 5s)
             </span>
             <span
-              id="selected-new-platform-label"
-              class="font-mono text-[10px] font-bold text-pink-200"
+              id="interval-display"
+              class="rounded-md border border-[#f9a8d4]/40 bg-[#f9a8d4]/15 px-2 py-0.5 font-mono text-[11px] font-bold text-[#f9a8d4]"
             >
-              Instagram
+              5s
             </span>
           </div>
-          <div id="new-platform-grid" class="grid grid-cols-3 gap-1"></div>
-          <div class="flex items-center gap-1.5 pt-0.5">
+          <div class="mt-2 flex items-center gap-2">
+            <button
+              id="interval-dec-btn"
+              type="button"
+              class="flex h-7 w-8 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-[#090811] font-mono text-xs font-bold text-slate-200 hover:border-[#f9a8d4] hover:text-[#f9a8d4]"
+              title="Restar 5 segundos"
+            >
+              -5s
+            </button>
             <input
-              id="new-handle-input"
-              type="text"
-              placeholder="@tu_usuario"
-              aria-label="Usuario o enlace de la nueva red"
-              class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
+              id="interval-slider"
+              type="range"
+              min="5"
+              max="60"
+              step="5"
+              value="5"
+              class="h-1.5 flex-1 cursor-pointer accent-[#f9a8d4]"
             />
             <button
-              id="add-social-submit-btn"
+              id="interval-inc-btn"
               type="button"
-              class="shrink-0 rounded-lg border border-pink-300/50 bg-pink-300/20 px-3 py-1.5 font-mono text-[10px] font-extrabold uppercase tracking-wider text-pink-100 transition hover:bg-pink-300/30 active:scale-95"
+              class="flex h-7 w-8 shrink-0 items-center justify-center rounded-lg border border-white/15 bg-[#090811] font-mono text-xs font-bold text-slate-200 hover:border-[#f9a8d4] hover:text-[#f9a8d4]"
+              title="Sumar 5 segundos"
             >
-              + Añadir
+              +5s
             </button>
           </div>
         </div>
-
-        <!-- Existing Social Items Editor -->
-        <div id="item-editor-list" class="space-y-2"></div>
       </div>
 
-      <!-- 2. MULTI-SYMBOL INDEPENDENT CUSTOMIZATION -->
-      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
-        <div class="flex items-center justify-between">
-          <span class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            2. Símbolos Decorativos
-          </span>
+      <!-- SECTION 2: COLOR CUSTOMIZATION PRESETS & PICKERS -->
+      <div class="mt-4 space-y-2.5 border-t border-[#9d8df1]/20 pt-3.5">
+        <div class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+          2. Paleta de Colores Y2K
         </div>
 
-        <!-- Target Switcher: Encabezado vs Al lado del nombre -->
-        <div>
-          <span class="block font-mono text-[10px] text-slate-400">
-            Destino para añadir / combinar símbolos
-          </span>
-          <div class="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
-            <button
-              type="button"
-              data-symbol-target="header"
-              class="target-tab-btn rounded-lg bg-pink-300/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-pink-200 transition"
-            >
-              Encabezado
-            </button>
-            <button
-              type="button"
-              data-symbol-target="handle"
-              class="target-tab-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 transition hover:bg-white/5"
-            >
-              Al lado del nombre
-            </button>
-          </div>
-        </div>
+        <div id="color-presets-grid" class="grid grid-cols-2 gap-1.5"></div>
 
-        <!-- Quick-Add Preset Chips -->
-        <div>
-          <span class="block font-mono text-[10px] text-slate-400">
-            Chips rápidos para el destino seleccionado
-          </span>
-          <div id="preset-chips-grid" class="mt-1.5 flex flex-wrap gap-1.5"></div>
-        </div>
-
-        <!-- Custom Symbol Input + Add Button -->
-        <div>
-          <label for="custom-symbol-input" class="block font-mono text-[10px] text-slate-400">
-            Símbolo o combinación personalizada
+        <div class="grid grid-cols-2 gap-2 rounded-xl border border-white/10 bg-[#141324] p-2.5">
+          <label class="flex cursor-pointer items-center justify-between gap-2">
+            <span class="font-mono text-[10px] text-slate-300">Principal</span>
+            <input
+              id="picker-primary"
+              type="color"
+              value="#f9a8d4"
+              class="h-6 w-9 cursor-pointer rounded border border-white/20 bg-transparent"
+            />
           </label>
-          <div class="mt-1 flex items-center gap-1.5">
+          <label class="flex cursor-pointer items-center justify-between gap-2">
+            <span class="font-mono text-[10px] text-slate-300">Secundario</span>
             <input
-              id="custom-symbol-input"
-              type="text"
-              maxlength="24"
-              placeholder="Escribe o pega símbolos (ej. Ი𐑼, ɞ, ♡, ✦)..."
-              class="min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-900 px-2.5 py-1.5 font-mono text-xs text-white placeholder-slate-500 outline-none focus:border-pink-300"
+              id="picker-secondary"
+              type="color"
+              value="#9d8df1"
+              class="h-6 w-9 cursor-pointer rounded border border-white/20 bg-transparent"
             />
-            <button
-              id="add-custom-symbol-btn"
-              type="button"
-              class="shrink-0 rounded-lg border border-pink-300/40 bg-pink-300/20 px-3 py-1.5 font-mono text-[10px] font-bold text-pink-100 transition hover:bg-pink-300/30 active:scale-95"
-            >
-              Añadir
-            </button>
-          </div>
-        </div>
-
-        <!-- A) Encabezado Symbol List Box -->
-        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
-          <div class="flex items-center justify-between gap-2">
-            <label class="inline-flex cursor-pointer items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
-              <input
-                id="header-symbols-enabled"
-                type="checkbox"
-                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
-              />
-              <span>Encabezado</span>
-            </label>
-            <div class="flex items-center gap-2">
-              <span
-                id="header-combined-preview"
-                class="max-w-[130px] truncate font-mono text-[11px] font-semibold"
-                style="color: var(--accent);"
-              ></span>
-              <button
-                id="clear-header-symbols-btn"
-                type="button"
-                class="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
-              >
-                Limpiar
-              </button>
-            </div>
-          </div>
-          <div id="header-symbols-list" class="mt-2 flex flex-wrap gap-1.5"></div>
-        </div>
-
-        <!-- B) Al lado del nombre Symbol List Box -->
-        <div class="rounded-xl border border-white/10 bg-slate-900/75 p-2.5">
-          <div class="flex items-center justify-between gap-2">
-            <label class="inline-flex cursor-pointer items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-slate-200">
-              <input
-                id="handle-symbols-enabled"
-                type="checkbox"
-                class="h-3.5 w-3.5 cursor-pointer accent-pink-300"
-              />
-              <span>Al lado del nombre</span>
-            </label>
-            <div class="flex items-center gap-2">
-              <span
-                id="handle-combined-preview"
-                class="max-w-[120px] truncate font-mono text-[11px] font-semibold"
-                style="color: var(--accent);"
-              ></span>
-              <button
-                id="clear-handle-symbols-btn"
-                type="button"
-                class="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-300 hover:border-rose-400/40 hover:text-rose-200"
-              >
-                Limpiar
-              </button>
-            </div>
-          </div>
-
-          <!-- Handle symbol placement: after or around -->
-          <div class="mt-2 flex items-center justify-between gap-2">
-            <span class="font-mono text-[10px] text-slate-400">Ubicación junto al usuario</span>
-            <select
-              id="handle-symbol-position"
-              class="rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-[10px] font-semibold text-slate-200 outline-none focus:border-pink-300"
-            >
-              <option value="after">A la derecha (@usuario ♡✦)</option>
-              <option value="around">Rodeando (♡ @usuario ✦)</option>
-            </select>
-          </div>
-
-          <div id="handle-symbols-list" class="mt-2 flex flex-wrap gap-1.5"></div>
+          </label>
         </div>
       </div>
 
-      <!-- 3. POSITION, LAYOUT, ACCENT & PREVIEW BACKDROP -->
-      <div class="mt-3.5 space-y-3 border-t border-white/10 pt-3.5">
-        <div class="font-mono text-[10px] font-bold uppercase tracking-wider text-slate-300">
-          3. Posición, Diseño y Color
+      <!-- SECTION 3: SOCIAL PLATFORMS & HANDLES -->
+      <div class="mt-4 border-t border-[#9d8df1]/20 pt-3.5">
+        <div class="flex items-center justify-between">
+          <span class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+            3. Redes y Usuarios
+          </span>
+          <span class="font-mono text-[10px] text-slate-400">Activa / Edita</span>
+        </div>
+        <div id="platforms-editor-list" class="mt-2 space-y-2"></div>
+      </div>
+
+      <!-- SECTION 4: POSITION & PREVIEW BACKDROP -->
+      <div class="mt-4 space-y-3 border-t border-[#9d8df1]/20 pt-3.5">
+        <div class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+          4. Posición en Pantalla
         </div>
 
+        <!-- Pastel Pink Pill Badge ("SOCIALS" / custom tag) -->
+        <span
+          id="header-pill-badge"
+          class="rounded-full bg-[#f9a8d4] px-2.5 py-0.5 font-pixel text-[9px] font-bold uppercase tracking-widest text-[#0c0b14] shadow-[0_0_12px_rgba(249,168,212,0.65)]"
+        >
+          SOCIALS
+        </span>
+      </div>
+
+      <!-- Right: Custom Tagline + Cute Cat Head Outline -->
+      <div class="flex items-center gap-2">
+        <span
+          id="header-subtag"
+          class="font-pixel text-[9px] uppercase tracking-wider text-[#c4b5fd]"
+        >
+          &gt; FOLLOW &lt;
+        </span>
+        <!-- Neon Lavender Cat Head Icon matching reference image -->
+        <svg
+          class="h-5 w-5 text-[#c4b5fd] drop-shadow-[0_0_7px_rgba(157,141,241,0.85)]"
+          viewBox="0 0 28 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 11L5 3L10 7H18L23 3L24 11C25.5 13 25.5 17 23 19.5C20.5 21.5 7.5 21.5 5 19.5C2.5 17 2.5 13 4 11Z" />
+          <rect x="9.5" y="12.5" width="2" height="3" rx="0.5" fill="#f9a8d4" stroke="none" />
+          <rect x="16.5" y="12.5" width="2" height="3" rx="0.5" fill="#f9a8d4" stroke="none" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Segmented Pixel Divider -->
+    <div class="cyber-segmented-line mb-3"></div>
+
+    <!-- Dynamic Social Tags Container (supports 'cycle' single-card or 'stack' multi-row) -->
+    <div id="socials-container" class="space-y-2"></div>
+
+    <!-- Bottom Cyber Footer Bar: Progress / Cycle Indicator + Pixel Brackets -->
+    <div class="mt-3 flex items-center justify-between gap-2 pt-0.5">
+      <span class="font-pixel text-[8px] uppercase tracking-[0.18em] text-[#9d8df1]/80">
+        // CONNECT //
+      </span>
+
+      <!-- Segmented Cycle Progress Bar -->
+      <div class="h-[4px] flex-1 overflow-hidden rounded-full border border-[#9d8df1]/40 bg-[#08070e]">
+        <div
+          id="cycle-progress-bar"
+          class="h-full rounded-full bg-gradient-to-r from-[#f9a8d4] to-[#9d8df1] shadow-[0_0_10px_rgba(249,168,212,0.75)] transition-[width] duration-200 ease-linear"
+          style="width: 100%;"
+        ></div>
+      </div>
+
+      <span id="cycle-counter" class="font-pixel text-[8px] text-[#f9a8d4]">
+        01/04
+      </span>
+    </div>
+  </aside>
+
+  <!-- ===================================================================== -->
+  <!-- DISCREET COLLAPSIBLE CUSTOMIZER PANEL (SHORTCUTS: [C] & [H])          -->
+  <!-- ===================================================================== -->
+  <div id="customizer-root" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <section
+      id="customizer-drawer"
+      class="custom-scroll mb-2.5 hidden max-h-[calc(100vh-4.5rem)] w-[390px] max-w-[92vw] overflow-y-auto rounded-2xl border border-[#9d8df1]/45 bg-[#0e0d18]/95 p-4 text-slate-100 shadow-2xl backdrop-blur-xl"
+    >
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between border-b border-[#9d8df1]/25 pb-2.5">
         <div>
-          <span class="block font-mono text-[10px] text-slate-400">Esquina en pantalla</span>
-          <div class="mt-1.5 grid grid-cols-2 gap-1.5">
-            <button
-              type="button"
-              data-pos="pos-bottom-left"
-              class="pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white"
-            >
-              ↙ Abajo Izquierda
-            </button>
-            <button
-              type="button"
-              data-pos="pos-top-left"
-              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              ↖ Arriba Izquierda
-            </button>
-            <button
-              type="button"
-              data-pos="pos-top-right"
-              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              ↗ Arriba Derecha
-            </button>
-            <button
-              type="button"
-              data-pos="pos-bottom-right"
-              class="pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25"
-            >
-              ↘ Abajo Derecha
-            </button>
+          <h2 class="font-pixel text-xs font-bold uppercase tracking-wider text-[#f9a8d4]">
+            Socials Overlay Setup
+          </h2>
+          <p class="font-mono text-[10px] text-slate-400">
+            Atajos: [C] Panel • [H] Ocultar UI • ?clean=1
+          </p>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button
+            id="hide-ui-btn"
+            type="button"
+            class="rounded-lg border border-[#9d8df1]/30 bg-white/5 px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-[#9d8df1]/20 hover:text-white"
+            title="Ocultar interfaz de configuración para OBS (Atajo: H)"
+          >
+            Hide UI
+          </button>
+          <button
+            id="close-drawer-btn"
+            type="button"
+            class="rounded-lg border border-[#9d8df1]/30 bg-white/5 px-2 py-1 font-mono text-xs text-slate-300 hover:bg-[#9d8df1]/20 hover:text-white"
+            title="Cerrar panel"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- SECTION 1: DISPLAY MODE & HEADER TEXT -->
+      <div class="mt-3.5 space-y-3">
+        <div class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+          1. Modo de Visualización y Encabezado
+        </div>
+
+        <!-- Display Mode Buttons (No native select for OBS Interact compatibility) -->
+        <div class="grid grid-cols-2 gap-1.5">
+          <button
+            type="button"
+            data-mode="cycle"
+            class="mode-btn rounded-xl border border-[#f9a8d4]/60 bg-[#f9a8d4]/15 px-3 py-2 font-mono text-[11px] font-bold text-white"
+          >
+            ↻ Rotación (1 a 1)
+          </button>
+          <button
+            type="button"
+            data-mode="stack"
+            class="mode-btn rounded-xl border border-white/10 bg-[#141324] px-3 py-2 font-mono text-[11px] font-semibold text-slate-300 hover:border-[#9d8df1]/40"
+          >
+            ☰ Lista Apilada
+          </button>
+        </div>
+
+        <!-- Custom Header Badge & Subtag -->
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="input-pill-badge" class="block font-mono text-[10px] text-slate-400">
+              Etiqueta Pastilla
+            </label>
+            <input
+              id="input-pill-badge"
+              type="text"
+              maxlength="14"
+              value="SOCIALS"
+              class="mt-1 w-full rounded-lg border border-[#9d8df1]/30 bg-[#090811] px-2.5 py-1.5 font-mono text-xs text-[#f9a8d4] outline-none focus:border-[#f9a8d4]"
+            />
+          </div>
+          <div>
+            <label for="input-subtag" class="block font-mono text-[10px] text-slate-400">
+              Texto Superior Derecho
+            </label>
+            <input
+              id="input-subtag"
+              type="text"
+              maxlength="18"
+              value="> FOLLOW <"
+              class="mt-1 w-full rounded-lg border border-[#9d8df1]/30 bg-[#090811] px-2.5 py-1.5 font-mono text-xs text-[#c4b5fd] outline-none focus:border-[#f9a8d4]"
+            />
           </div>
         </div>
 
-        <div>
-          <span class="block font-mono text-[10px] text-slate-400">Diseño</span>
-          <div class="mt-1.5 grid grid-cols-2 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
-            <button
-              type="button"
-              data-layout="card"
-              class="layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200"
-            >
-              2 Columnas
-            </button>
-            <button
-              type="button"
-              data-layout="compact"
-              class="layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5"
-            >
-              Compacto Fila
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <span class="block font-mono text-[10px] text-slate-400">Paleta de acento (11 colores)</span>
-          <div id="accent-presets-grid" class="mt-1.5 grid grid-cols-2 gap-1.5 sm:grid-cols-3"></div>
-        </div>
-
+        <!-- Cycle Duration Button Grid -->
         <div>
           <span class="block font-mono text-[10px] text-slate-400">
-            Fondo de vista previa (OBS siempre transparente)
+            Velocidad de rotación (Modo 1 a 1)
           </span>
-          <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-slate-900 p-1">
+          <div class="mt-1.5 grid grid-cols-4 gap-1.5">
+            <button
+              type="button"
+              data-interval="3000"
+              class="interval-btn rounded-lg border border-white/10 bg-[#141324] py-1.5 font-mono text-[10px] font-semibold text-slate-300"
+            >
+              3s
+            </button>
+            <button
+              type="button"
+              data-interval="5000"
+              class="interval-btn rounded-lg border border-[#f9a8d4]/60 bg-[#f9a8d4]/15 py-1.5 font-mono text-[10px] font-bold text-white"
+            >
+              5s
+            </button>
+            <button
+              type="button"
+              data-interval="8000"
+              class="interval-btn rounded-lg border border-white/10 bg-[#141324] py-1.5 font-mono text-[10px] font-semibold text-slate-300"
+            >
+              8s
+            </button>
+            <button
+              type="button"
+              data-interval="12000"
+              class="interval-btn rounded-lg border border-white/10 bg-[#141324] py-1.5 font-mono text-[10px] font-semibold text-slate-300"
+            >
+              12s
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: SOCIAL PLATFORMS & HANDLES -->
+      <div class="mt-4 border-t border-[#9d8df1]/20 pt-3.5">
+        <div class="flex items-center justify-between">
+          <span class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+            2. Redes y Usuarios
+          </span>
+          <span class="font-mono text-[10px] text-slate-400">Activa / Edita</span>
+        </div>
+        <div id="platforms-editor-list" class="mt-2 space-y-2"></div>
+      </div>
+
+      <!-- SECTION 3: POSITION & PREVIEW BACKDROP -->
+      <div class="mt-4 space-y-3 border-t border-[#9d8df1]/20 pt-3.5">
+        <div class="font-pixel text-[10px] font-bold uppercase tracking-wider text-[#c4b5fd]">
+          3. Posición en Pantalla
+        </div>
+
+        <div class="grid grid-cols-2 gap-1.5">
+          <button
+            type="button"
+            data-pos="pos-bottom-left"
+            class="pos-btn rounded-lg border border-[#f9a8d4]/60 bg-[#f9a8d4]/15 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-white"
+          >
+            ↙ Abajo Izquierda
+          </button>
+          <button
+            type="button"
+            data-pos="pos-top-left"
+            class="pos-btn rounded-lg border border-white/10 bg-[#141324] px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25"
+          >
+            ↖ Arriba Izquierda
+          </button>
+          <button
+            type="button"
+            data-pos="pos-top-right"
+            class="pos-btn rounded-lg border border-white/10 bg-[#141324] px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25"
+          >
+            ↗ Arriba Derecha
+          </button>
+          <button
+            type="button"
+            data-pos="pos-bottom-right"
+            class="pos-btn rounded-lg border border-white/10 bg-[#141324] px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25"
+          >
+            ↘ Abajo Derecha
+          </button>
+        </div>
+
+        <!-- Preview Backdrop Switcher -->
+        <div>
+          <span class="block font-mono text-[10px] text-slate-400">
+            Fondo de prueba (OBS siempre es transparente)
+          </span>
+          <div class="mt-1.5 grid grid-cols-3 gap-1.5 rounded-xl border border-white/10 bg-[#141324] p-1">
             <button
               type="button"
               data-backdrop="transparent"
-              class="backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200"
+              class="backdrop-btn rounded-lg bg-[#f9a8d4]/20 px-2 py-1 font-mono text-[10px] font-semibold text-[#f9a8d4]"
             >
               Transparente
             </button>
@@ -473,20 +721,17 @@
       </div>
     </section>
 
-    <!-- Bottom-Right Toggle Button -->
+    <!-- Discreet Floating Toggle Pill -->
     <button
       id="toggle-drawer-btn"
       type="button"
-      title="Configurar Redes Overlay (Atajo: C)"
-      class="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/80 px-3 py-1.5 font-mono text-[11px] font-semibold text-slate-300 opacity-65 shadow-lg backdrop-blur-md transition hover:border-pink-300/50 hover:text-pink-200 hover:opacity-100 focus:opacity-100"
+      title="Configurar Socials Overlay (Atajo: C)"
+      class="flex items-center gap-2 rounded-full border border-[#9d8df1]/45 bg-[#0e0d18]/85 px-3.5 py-1.5 font-pixel text-[10px] font-bold text-[#f9a8d4] opacity-65 shadow-lg backdrop-blur-md transition hover:border-[#f9a8d4] hover:opacity-100 focus:opacity-100"
       aria-expanded="false"
       aria-controls="customizer-drawer"
     >
-      <span
-        class="h-2 w-2 rounded-full"
-        style="background-color: var(--accent);"
-      ></span>
-      <span>Redes Setup</span>
+      <span class="h-2 w-2 rounded-full bg-[#f9a8d4] shadow-[0_0_8px_#f9a8d4]"></span>
+      <span>Socials Setup</span>
     </button>
   </div>
 
@@ -494,904 +739,635 @@
     (function () {
       'use strict';
 
-      const STORAGE_KEY = 'twitch_redes_overlay_v5';
+      // =========================================================================
+      // Y2K COLOR PALETTE PRESETS
+      // =========================================================================
+      const COLOR_PRESETS = [
+        {
+          id: 'pink-lavender',
+          name: 'Rosa & Lavanda',
+          primary: '#f9a8d4',
+          secondary: '#9d8df1',
+        },
+        {
+          id: 'mint-cyan',
+          name: 'Menta & Cian',
+          primary: '#6ee7b7',
+          secondary: '#38bdf8',
+        },
+        {
+          id: 'peach-pink',
+          name: 'Melocotón & Rosa',
+          primary: '#fdba74',
+          secondary: '#f472b6',
+        },
+        {
+          id: 'electric-lilac',
+          name: 'Azul & Lila',
+          primary: '#7dd3fc',
+          secondary: '#c084fc',
+        },
+        {
+          id: 'lemon-mint',
+          name: 'Limón & Menta',
+          primary: '#fde047',
+          secondary: '#4ade80',
+        },
+        {
+          id: 'crimson-fuchsia',
+          name: 'Rojo & Fucsia',
+          primary: '#fb7185',
+          secondary: '#e879f9',
+        },
+        {
+          id: 'ice-lavender',
+          name: 'Hielo & Lavanda',
+          primary: '#f8fafc',
+          secondary: '#a78bfa',
+        },
+      ];
 
-      // All supported platforms (used in both "Añadir red social" button grid and item quick-switchers)
+      // =========================================================================
+      // PLATFORM DEFINITIONS & VECTOR ICONS
+      // =========================================================================
       const PLATFORMS = [
         {
           id: 'twitch',
-          name: 'Twitch',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/></svg>`,
+          label: 'TWITCH',
+          defaultHandle: '@sxtowa',
+          enabled: true,
+          svg: '<path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>',
+        },
+        {
+          id: 'twitter',
+          label: 'X / TWITTER',
+          defaultHandle: '@sxtowa',
+          enabled: true,
+          svg: '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>',
         },
         {
           id: 'instagram',
-          name: 'Instagram',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/></svg>`,
+          label: 'INSTAGRAM',
+          defaultHandle: '@sxtowa',
+          enabled: true,
+          svg: '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>',
         },
         {
           id: 'tiktok',
-          name: 'TikTok',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>`,
+          label: 'TIKTOK',
+          defaultHandle: '@sxtowa',
+          enabled: true,
+          svg: '<path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>',
         },
         {
           id: 'discord',
-          name: 'Discord',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`,
-        },
-        {
-          id: 'x',
-          name: 'X / Twitter',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+          label: 'DISCORD',
+          defaultHandle: 'discord.gg/sxtowa',
+          enabled: false,
+          svg: '<path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>',
         },
         {
           id: 'youtube',
-          name: 'YouTube',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+          label: 'YOUTUBE',
+          defaultHandle: '@sxtowa',
+          enabled: false,
+          svg: '<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>',
         },
         {
           id: 'kick',
-          name: 'Kick',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 3h6.5v5.2L14.8 3H22l-6.6 7.4L22.4 21h-7.3l-5.6-6.2V21H3Z"/></svg>`,
+          label: 'KICK',
+          defaultHandle: 'kick.com/sxtowa',
+          enabled: false,
+          svg: '<path d="M1.333 0h8v5.333H12V2.667h2.667V0h8v8H20v2.667h-2.667v2.666H20V16h2.667v8h-8v-2.667H12v-2.666H9.333V24h-8Z"/>',
         },
         {
-          id: 'github',
-          name: 'GitHub',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2Z"/></svg>`,
+          id: 'steam',
+          label: 'STEAM',
+          defaultHandle: 'steamcommunity.com/id/sxtowa',
+          enabled: false,
+          svg: '<path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>',
         },
         {
-          id: 'web',
-          name: 'Web / Enlace',
-          svg: `<svg class="h-3.5 w-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5a14.5 14.5 0 0 1 0 19"/><path d="M12 2.5a14.5 14.5 0 0 0 0 19"/></svg>`,
+          id: 'spotify',
+          label: 'SPOTIFY',
+          defaultHandle: 'open.spotify.com/user/sxtowa',
+          enabled: false,
+          svg: '<path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>',
+        },
+        {
+          id: 'bluesky',
+          label: 'BLUESKY',
+          defaultHandle: '@sxtowa.bsky.social',
+          enabled: false,
+          svg: '<path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/>',
+        },
+        {
+          id: 'threads',
+          label: 'THREADS',
+          defaultHandle: '@sxtowa',
+          enabled: false,
+          svg: '<path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.308-.883-2.359-.89h-.029c-.844 0-1.992.232-2.721 1.32l-1.757-1.18c.98-1.454 2.568-2.256 4.478-2.256h.044c3.194.02 5.097 1.975 5.287 5.388.108.046.216.094.321.142 1.49.7 2.58 1.761 3.154 3.07.797 1.82.871 4.79-1.548 7.158-1.85 1.81-4.094 2.628-7.277 2.65Zm1.003-11.69c-.242 0-.487.007-.739.021-1.836.103-2.98.946-2.916 2.143.067 1.256 1.452 1.839 2.784 1.767 1.224-.065 2.818-.543 3.086-3.71a10.5 10.5 0 0 0-2.215-.221z"/>',
+        },
+        {
+          id: 'kofi',
+          label: 'KO-FI',
+          defaultHandle: 'ko-fi.com/sxtowa',
+          enabled: false,
+          svg: '<path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.453-4.011 3.976-4.011 3.976s-.121.119-.31.023c-.076-.057-.108-.09-.108-.09-.443-.441-3.368-3.049-4.034-3.954-.709-.965-1.041-2.7-.091-3.71.951-1.01 3.005-1.086 4.363.407 0 0 1.565-1.782 3.468-.963 1.904.82 1.832 3.011.723 4.311zm6.173.478c-.928.116-1.682.028-1.682.028V7.284h1.77s1.971.551 1.971 2.638c0 1.913-.985 2.667-2.059 3.015z"/>',
         },
       ];
 
-      // 11 Accent Presets (Rosa Pastel #f9a8d4 default first)
-      const ACCENT_PRESETS = [
-        {
-          id: 'rosa-pastel',
-          name: 'Rosa Pastel',
-          color: '#f9a8d4',
-          glow: 'rgba(249, 168, 212, 0.35)',
-          soft: 'rgba(249, 168, 212, 0.14)',
-        },
-        {
-          id: 'spotify-verde',
-          name: 'Spotify Verde',
-          color: '#1db954',
-          glow: 'rgba(29, 185, 84, 0.34)',
-          soft: 'rgba(29, 185, 84, 0.14)',
-        },
-        {
-          id: 'twitch-violeta',
-          name: 'Twitch Violeta',
-          color: '#9146ff',
-          glow: 'rgba(145, 70, 255, 0.36)',
-          soft: 'rgba(145, 70, 255, 0.15)',
-        },
-        {
-          id: 'cian-neon',
-          name: 'Cian Neón',
-          color: '#22d3ee',
-          glow: 'rgba(34, 211, 238, 0.34)',
-          soft: 'rgba(34, 211, 238, 0.14)',
-        },
-        {
-          id: 'lavanda',
-          name: 'Lavanda',
-          color: '#c4b5fd',
-          glow: 'rgba(196, 181, 253, 0.34)',
-          soft: 'rgba(196, 181, 253, 0.14)',
-        },
-        {
-          id: 'menta-pastel',
-          name: 'Menta Pastel',
-          color: '#6ee7b7',
-          glow: 'rgba(110, 231, 183, 0.34)',
-          soft: 'rgba(110, 231, 183, 0.14)',
-        },
-        {
-          id: 'melocoton',
-          name: 'Melocotón',
-          color: '#fdba74',
-          glow: 'rgba(253, 186, 116, 0.34)',
-          soft: 'rgba(253, 186, 116, 0.14)',
-        },
-        {
-          id: 'lila',
-          name: 'Lila',
-          color: '#e879f9',
-          glow: 'rgba(232, 121, 249, 0.34)',
-          soft: 'rgba(232, 121, 249, 0.14)',
-        },
-        {
-          id: 'coral',
-          name: 'Coral',
-          color: '#fb7185',
-          glow: 'rgba(251, 113, 133, 0.34)',
-          soft: 'rgba(251, 113, 133, 0.14)',
-        },
-        {
-          id: 'azul-cielo',
-          name: 'Azul Cielo',
-          color: '#7dd3fc',
-          glow: 'rgba(125, 211, 252, 0.34)',
-          soft: 'rgba(125, 211, 252, 0.14)',
-        },
-        {
-          id: 'dorado',
-          name: 'Dorado',
-          color: '#fbbf24',
-          glow: 'rgba(251, 191, 36, 0.34)',
-          soft: 'rgba(251, 191, 36, 0.14)',
-        },
-      ];
+      const STORAGE_KEY = 'twitch_socials_kawaii_pixel_v2';
 
-      const SYMBOL_PRESETS = ['Ი𐑼', 'ɞ', '♡', '✦', '✧', '⋆', '˚', '୨ৎ', '★', '✿'];
+      const state = {
+        mode: 'cycle', // 'cycle' | 'stack'
+        pillBadge: 'SOCIALS',
+        subtag: '> FOLLOW <',
+        intervalMs: 5000,
+        primaryColor: '#f9a8d4',
+        secondaryColor: '#9d8df1',
+        position: 'pos-bottom-left',
+        activeIndex: 0,
+        cycleStartedAt: Date.now(),
+        drawerOpen: false,
+        uiHidden: false,
+        items: PLATFORMS.map((p) => ({
+          id: p.id,
+          label: p.label,
+          handle: p.defaultHandle,
+          enabled: p.enabled,
+          svg: p.svg,
+        })),
+      };
 
-      function createDefaultState() {
-        return {
-          items: [
-            { id: 'soc-1', platform: 'twitch', handle: '@tu_canal', enabled: true },
-            { id: 'soc-2', platform: 'instagram', handle: '@tu_ig', enabled: true },
-            { id: 'soc-3', platform: 'tiktok', handle: '@tu_tiktok', enabled: true },
-            { id: 'soc-4', platform: 'discord', handle: 'discord.gg/tu-sala', enabled: true },
-          ],
-          headerSymbolsEnabled: true,
-          headerSymbols: ['♡', '✦'],
-          handleSymbolsEnabled: true,
-          handleSymbols: ['Ი𐑼', 'ɞ'],
-          handleSymbolPosition: 'after', // 'after' | 'around'
-          activeSymbolTarget: 'header', // 'header' | 'handle'
-          position: 'pos-bottom-left',
-          layout: 'card', // 'card' (2 Columnas) | 'compact' (Compacto Fila)
-          backdrop: 'transparent', // 'transparent' | 'dark' | 'light'
-          accent: ACCENT_PRESETS[0].color,
-          accentGlow: ACCENT_PRESETS[0].glow,
-          accentSoft: ACCENT_PRESETS[0].soft,
-        };
+      const dom = {
+        widget: document.getElementById('socials-widget'),
+        socialsContainer: document.getElementById('socials-container'),
+
+        customizerRoot: document.getElementById('customizer-root'),
+        drawer: document.getElementById('customizer-drawer'),
+        toggleDrawerBtn: document.getElementById('toggle-drawer-btn'),
+        closeDrawerBtn: document.getElementById('close-drawer-btn'),
+        hideUiBtn: document.getElementById('hide-ui-btn'),
+
+        modeBtns: Array.from(document.querySelectorAll('.mode-btn')),
+        intervalSlider: document.getElementById('interval-slider'),
+        intervalDisplay: document.getElementById('interval-display'),
+        intervalDecBtn: document.getElementById('interval-dec-btn'),
+        intervalIncBtn: document.getElementById('interval-inc-btn'),
+        colorPresetsGrid: document.getElementById('color-presets-grid'),
+        pickerPrimary: document.getElementById('picker-primary'),
+        pickerSecondary: document.getElementById('picker-secondary'),
+        inputPillBadge: document.getElementById('input-pill-badge'),
+        inputSubtag: document.getElementById('input-subtag'),
+        platformsEditorList: document.getElementById('platforms-editor-list'),
+        posBtns: Array.from(document.querySelectorAll('.pos-btn')),
+        backdropBtns: Array.from(document.querySelectorAll('.backdrop-btn')),
+      };
+
+      // =========================================================================
+      // COLOR THEME HELPERS
+      // =========================================================================
+      function hexToRgba(hex, alpha) {
+        const clean = (hex || '').replace('#', '').trim();
+        if (clean.length !== 6) return `rgba(249, 168, 212, ${alpha})`;
+        const num = parseInt(clean, 16);
+        if (Number.isNaN(num)) return `rgba(249, 168, 212, ${alpha})`;
+        const r = (num >> 16) & 255;
+        const g = (num >> 8) & 255;
+        const b = num & 255;
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
       }
 
-      function sanitizeStringArray(arr, fallback) {
-        if (!Array.isArray(arr)) return fallback.slice();
-        return arr.map((s) => String(s || '').trim()).filter((s) => s.length > 0);
+      function applyColors(primaryHex, secondaryHex, shouldSave = true) {
+        const primary = /^#[0-9a-fA-F]{6}$/.test(primaryHex) ? primaryHex.toLowerCase() : '#f9a8d4';
+        const secondary = /^#[0-9a-fA-F]{6}$/.test(secondaryHex) ? secondaryHex.toLowerCase() : '#9d8df1';
+
+        state.primaryColor = primary;
+        state.secondaryColor = secondary;
+
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty('--pink', primary);
+        rootStyle.setProperty('--pink-bright', primary);
+        rootStyle.setProperty('--pink-glow', hexToRgba(primary, 0.5));
+        rootStyle.setProperty('--pink-soft', hexToRgba(primary, 0.16));
+
+        rootStyle.setProperty('--lavender', secondary);
+        rootStyle.setProperty('--lavender-deep', secondary);
+        rootStyle.setProperty('--lavender-glow', hexToRgba(secondary, 0.45));
+        rootStyle.setProperty('--lavender-soft', hexToRgba(secondary, 0.14));
+
+        if (dom.pickerPrimary) dom.pickerPrimary.value = primary;
+        if (dom.pickerSecondary) dom.pickerSecondary.value = secondary;
+
+        syncColorPresetButtons();
+        if (shouldSave) saveState();
+      }
+
+      function syncColorPresetButtons() {
+        if (!dom.colorPresetsGrid) return;
+        const btns = Array.from(dom.colorPresetsGrid.querySelectorAll('[data-preset-id]'));
+        btns.forEach((btn) => {
+          const isMatch =
+            btn.dataset.primary === state.primaryColor &&
+            btn.dataset.secondary === state.secondaryColor;
+          btn.classList.toggle('border-white/75', isMatch);
+          btn.classList.toggle('bg-white/15', isMatch);
+          btn.classList.toggle('text-white', isMatch);
+          btn.classList.toggle('border-white/10', !isMatch);
+          btn.classList.toggle('bg-[#141324]', !isMatch);
+          btn.classList.toggle('text-slate-300', !isMatch);
+        });
+      }
+
+      function renderColorPresets() {
+        if (!dom.colorPresetsGrid) return;
+        dom.colorPresetsGrid.innerHTML = '';
+
+        COLOR_PRESETS.forEach((preset) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.presetId = preset.id;
+          btn.dataset.primary = preset.primary.toLowerCase();
+          btn.dataset.secondary = preset.secondary.toLowerCase();
+          btn.className =
+            'flex items-center gap-2 rounded-xl border border-white/10 bg-[#141324] px-2.5 py-1.5 text-left font-mono text-[10px] font-semibold text-slate-300 transition hover:border-white/30';
+
+          const swatches = document.createElement('span');
+          swatches.className = 'flex shrink-0 items-center -space-x-1';
+          swatches.innerHTML = `
+            <span class="h-3.5 w-3.5 rounded-full border border-black/60" style="background:${preset.primary}"></span>
+            <span class="h-3.5 w-3.5 rounded-full border border-black/60" style="background:${preset.secondary}"></span>
+          `;
+
+          const label = document.createElement('span');
+          label.className = 'truncate';
+          label.textContent = preset.name;
+
+          btn.appendChild(swatches);
+          btn.appendChild(label);
+          btn.addEventListener('click', () => {
+            applyColors(preset.primary, preset.secondary, true);
+          });
+
+          dom.colorPresetsGrid.appendChild(btn);
+        });
+
+        syncColorPresetButtons();
+      }
+
+      // =========================================================================
+      // PERSISTENCE
+      // =========================================================================
+      function saveState() {
+        try {
+          const payload = {
+            mode: state.mode,
+            pillBadge: state.pillBadge,
+            subtag: state.subtag,
+            intervalMs: state.intervalMs,
+            primaryColor: state.primaryColor,
+            secondaryColor: state.secondaryColor,
+            position: state.position,
+            items: state.items.map(({ id, handle, enabled }) => ({ id, handle, enabled })),
+          };
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) {}
       }
 
       function loadState() {
-        const defaults = createDefaultState();
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) return defaults;
-          const parsed = JSON.parse(raw);
-          if (!parsed || typeof parsed !== 'object') return defaults;
-
-          const items =
-            Array.isArray(parsed.items) && parsed.items.length > 0
-              ? parsed.items.map((item, idx) => ({
-                  id: String(item.id || `soc-${idx}-${Date.now()}`),
-                  platform: PLATFORMS.some((p) => p.id === item.platform) ? item.platform : 'web',
-                  handle: String(item.handle || ''),
-                  enabled: item.enabled !== false,
-                }))
-              : defaults.items;
-
-          const validPositions = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
-          const position = validPositions.includes(parsed.position) ? parsed.position : defaults.position;
-          const layout = parsed.layout === 'compact' ? 'compact' : 'card';
-          const backdrop = ['transparent', 'dark', 'light'].includes(parsed.backdrop)
-            ? parsed.backdrop
-            : 'transparent';
-          const handleSymbolPosition = parsed.handleSymbolPosition === 'around' ? 'around' : 'after';
-          const activeSymbolTarget = parsed.activeSymbolTarget === 'handle' ? 'handle' : 'header';
-
-          const preset =
-            ACCENT_PRESETS.find(
-              (p) => p.color.toLowerCase() === String(parsed.accent || '').toLowerCase()
-            ) || ACCENT_PRESETS[0];
-
-          return {
-            items,
-            headerSymbolsEnabled: parsed.headerSymbolsEnabled !== false,
-            headerSymbols: sanitizeStringArray(parsed.headerSymbols, defaults.headerSymbols),
-            handleSymbolsEnabled: parsed.handleSymbolsEnabled !== false,
-            handleSymbols: sanitizeStringArray(parsed.handleSymbols, defaults.handleSymbols),
-            handleSymbolPosition,
-            activeSymbolTarget,
-            position,
-            layout,
-            backdrop,
-            accent: preset.color,
-            accentGlow: typeof parsed.accentGlow === 'string' && parsed.accentGlow ? parsed.accentGlow : preset.glow,
-            accentSoft: typeof parsed.accentSoft === 'string' && parsed.accentSoft ? parsed.accentSoft : preset.soft,
-          };
-        } catch (err) {
-          console.error('Error loading state:', err);
-          return defaults;
-        }
-      }
-
-      let state = loadState();
-
-      function saveState() {
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-        } catch (err) {
-          console.error('Error saving state:', err);
-        }
+          if (!raw) return;
+          const saved = JSON.parse(raw);
+          if (saved.mode === 'cycle' || saved.mode === 'stack') state.mode = saved.mode;
+          if (typeof saved.pillBadge === 'string') state.pillBadge = saved.pillBadge;
+          if (typeof saved.subtag === 'string') state.subtag = saved.subtag;
+          if (typeof saved.intervalMs === 'number' && saved.intervalMs >= 5000) {
+            const snappedSec = Math.max(5, Math.min(60, Math.round(saved.intervalMs / 5000) * 5));
+            state.intervalMs = snappedSec * 1000;
+          }
+          if (typeof saved.primaryColor === 'string') state.primaryColor = saved.primaryColor;
+          if (typeof saved.secondaryColor === 'string') state.secondaryColor = saved.secondaryColor;
+          if (typeof saved.position === 'string') state.position = saved.position;
+          if (Array.isArray(saved.items)) {
+            saved.items.forEach((savedItem) => {
+              const target = state.items.find((it) => it.id === savedItem.id);
+              if (target) {
+                if (typeof savedItem.handle === 'string') target.handle = savedItem.handle;
+                if (typeof savedItem.enabled === 'boolean') target.enabled = savedItem.enabled;
+              }
+            });
+          }
+        } catch (_) {}
       }
 
       // =========================================================================
-      // DOM REFERENCES
+      // RENDERING WIDGET CARDS
       // =========================================================================
-      const widgetEl = document.getElementById('redes-widget');
-      const headerSymbolsDisplayEl = document.getElementById('header-symbols-display');
-      const redesListEl = document.getElementById('redes-list');
-      const itemEditorListEl = document.getElementById('item-editor-list');
-
-      const newPlatformGridEl = document.getElementById('new-platform-grid');
-      const selectedNewPlatformLabelEl = document.getElementById('selected-new-platform-label');
-      const newHandleInputEl = document.getElementById('new-handle-input');
-      const addSocialSubmitBtn = document.getElementById('add-social-submit-btn');
-
-      let selectedNewPlatformId = 'instagram';
-
-      const presetChipsGridEl = document.getElementById('preset-chips-grid');
-      const customSymbolInput = document.getElementById('custom-symbol-input');
-      const addCustomSymbolBtn = document.getElementById('add-custom-symbol-btn');
-
-      const headerSymbolsEnabledCb = document.getElementById('header-symbols-enabled');
-      const headerCombinedPreviewEl = document.getElementById('header-combined-preview');
-      const clearHeaderSymbolsBtn = document.getElementById('clear-header-symbols-btn');
-      const headerSymbolsListEl = document.getElementById('header-symbols-list');
-
-      const handleSymbolsEnabledCb = document.getElementById('handle-symbols-enabled');
-      const handleCombinedPreviewEl = document.getElementById('handle-combined-preview');
-      const clearHandleSymbolsBtn = document.getElementById('clear-handle-symbols-btn');
-      const handleSymbolPositionSelect = document.getElementById('handle-symbol-position');
-      const handleSymbolsListEl = document.getElementById('handle-symbols-list');
-
-      const accentPresetsGridEl = document.getElementById('accent-presets-grid');
-      const customizerRootEl = document.getElementById('customizer-root');
-      const drawerEl = document.getElementById('customizer-drawer');
-      const toggleDrawerBtn = document.getElementById('toggle-drawer-btn');
-      const closeDrawerBtn = document.getElementById('close-drawer-btn');
-      const hideUiBtn = document.getElementById('hide-ui-btn');
-      const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
-
-      function escapeHtml(text) {
-        return String(text || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
+      function getEnabledItems() {
+        const enabled = state.items.filter((it) => it.enabled && it.handle.trim().length > 0);
+        return enabled.length > 0 ? enabled : [state.items[0]];
       }
 
-      function getPlatform(id) {
-        return PLATFORMS.find((p) => p.id === id) || PLATFORMS[PLATFORMS.length - 1];
+      function createSocialRowElement(item, isFeatured) {
+        const row = document.createElement('div');
+        row.className = `social-pill ${
+          isFeatured ? 'social-pill-highlight tag-animate-enter' : ''
+        } flex items-center gap-3 rounded-xl px-3 py-2`;
+
+        // Icon Badge Box (void-black with glowing primary/secondary frame)
+        const iconWrap = document.createElement('div');
+        iconWrap.className =
+          'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#090811]';
+        iconWrap.style.border = '1px solid var(--pink)';
+        iconWrap.style.color = 'var(--pink)';
+        iconWrap.style.boxShadow = '0 0 12px var(--pink-glow)';
+        iconWrap.innerHTML = `<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${item.svg}</svg>`;
+
+        // Platform Label + Handle Text (Clean Y2K Techno-Sans Typography)
+        const textWrap = document.createElement('div');
+        textWrap.className = 'min-w-0 flex-1';
+
+        const platLabel = document.createElement('div');
+        platLabel.className =
+          'font-handle text-[10px] font-bold uppercase tracking-[0.18em] pixel-glow-lavender';
+        platLabel.textContent = item.label;
+
+        const handleText = document.createElement('div');
+        handleText.className =
+          'mt-0.5 truncate font-handle text-[16px] font-bold leading-tight tracking-tight pixel-glow-pink';
+        handleText.textContent = item.handle;
+
+        textWrap.appendChild(platLabel);
+        textWrap.appendChild(handleText);
+
+        // Right Cute Pixel Sparkle Star
+        const starBadge = document.createElement('div');
+        starBadge.className = 'shrink-0 opacity-85';
+        starBadge.style.color = 'var(--lavender)';
+        starBadge.innerHTML =
+          '<svg class="h-3.5 w-3.5" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7 1h2v4h2v2h4v2h-4v2H9v4H7v-4H5V9H1V7h4V5h2V1z"/></svg>';
+
+        row.appendChild(iconWrap);
+        row.appendChild(textWrap);
+        row.appendChild(starBadge);
+        return row;
       }
 
-      function getShortPlatformLabel(platformObj) {
-        if (!platformObj) return 'Web';
-        if (platformObj.id === 'x') return 'X';
-        if (platformObj.id === 'web') return 'Web';
-        return platformObj.name;
-      }
-
-      function renderNewPlatformGrid() {
-        if (!newPlatformGridEl) return;
-        const activeObj = getPlatform(selectedNewPlatformId);
-        selectedNewPlatformId = activeObj.id;
-
-        if (selectedNewPlatformLabelEl) {
-          selectedNewPlatformLabelEl.textContent = activeObj.name;
+      function renderWidget() {
+        const enabled = getEnabledItems();
+        if (state.activeIndex >= enabled.length) {
+          state.activeIndex = 0;
         }
 
-        newPlatformGridEl.innerHTML = PLATFORMS.map((p) => {
-          const isSelected = p.id === selectedNewPlatformId;
-          return `
-            <button
-              type="button"
-              data-new-platform="${p.id}"
-              title="${escapeHtml(p.name)}"
-              class="new-platform-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
-                isSelected
-                  ? 'border-pink-300/70 bg-pink-300/20 font-bold text-white shadow-sm'
-                  : 'border-white/10 bg-slate-950 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
-              }"
-            >
-              <span class="flex shrink-0 items-center justify-center" style="color: ${isSelected ? 'var(--accent)' : 'currentColor'};">${p.svg}</span>
-              <span class="truncate">${escapeHtml(getShortPlatformLabel(p))}</span>
-            </button>
-          `;
-        }).join('');
+        dom.socialsContainer.innerHTML = '';
 
-        newPlatformGridEl.querySelectorAll('.new-platform-btn').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            selectedNewPlatformId = btn.getAttribute('data-new-platform') || 'instagram';
-            renderNewPlatformGrid();
+        if (state.mode === 'stack') {
+          enabled.forEach((item) => {
+            dom.socialsContainer.appendChild(createSocialRowElement(item, false));
           });
-        });
-      }
-
-      function addNewSocialItem() {
-        const platformObj = getPlatform(selectedNewPlatformId);
-        const rawHandle = newHandleInputEl ? newHandleInputEl.value.trim() : '';
-        const finalHandle = rawHandle || `@tu_${platformObj.id}`;
-
-        state.items.push({
-          id: `soc-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          platform: platformObj.id,
-          handle: finalHandle,
-          enabled: true,
-        });
-
-        if (newHandleInputEl) {
-          newHandleInputEl.value = '';
-          newHandleInputEl.focus();
-        }
-
-        saveState();
-        renderItemEditor();
-        renderOverlay();
-      }
-
-      function cycleItemPlatform(id) {
-        const item = state.items.find((i) => i.id === id);
-        if (!item) return;
-        const currentIdx = PLATFORMS.findIndex((p) => p.id === item.platform);
-        const nextIdx = currentIdx >= 0 ? (currentIdx + 1) % PLATFORMS.length : 0;
-        item.platform = PLATFORMS[nextIdx].id;
-        saveState();
-        renderItemEditor();
-        renderOverlay();
-      }
-
-      // =========================================================================
-      // SYMBOL LIST HELPERS (MULTI-SYMBOL & INDEPENDENT TARGETS)
-      // =========================================================================
-      function getTargetArray(target) {
-        return target === 'handle' ? state.handleSymbols : state.headerSymbols;
-      }
-
-      function addSymbolToTarget(target, rawSymbol) {
-        const cleaned = String(rawSymbol || '').trim();
-        if (!cleaned) return;
-        const list = getTargetArray(target);
-        list.push(cleaned);
-        if (target === 'handle') {
-          state.handleSymbolsEnabled = true;
         } else {
-          state.headerSymbolsEnabled = true;
+          const current = enabled[state.activeIndex];
+          dom.socialsContainer.appendChild(createSocialRowElement(current, true));
         }
-        saveState();
-        syncSymbolControls();
-        renderOverlay();
       }
 
-      function moveSymbol(target, index, delta) {
-        const list = getTargetArray(target);
-        const nextIdx = index + delta;
-        if (nextIdx < 0 || nextIdx >= list.length) return;
-        const [moved] = list.splice(index, 1);
-        list.splice(nextIdx, 0, moved);
-        saveState();
-        syncSymbolControls();
-        renderOverlay();
-      }
-
-      function removeSymbol(target, index) {
-        const list = getTargetArray(target);
-        if (index < 0 || index >= list.length) return;
-        list.splice(index, 1);
-        saveState();
-        syncSymbolControls();
-        renderOverlay();
-      }
-
-      function clearSymbols(target) {
-        if (target === 'handle') {
-          state.handleSymbols = [];
-        } else {
-          state.headerSymbols = [];
-        }
-        saveState();
-        syncSymbolControls();
-        renderOverlay();
-      }
-
-      function renderSymbolChipList(containerEl, target, symbols) {
-        if (!containerEl) return;
-        if (!symbols.length) {
-          containerEl.innerHTML = `<span class="font-mono text-[10px] text-slate-500">Sin símbolos añadidos</span>`;
+      function tickCycle() {
+        if (state.mode !== 'cycle') return;
+        const enabled = getEnabledItems();
+        if (enabled.length <= 1) {
           return;
         }
 
-        containerEl.innerHTML = symbols
-          .map((sym, idx) => {
-            return `
-              <span class="inline-flex items-center gap-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-0.5 font-mono text-[11px] font-semibold text-white">
-                <span>${escapeHtml(sym)}</span>
-                <button
-                  type="button"
-                  data-sym-action="left"
-                  data-sym-target="${target}"
-                  data-sym-idx="${idx}"
-                  title="Mover izquierda"
-                  ${idx === 0 ? 'disabled' : ''}
-                  class="px-0.5 text-[10px] text-slate-400 hover:text-white disabled:opacity-25"
-                >‹</button>
-                <button
-                  type="button"
-                  data-sym-action="right"
-                  data-sym-target="${target}"
-                  data-sym-idx="${idx}"
-                  title="Mover derecha"
-                  ${idx === symbols.length - 1 ? 'disabled' : ''}
-                  class="px-0.5 text-[10px] text-slate-400 hover:text-white disabled:opacity-25"
-                >›</button>
-                <button
-                  type="button"
-                  data-sym-action="remove"
-                  data-sym-target="${target}"
-                  data-sym-idx="${idx}"
-                  title="Quitar símbolo"
-                  class="px-0.5 text-[11px] font-bold text-slate-400 hover:text-rose-300"
-                >×</button>
-              </span>
-            `;
-          })
-          .join('');
-
-        containerEl.querySelectorAll('button[data-sym-action]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const action = btn.getAttribute('data-sym-action');
-            const tgt = btn.getAttribute('data-sym-target');
-            const idx = Number(btn.getAttribute('data-sym-idx'));
-            if (action === 'left') moveSymbol(tgt, idx, -1);
-            if (action === 'right') moveSymbol(tgt, idx, 1);
-            if (action === 'remove') removeSymbol(tgt, idx);
-          });
-        });
-      }
-
-      function renderPresetChips() {
-        if (!presetChipsGridEl) return;
-        presetChipsGridEl.innerHTML = SYMBOL_PRESETS.map((sym) => {
-          return `
-            <button
-              type="button"
-              data-preset-sym="${escapeHtml(sym)}"
-              title="Añadir ${escapeHtml(sym)}"
-              class="rounded-lg border border-white/10 bg-slate-900 px-2 py-1 font-mono text-xs font-semibold text-slate-200 transition hover:border-pink-300/50 hover:bg-pink-300/15 hover:text-white active:scale-95"
-            >
-              ${escapeHtml(sym)}
-            </button>
-          `;
-        }).join('');
-
-        presetChipsGridEl.querySelectorAll('button[data-preset-sym]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            addSymbolToTarget(state.activeSymbolTarget, btn.getAttribute('data-preset-sym'));
-          });
-        });
-      }
-
-      function applySymbolTargetTab(target) {
-        state.activeSymbolTarget = target === 'handle' ? 'handle' : 'header';
-        saveState();
-        document.querySelectorAll('.target-tab-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-symbol-target') === state.activeSymbolTarget;
-          btn.className = active
-            ? 'target-tab-btn rounded-lg bg-pink-300/20 px-2.5 py-1.5 font-mono text-[10px] font-bold text-pink-200 transition'
-            : 'target-tab-btn rounded-lg px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 transition hover:bg-white/5';
-        });
-      }
-
-      function syncSymbolControls() {
-        applySymbolTargetTab(state.activeSymbolTarget);
-        headerSymbolsEnabledCb.checked = Boolean(state.headerSymbolsEnabled);
-        handleSymbolsEnabledCb.checked = Boolean(state.handleSymbolsEnabled);
-        handleSymbolPositionSelect.value = state.handleSymbolPosition;
-
-        const headerCombined = state.headerSymbols.join(' ');
-        const handleCombined = state.handleSymbols.join(' ');
-
-        headerCombinedPreviewEl.textContent = headerCombined || '—';
-        handleCombinedPreviewEl.textContent = handleCombined || '—';
-
-        renderSymbolChipList(headerSymbolsListEl, 'header', state.headerSymbols);
-        renderSymbolChipList(handleSymbolsListEl, 'handle', state.handleSymbols);
-      }
-
-      // =========================================================================
-      // OVERLAY & SOCIAL ITEMS RENDERING
-      // =========================================================================
-      function renderOverlay() {
-        const headerCombined = state.headerSymbols.join(' ').trim();
-        if (state.headerSymbolsEnabled && headerCombined.length > 0) {
-          headerSymbolsDisplayEl.textContent = headerCombined;
-          headerSymbolsDisplayEl.classList.remove('hidden');
-        } else {
-          headerSymbolsDisplayEl.textContent = '';
-          headerSymbolsDisplayEl.classList.add('hidden');
+        const elapsed = Date.now() - state.cycleStartedAt;
+        if (elapsed >= state.intervalMs) {
+          state.activeIndex = (state.activeIndex + 1) % enabled.length;
+          state.cycleStartedAt = Date.now();
+          renderWidget();
         }
-
-        if (state.layout === 'compact') {
-          widgetEl.classList.remove('w-[448px]');
-          widgetEl.classList.add('w-auto', 'max-w-[calc(100vw-48px)]');
-          redesListEl.className = 'flex flex-wrap items-center gap-2';
-        } else {
-          widgetEl.classList.remove('w-auto');
-          widgetEl.classList.add('w-[448px]', 'max-w-[calc(100vw-48px)]');
-          redesListEl.className = 'grid grid-cols-1 gap-2 sm:grid-cols-2';
-        }
-
-        const activeItems = state.items.filter((item) => item.enabled);
-        const handleCombined = state.handleSymbols.join(' ').trim();
-        const showHandleSymbols = state.handleSymbolsEnabled && handleCombined.length > 0;
-
-        if (!activeItems.length) {
-          redesListEl.innerHTML = `
-            <div class="col-span-full rounded-xl border border-dashed border-white/15 bg-slate-950/45 px-3.5 py-2.5 text-center font-mono text-[11px] text-slate-400">
-              Activa o añade redes en <span class="text-pink-200">Redes Setup</span>
-            </div>
-          `;
-          return;
-        }
-
-        redesListEl.innerHTML = activeItems
-          .map((item) => {
-            const platform = getPlatform(item.platform);
-            const rawHandle = (item.handle || '@usuario').trim() || '@usuario';
-            const escapedHandle = escapeHtml(rawHandle);
-            const escapedSym = escapeHtml(handleCombined);
-
-            const handleContent = showHandleSymbols
-              ? state.handleSymbolPosition === 'around'
-                ? `<span style="color: var(--accent);">${escapedSym}</span> <span>${escapedHandle}</span> <span style="color: var(--accent);">${escapedSym}</span>`
-                : `<span>${escapedHandle}</span> <span style="color: var(--accent);">${escapedSym}</span>`
-              : `<span>${escapedHandle}</span>`;
-
-            if (state.layout === 'compact') {
-              return `
-                <div class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-slate-950/65 px-3 py-1.5">
-                  <span class="flex h-5 w-5 shrink-0 items-center justify-center" style="color: var(--accent);">${platform.svg}</span>
-                  <span class="font-mono text-xs font-semibold text-slate-100">${handleContent}</span>
-                </div>
-              `;
-            }
-
-            return `
-              <div class="flex items-center gap-2.5 rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2">
-                <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-white/5" style="color: var(--accent);">${platform.svg}</span>
-                <span class="min-w-0 flex-1 truncate font-mono text-xs font-semibold text-slate-100">${handleContent}</span>
-              </div>
-            `;
-          })
-          .join('');
-      }
-
-      function moveSocialItem(index, delta) {
-        const nextIdx = index + delta;
-        if (nextIdx < 0 || nextIdx >= state.items.length) return;
-        const [moved] = state.items.splice(index, 1);
-        state.items.splice(nextIdx, 0, moved);
-        saveState();
-        renderItemEditor();
-        renderOverlay();
-      }
-
-      function renderItemEditor() {
-        itemEditorListEl.innerHTML = state.items
-          .map((item, idx) => {
-            const platform = getPlatform(item.platform);
-
-            return `
-              <div
-                data-soc-id="${escapeHtml(item.id)}"
-                class="rounded-xl border border-white/10 bg-slate-900/80 p-2 ${item.enabled ? '' : 'opacity-60'}"
-              >
-                <div class="flex items-center gap-1.5">
-                  <input
-                    type="checkbox"
-                    ${item.enabled ? 'checked' : ''}
-                    title="Activar / desactivar"
-                    class="soc-enabled-cb h-3.5 w-3.5 shrink-0 cursor-pointer accent-pink-300"
-                  />
-                  <button
-                    type="button"
-                    title="Cambiar red social (${escapeHtml(platform.name)})"
-                    class="soc-cycle-btn flex h-7 shrink-0 items-center gap-1 rounded-lg border border-white/15 bg-slate-950 px-2 font-mono text-[10px] font-bold text-pink-200 transition hover:border-pink-300/50 hover:bg-slate-800"
-                  >
-                    <span class="flex items-center justify-center" style="color: var(--accent);">${platform.svg}</span>
-                    <span>${escapeHtml(getShortPlatformLabel(platform))}</span>
-                    <span class="text-[9px] text-slate-400">↻</span>
-                  </button>
-                  <input
-                    type="text"
-                    value="${escapeHtml(item.handle)}"
-                    placeholder="@usuario"
-                    class="soc-handle-input min-w-0 flex-1 rounded-lg border border-white/15 bg-slate-950 px-2 py-1 font-mono text-xs text-white outline-none focus:border-pink-300"
-                  />
-                  <div class="flex shrink-0 items-center gap-0.5">
-                    <button
-                      type="button"
-                      title="Subir"
-                      ${idx === 0 ? 'disabled' : ''}
-                      class="soc-up-btn rounded border border-white/10 bg-white/5 px-1.5 py-1 font-mono text-[10px] text-slate-300 hover:bg-white/10 disabled:opacity-25"
-                    >↑</button>
-                    <button
-                      type="button"
-                      title="Bajar"
-                      ${idx === state.items.length - 1 ? 'disabled' : ''}
-                      class="soc-down-btn rounded border border-white/10 bg-white/5 px-1.5 py-1 font-mono text-[10px] text-slate-300 hover:bg-white/10 disabled:opacity-25"
-                    >↓</button>
-                    <button
-                      type="button"
-                      title="Eliminar"
-                      class="soc-delete-btn rounded border border-white/10 bg-white/5 px-1.5 py-1 font-mono text-[10px] font-bold text-slate-400 hover:border-rose-400/40 hover:bg-rose-500/15 hover:text-rose-300"
-                    >×</button>
-                  </div>
-                </div>
-              </div>
-            `;
-          })
-          .join('');
-
-        itemEditorListEl.querySelectorAll('[data-soc-id]').forEach((row, idx) => {
-          const id = row.getAttribute('data-soc-id');
-          const item = state.items.find((i) => i.id === id);
-          if (!item) return;
-
-          row.querySelector('.soc-enabled-cb').addEventListener('change', (e) => {
-            item.enabled = e.target.checked;
-            row.classList.toggle('opacity-60', !item.enabled);
-            saveState();
-            renderOverlay();
-          });
-
-          row.querySelector('.soc-cycle-btn').addEventListener('click', () => {
-            cycleItemPlatform(id);
-          });
-
-          row.querySelector('.soc-handle-input').addEventListener('input', (e) => {
-            item.handle = e.target.value;
-            saveState();
-            renderOverlay();
-          });
-
-          row.querySelector('.soc-up-btn').addEventListener('click', () => moveSocialItem(idx, -1));
-          row.querySelector('.soc-down-btn').addEventListener('click', () => moveSocialItem(idx, 1));
-          row.querySelector('.soc-delete-btn').addEventListener('click', () => {
-            state.items = state.items.filter((i) => i.id !== id);
-            saveState();
-            renderItemEditor();
-            renderOverlay();
-          });
-        });
       }
 
       // =========================================================================
-      // POSITION, LAYOUT, BACKDROP & ACCENT PALETTE
+      // CUSTOMIZER PANEL CONTROLS
       // =========================================================================
-      function applyPosition(pos) {
-        const valid = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
-        const chosen = valid.includes(pos) ? pos : 'pos-bottom-left';
-        state.position = chosen;
-        widgetEl.classList.remove(...valid);
-        widgetEl.classList.add(chosen);
-        saveState();
+      function renderPlatformsEditor() {
+        dom.platformsEditorList.innerHTML = '';
 
-        document.querySelectorAll('.pos-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-pos') === chosen;
-          btn.className = active
-            ? 'pos-btn rounded-lg border border-pink-300/60 bg-pink-300/15 px-2.5 py-1.5 font-mono text-[10px] font-bold text-white'
-            : 'pos-btn rounded-lg border border-white/10 bg-slate-900 px-2.5 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:border-white/25';
+        state.items.forEach((item) => {
+          const card = document.createElement('div');
+          card.className =
+            'flex items-center gap-2 rounded-xl border border-white/10 bg-[#141324] px-2.5 py-2';
+
+          // Toggle Button (instead of native checkbox/dropdown for OBS Interact compatibility)
+          const toggleBtn = document.createElement('button');
+          toggleBtn.type = 'button';
+          toggleBtn.className = item.enabled
+            ? 'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#f9a8d4]/60 bg-[#f9a8d4]/20 text-[#f9a8d4]'
+            : 'flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#090811] text-slate-500';
+          toggleBtn.innerHTML = `<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">${item.svg}</svg>`;
+          toggleBtn.title = `Activar/Desactivar ${item.label}`;
+
+          toggleBtn.addEventListener('click', () => {
+            item.enabled = !item.enabled;
+            state.cycleStartedAt = Date.now();
+            saveState();
+            renderPlatformsEditor();
+            renderWidget();
+          });
+
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = item.handle;
+          input.placeholder = item.label;
+          input.className =
+            'min-w-0 flex-1 rounded-lg border border-white/10 bg-[#090811] px-2 py-1 font-mono text-xs text-white placeholder-slate-600 outline-none focus:border-[#f9a8d4]';
+
+          input.addEventListener('input', () => {
+            item.handle = input.value;
+            saveState();
+            renderWidget();
+          });
+
+          const statusPill = document.createElement('span');
+          statusPill.className = item.enabled
+            ? 'font-mono text-[9px] font-bold text-[#f9a8d4]'
+            : 'font-mono text-[9px] text-slate-500';
+          statusPill.textContent = item.enabled ? 'ON' : 'OFF';
+
+          card.appendChild(toggleBtn);
+          card.appendChild(input);
+          card.appendChild(statusPill);
+          dom.platformsEditorList.appendChild(card);
         });
       }
 
-      function applyLayout(layout) {
-        state.layout = layout === 'compact' ? 'compact' : 'card';
-        saveState();
+      function applyPosition(posClass) {
+        const allowed = ['pos-bottom-left', 'pos-top-left', 'pos-top-right', 'pos-bottom-right'];
+        const target = allowed.includes(posClass) ? posClass : 'pos-bottom-left';
+        state.position = target;
 
-        document.querySelectorAll('.layout-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-layout') === state.layout;
+        allowed.forEach((cls) => dom.widget.classList.remove(cls));
+        dom.widget.classList.add(target);
+
+        dom.posBtns.forEach((btn) => {
+          const active = btn.dataset.pos === target;
           btn.className = active
-            ? 'layout-btn rounded-lg bg-pink-300/20 px-2 py-1.5 font-mono text-[10px] font-bold text-pink-200'
-            : 'layout-btn rounded-lg px-2 py-1.5 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
+            ? 'pos-btn rounded-lg border border-[#f9a8d4]/60 bg-[#f9a8d4]/15 px-2.5 py-1.5 font-mono text-[11px] font-semibold text-white'
+            : 'pos-btn rounded-lg border border-white/10 bg-[#141324] px-2.5 py-1.5 font-mono text-[11px] font-semibold text-slate-300 hover:border-white/25';
         });
 
-        renderOverlay();
+        saveState();
       }
 
-      function applyBackdrop(backdrop) {
-        const chosen = ['transparent', 'dark', 'light'].includes(backdrop) ? backdrop : 'transparent';
-        state.backdrop = chosen;
+      function applyMode(mode) {
+        state.mode = mode === 'stack' ? 'stack' : 'cycle';
+        state.cycleStartedAt = Date.now();
+
+        dom.modeBtns.forEach((btn) => {
+          const active = btn.dataset.mode === state.mode;
+          btn.className = active
+            ? 'mode-btn rounded-xl border border-[#f9a8d4]/60 bg-[#f9a8d4]/15 px-3 py-2 font-mono text-[11px] font-bold text-white'
+            : 'mode-btn rounded-xl border border-white/10 bg-[#141324] px-3 py-2 font-mono text-[11px] font-semibold text-slate-300 hover:border-[#9d8df1]/40';
+        });
+
+        saveState();
+        renderWidget();
+      }
+
+      function applyIntervalSeconds(seconds) {
+        const clampedSec = Math.max(5, Math.min(60, Math.round((Number(seconds) || 5) / 5) * 5));
+        state.intervalMs = clampedSec * 1000;
+        state.cycleStartedAt = Date.now();
+
+        if (dom.intervalSlider) dom.intervalSlider.value = String(clampedSec);
+        if (dom.intervalDisplay) dom.intervalDisplay.textContent = `${clampedSec}s`;
+
+        saveState();
+      }
+
+      function applyBackdrop(mode) {
         document.body.classList.remove('preview-dark', 'preview-light');
-        if (chosen === 'dark') document.body.classList.add('preview-dark');
-        if (chosen === 'light') document.body.classList.add('preview-light');
-        saveState();
+        if (mode === 'dark') document.body.classList.add('preview-dark');
+        if (mode === 'light') document.body.classList.add('preview-light');
 
-        document.querySelectorAll('.backdrop-btn').forEach((btn) => {
-          const active = btn.getAttribute('data-backdrop') === chosen;
+        dom.backdropBtns.forEach((btn) => {
+          const active = btn.dataset.backdrop === mode;
           btn.className = active
-            ? 'backdrop-btn rounded-lg bg-pink-300/20 px-2 py-1 font-mono text-[10px] font-semibold text-pink-200'
+            ? 'backdrop-btn rounded-lg bg-[#f9a8d4]/20 px-2 py-1 font-mono text-[10px] font-semibold text-[#f9a8d4]'
             : 'backdrop-btn rounded-lg px-2 py-1 font-mono text-[10px] font-semibold text-slate-300 hover:bg-white/5';
         });
       }
 
-      function renderAccentGrid() {
-        if (!accentPresetsGridEl) return;
-        const current = String(state.accent || ACCENT_PRESETS[0].color).toLowerCase();
+      function setDrawerOpen(open) {
+        state.drawerOpen = Boolean(open);
+        dom.drawer.classList.toggle('hidden', !state.drawerOpen);
+        dom.toggleDrawerBtn.setAttribute('aria-expanded', String(state.drawerOpen));
+      }
 
-        accentPresetsGridEl.innerHTML = ACCENT_PRESETS.map((preset) => {
-          const isActive = preset.color.toLowerCase() === current;
-          return `
-            <button
-              type="button"
-              data-accent-id="${preset.id}"
-              title="${escapeHtml(preset.name)} (${preset.color})"
-              class="accent-btn flex items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left font-mono text-[10px] transition ${
-                isActive
-                  ? 'border-white/60 bg-slate-800/95 font-bold text-white shadow-sm'
-                  : 'border-white/10 bg-slate-900 font-semibold text-slate-300 hover:border-white/25 hover:text-white'
-              }"
-            >
-              <span
-                class="h-2.5 w-2.5 shrink-0 rounded-full"
-                style="background-color: ${preset.color}; box-shadow: 0 0 8px ${preset.glow};"
-              ></span>
-              <span class="truncate">${escapeHtml(preset.name)}</span>
-            </button>
-          `;
-        }).join('');
+      function setUiHidden(hidden) {
+        state.uiHidden = Boolean(hidden);
+        dom.customizerRoot.classList.toggle('hidden', state.uiHidden);
+      }
 
-        accentPresetsGridEl.querySelectorAll('.accent-btn').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const preset = ACCENT_PRESETS.find((p) => p.id === btn.getAttribute('data-accent-id'));
-            if (preset) applyAccent(preset);
-          });
+      function bindEvents() {
+        dom.toggleDrawerBtn.addEventListener('click', () => setDrawerOpen(!state.drawerOpen));
+        dom.closeDrawerBtn.addEventListener('click', () => setDrawerOpen(false));
+        dom.hideUiBtn.addEventListener('click', () => {
+          setDrawerOpen(false);
+          setUiHidden(true);
         });
-      }
 
-      function applyAccent(preset) {
-        const chosen = preset || ACCENT_PRESETS[0];
-        state.accent = chosen.color;
-        state.accentGlow = chosen.glow;
-        state.accentSoft = chosen.soft;
+        dom.modeBtns.forEach((btn) => {
+          btn.addEventListener('click', () => applyMode(btn.dataset.mode));
+        });
 
-        document.documentElement.style.setProperty('--accent', state.accent);
-        document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
-        document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
+        if (dom.intervalSlider) {
+          dom.intervalSlider.addEventListener('input', () => {
+            applyIntervalSeconds(dom.intervalSlider.value);
+          });
+        }
+        if (dom.intervalDecBtn) {
+          dom.intervalDecBtn.addEventListener('click', () => {
+            applyIntervalSeconds(state.intervalMs / 1000 - 5);
+          });
+        }
+        if (dom.intervalIncBtn) {
+          dom.intervalIncBtn.addEventListener('click', () => {
+            applyIntervalSeconds(state.intervalMs / 1000 + 5);
+          });
+        }
 
-        saveState();
-        renderAccentGrid();
-        renderItemEditor();
-        renderOverlay();
-        syncSymbolControls();
-      }
+        if (dom.pickerPrimary) {
+          dom.pickerPrimary.addEventListener('input', () => {
+            applyColors(dom.pickerPrimary.value, state.secondaryColor, true);
+          });
+        }
+        if (dom.pickerSecondary) {
+          dom.pickerSecondary.addEventListener('input', () => {
+            applyColors(state.primaryColor, dom.pickerSecondary.value, true);
+          });
+        }
 
-      // =========================================================================
-      // DRAWER, SHORTCUTS & EVENT LISTENERS
-      // =========================================================================
-      function toggleDrawer(force) {
-        const shouldOpen = typeof force === 'boolean' ? force : drawerEl.classList.contains('hidden');
-        drawerEl.classList.toggle('hidden', !shouldOpen);
-        toggleDrawerBtn.setAttribute('aria-expanded', String(shouldOpen));
-        toggleDrawerBtn.classList.toggle('opacity-100', shouldOpen);
-      }
+        dom.posBtns.forEach((btn) => {
+          btn.addEventListener('click', () => applyPosition(btn.dataset.pos));
+        });
 
-      if (addSocialSubmitBtn) {
-        addSocialSubmitBtn.addEventListener('click', addNewSocialItem);
-      }
+        dom.backdropBtns.forEach((btn) => {
+          btn.addEventListener('click', () => applyBackdrop(btn.dataset.backdrop));
+        });
 
-      if (newHandleInputEl) {
-        newHandleInputEl.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            addNewSocialItem();
+        dom.inputPillBadge.addEventListener('input', () => {
+          state.pillBadge = dom.inputPillBadge.value;
+          saveState();
+        });
+
+        dom.inputSubtag.addEventListener('input', () => {
+          state.subtag = dom.inputSubtag.value;
+          saveState();
+        });
+
+        // Keyboard shortcuts: [C] toggle drawer, [H] toggle UI
+        window.addEventListener('keydown', (e) => {
+          const tag = (e.target && e.target.tagName) || '';
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+
+          if (e.key === 'c' || e.key === 'C') {
+            if (state.uiHidden) setUiHidden(false);
+            setDrawerOpen(!state.drawerOpen);
+          } else if (e.key === 'h' || e.key === 'H') {
+            setDrawerOpen(false);
+            setUiHidden(!state.uiHidden);
+          } else if (e.key === 'Escape' && state.drawerOpen) {
+            setDrawerOpen(false);
           }
         });
       }
 
-      document.querySelectorAll('.target-tab-btn').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          applySymbolTargetTab(btn.getAttribute('data-symbol-target'));
-        });
-      });
+      function init() {
+        loadState();
 
-      addCustomSymbolBtn.addEventListener('click', () => {
-        addSymbolToTarget(state.activeSymbolTarget, customSymbolInput.value);
-        customSymbolInput.value = '';
-        customSymbolInput.focus();
-      });
+        dom.inputPillBadge.value = state.pillBadge;
+        dom.inputSubtag.value = state.subtag;
 
-      customSymbolInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          addSymbolToTarget(state.activeSymbolTarget, customSymbolInput.value);
-          customSymbolInput.value = '';
-        }
-      });
-
-      headerSymbolsEnabledCb.addEventListener('change', (e) => {
-        state.headerSymbolsEnabled = e.target.checked;
-        saveState();
-        renderOverlay();
-      });
-
-      handleSymbolsEnabledCb.addEventListener('change', (e) => {
-        state.handleSymbolsEnabled = e.target.checked;
-        saveState();
-        renderOverlay();
-      });
-
-      handleSymbolPositionSelect.addEventListener('change', (e) => {
-        state.handleSymbolPosition = e.target.value === 'around' ? 'around' : 'after';
-        saveState();
-        renderOverlay();
-      });
-
-      clearHeaderSymbolsBtn.addEventListener('click', () => clearSymbols('header'));
-      clearHandleSymbolsBtn.addEventListener('click', () => clearSymbols('handle'));
-
-      document.querySelectorAll('.pos-btn').forEach((btn) => {
-        btn.addEventListener('click', () => applyPosition(btn.getAttribute('data-pos')));
-      });
-
-      document.querySelectorAll('.layout-btn').forEach((btn) => {
-        btn.addEventListener('click', () => applyLayout(btn.getAttribute('data-layout')));
-      });
-
-      document.querySelectorAll('.backdrop-btn').forEach((btn) => {
-        btn.addEventListener('click', () => applyBackdrop(btn.getAttribute('data-backdrop')));
-      });
-
-      toggleDrawerBtn.addEventListener('click', () => toggleDrawer());
-      closeDrawerBtn.addEventListener('click', () => toggleDrawer(false));
-      hideUiBtn.addEventListener('click', () => customizerRootEl.classList.add('hidden'));
-
-      resetDefaultsBtn.addEventListener('click', () => {
-        state = createDefaultState();
-        saveState();
-        initUI();
-      });
-
-      document.addEventListener('keydown', (e) => {
-        const tag = (e.target && e.target.tagName) || '';
-        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-        if (e.key.toLowerCase() === 'c') {
-          customizerRootEl.classList.remove('hidden');
-          toggleDrawer();
-        } else if (e.key.toLowerCase() === 'h') {
-          customizerRootEl.classList.toggle('hidden');
-        }
-      });
-
-      function initUI() {
-        document.documentElement.style.setProperty('--accent', state.accent);
-        document.documentElement.style.setProperty('--accent-glow', state.accentGlow);
-        document.documentElement.style.setProperty('--accent-soft', state.accentSoft);
-
-        renderNewPlatformGrid();
-        renderPresetChips();
-        renderAccentGrid();
+        renderColorPresets();
+        applyColors(state.primaryColor, state.secondaryColor, false);
         applyPosition(state.position);
-        applyLayout(state.layout);
-        applyBackdrop(state.backdrop);
-        syncSymbolControls();
-        renderItemEditor();
-        renderOverlay();
-      }
+        applyMode(state.mode);
+        applyIntervalSeconds(state.intervalMs / 1000);
+        renderPlatformsEditor();
+        renderWidget();
+        bindEvents();
 
-      try {
         const params = new URLSearchParams(window.location.search);
         if (params.get('clean') === '1') {
-          customizerRootEl.classList.add('hidden');
+          setUiHidden(true);
         }
-        initUI();
-      } catch (err) {
-        console.error('Error initializing Redes Overlay:', err);
+
+        setInterval(tickCycle, 150);
       }
+
+      init();
     })();
   </script>
 </body>
